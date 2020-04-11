@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestEval(t *testing.T) {
+func TestPlus(t *testing.T) {
 	{
 		result := eval(&intNode{value: 1})
 		if result != nil {
