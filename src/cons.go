@@ -49,51 +49,40 @@ type consCell struct {
 	car		node
 	cdr		node
 }
-func (n *consCell) getNodeType() int {
+func (c *consCell) getNodeType() int {
 	return ntConsCell
 }
-func (n *consCell) toString() string {
-	if n.car == nil || n.cdr == nil {
-		s := ""
-		if n.cdr == nil {
-			s += "car: empty"
-		}
-		if n.car == nil {
-			s += "cdr: empty"
-		}
-		return s
-	}
-
+func (c *consCell) toString() string {
 	s:= "("
 
-	n2 := n
+	c2 := c
 
 	// listの終わりまでループ
 	for true {
-		if n2.car == nil {
+		if c2.car == nil {
 			s += "car: empty"
 		} else {
-			s += n2.car.toString()
+			s += c2.car.toString()
 		}
 
-		if n2.cdr == nil {
+		if c2.cdr == nil {
 			s += "cdr: empty"
 			break
 		}
 
 		// end of list
-		if n2.cdr.getNodeType() == ntNil {
+		if c2.cdr.getNodeType() == ntNil {
 			break
 		}
 
 		// 次もConsCellだった場合たどる
-		next, ok := n2.cdr.(*consCell)
+		next, ok := c2.cdr.(*consCell)
 		if ok {
 			s += " "
-			n2 = next	
+			c2 = next
 		} else {
 			// dot list
-			s += " . " + n2.cdr.toString() 
+			s += " . " + c2.cdr.toString()
 			break
 		}
 	}
@@ -101,3 +90,46 @@ func (n *consCell) toString() string {
 
 	return s
 }
+
+func (c *consCell) next() *consCell {
+	next, ok := c.cdr.(*consCell)
+	if !ok {
+		return nil
+	}
+	return next
+}
+
+func (c *consCell) isDotList() bool {
+	if c.cdr.getNodeType() != ntConsCell &&
+	   c.cdr.getNodeType() != ntNil {
+		return true
+	}
+	return false
+}
+
+// 末尾がdot listでないかチェック
+func (c *consCell) isList() bool {
+	c2 := c
+	for c2 != nil {
+		if c2.isDotList() {
+			return false
+		}
+		c2 = c2.next()
+	}
+	return true
+}
+
+func (c *consCell) length() int {
+	length := 0
+
+	c2 := c
+	for c2 != nil {
+		length++
+		if c2.isDotList() {
+			break
+		}
+		c2 = c2.next()
+	}
+	return length
+}
+

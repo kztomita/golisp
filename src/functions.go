@@ -8,24 +8,48 @@ import (
 // (car list)
 // Ex. (car '(1 2 3))
 func funcCar(c *consCell) node {
-	// TODO 引数が一つでリストであること
-	list, ok := c.car.(*consCell)
+	if c == nil {
+		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
+		return nil
+	}
+	if !c.isList() {
+		fmt.Fprintf(os.Stderr, "Wrong type argument.")
+		return nil
+	}
+	if c.length() != 1 {
+		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
+		return nil
+	}
+
+	arg0, ok := c.car.(*consCell)
 	if !ok {
 		fmt.Fprintf(os.Stderr, "Wrong type argument.")
 		return nil
 	}
-	return list.car
+	return arg0.car
 }
 
 // (cdr list)
 // Ex. (cdr '(1 2 3))
 func funcCdr(c *consCell) node {
-	// TODO 引数が一つでリストであること
-	list, ok := c.car.(*consCell)
+	if c == nil {
+		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
+		return nil
+	}
+	if !c.isList() {
+		fmt.Fprintf(os.Stderr, "Wrong type argument.")
+		return nil
+	}
+	if c.length() != 1 {
+		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
+		return nil
+	}
+
+	arg0, ok := c.car.(*consCell)
 	if !ok {
 		fmt.Fprintf(os.Stderr, "Wrong type argument.")
 		return nil
 	}
-	return list.cdr
+	return arg0.cdr
 }
 

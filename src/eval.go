@@ -56,21 +56,9 @@ func eval(n node) node {
 				}
 				// TODO 計算してintNodeを返す
 			case "car":
-				// TODO 引数が一つでリストであること
-				next, ok := cell.cdr.(*consCell)
-				if ok {
-					return funcCar(next)
-				} else {
-					return nil
-				}
+				return funcCar(cell.next())
 			case "cdr":
-				// TODO 引数が一つでリストであること
-				next, ok := cell.cdr.(*consCell)
-				if ok {
-					return funcCdr(next)
-				} else {
-					return nil
-				}
+				return funcCdr(cell.next())
 			}
 		} else {
 			// TODO error
