@@ -9,6 +9,7 @@ const (
 	tokenRightParentheses
 	tokenInt
 	tokenSymbol
+	tokenString
 )
 
 type token struct {
@@ -42,6 +43,18 @@ func (t *tokenizer) nextToken() *token {
 			}
 			found = true
 		case ' ':
+			found = true
+		case '"':
+			// TODO escape seq
+			if literal == "" {
+				t.pos++
+				for t.pos < slen && t.s[t.pos] != '"' {
+					literal += string(t.s[t.pos])
+					t.pos++
+				}
+				t.pos++
+				return &token{tokenId: tokenString, literal: literal}
+			}
 			found = true
 		default:
 			literal += string(t.s[t.pos])
