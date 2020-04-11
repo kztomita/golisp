@@ -13,6 +13,7 @@ const (
 	ntConsCell int = iota
 	ntInt
 	ntNil
+	ntSymbol
 )
 
 type intNode struct {
@@ -32,6 +33,16 @@ func (n *nilNode) getNodeType() int {
 }
 func (n *nilNode) toString() string {
 	return "nil"
+}
+
+type symbolNode struct {
+	name	string
+}
+func (n *symbolNode) getNodeType() int {
+	return ntSymbol
+}
+func (n *symbolNode) toString() string {
+	return n.name
 }
 
 type consCell struct {
