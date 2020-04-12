@@ -5,16 +5,27 @@ import (
 )
 
 func TestParser(t *testing.T) {
-	cell, err := parse(`(1 2 (foo 4 5 "bar") 3)`)
-	if err != nil {
-		t.Fatalf("%v", err)
+	testCases := []struct{
+		expression	string
+		expected	string
+	}{
+		{
+			`(1 2 (foo 4 5 "bar") 3)`,
+			`(1 2 (foo 4 5 "bar") 3)`,
+		},
 	}
-	result := cell.toString()
-	expected := `(1 2 (foo 4 5 "bar") 3)`
-	if result != expected {
-		t.Errorf("Result: %v, Expected: %v", result, expected)
+
+	for _, c := range testCases {
+		cell, err := parse(c.expression)
+		if err != nil {
+			t.Fatalf("%v", err)
+		}
+		result := cell.toString()
+		if result != c.expected {
+			t.Errorf("Result: %v, Expected: %v", result, c.expected)
+		}
+		t.Logf("%v", result)
 	}
-	t.Logf("%v", result)
 }
 
 
