@@ -4,9 +4,11 @@ import (
 	"testing"
 )
 
-func TestPlus(t *testing.T) {
+func TestEvalPlus(t *testing.T) {
+	ev := newEvaluator()
+
 	{
-		result := eval(&intNode{value: 1})
+		result := ev.eval(&intNode{value: 1})
 		if result != nil {
 			t.Logf("%v", result.toString());
 		}
@@ -25,7 +27,7 @@ func TestPlus(t *testing.T) {
 		}
 		expr := c.toString()
 		t.Logf("%v", expr)
-		result := eval(c)
+		result := ev.eval(c)
 		if result != nil {
 			t.Logf("%v", result.toString());
 		}
@@ -53,7 +55,7 @@ func TestPlus(t *testing.T) {
 		}
 		expr := c.toString()
 		t.Logf("%v", expr)
-		result := eval(c)
+		result := ev.eval(c)
 		if result != nil {
 			t.Logf("%v", result.toString());
 		}
@@ -61,7 +63,9 @@ func TestPlus(t *testing.T) {
 
 }
 
-func TestCar(t *testing.T) {
+func TestEvalCar(t *testing.T) {
+	ev := newEvaluator()
+
 	// list
 	list := &consCell{
 		car: &intNode{value: 1},
@@ -77,7 +81,7 @@ func TestCar(t *testing.T) {
 	t.Logf("%v", expr)
 
 	// (car '(1 2 3))
-	result := eval(&consCell{
+	result := ev.eval(&consCell{
 		car: &symbolNode{name: "car"},
 		cdr: &consCell{
 			car: list,
@@ -89,7 +93,9 @@ func TestCar(t *testing.T) {
 	}
 }
 
-func TestCdr(t *testing.T) {
+func TestEvalCdr(t *testing.T) {
+	ev := newEvaluator()
+
 	// list
 	list := &consCell{
 		car: &intNode{value: 1},
@@ -105,7 +111,7 @@ func TestCdr(t *testing.T) {
 	t.Logf("%v", expr)
 
 	// (cdr '(1 2 3))
-	result := eval(&consCell{
+	result := ev.eval(&consCell{
 		car: &symbolNode{name: "cdr"},
 		cdr: &consCell{
 			car: list,
@@ -115,4 +121,25 @@ func TestCdr(t *testing.T) {
 	if result != nil {
 		t.Logf("%v", result.toString())
 	}
+}
+
+func TestEvalSetq(t *testing.T) {
+	ev := newEvaluator()
+
+	// (setq foo 100)
+	result := ev.eval(&consCell{
+		car: &symbolNode{name: "setq"},
+		cdr: &consCell{
+			car: &symbolNode{name: "foo"},
+			cdr: &consCell{
+				car: &intNode{value: 100},
+				cdr: &nilNode{},
+			},
+		},
+	})
+	if result != nil {
+		t.Logf("%v", result.toString())
+	}
+
+	t.Logf("%v", ev.eval(&symbolNode{name: "foo"}))
 }

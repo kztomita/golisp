@@ -53,7 +53,34 @@ func funcCdr(c *consCell) node {
 	return arg0.cdr
 }
 
-func funcPlus(c *consCell) *intNode {
+func funcSetq(ev *evaluator, c *consCell) node {
+	if c == nil {
+		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
+		return nil
+	}
+	if !c.isList() {
+		fmt.Fprintf(os.Stderr, "Wrong type argument.")
+		return nil
+	}
+	if c.length() != 2 {
+		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
+		return nil
+	}
+
+	arg0, ok := c.car.(*symbolNode)	// symbolname
+	if !ok {
+		fmt.Fprintf(os.Stderr, "Wrong type argument.")
+		return nil
+	}
+
+	arg1 := c.next().car
+
+	ev.symbolTable[arg0.name] = ev.eval(arg1)
+
+	return &nilNode{}
+}
+
+func funcPlus(ev *evaluator, c *consCell) *intNode {
 	result := 0		// XXX 取り敢えずintのみ対応
 
 	if c != nil && !c.isList() {
@@ -63,7 +90,7 @@ func funcPlus(c *consCell) *intNode {
 
 	c2 := c
 	for c2 != nil {
-		element := eval(c2.car)
+		element := ev.eval(c2.car)
 		intResult, ok := element.(*intNode)
 		if ok {
 			result += intResult.value

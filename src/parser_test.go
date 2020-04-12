@@ -61,7 +61,9 @@ func TestParseAndEval(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	result := eval(cell)
+
+	ev := newEvaluator()
+	result := ev.eval(cell)
 	if result != nil {
 		t.Logf("%v", result.toString());
 	}
