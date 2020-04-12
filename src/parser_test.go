@@ -39,6 +39,7 @@ func TestParser(t *testing.T) {
 				t.Errorf("%v", err)
 				continue
 			}
+			// 構文木を文字列に戻して確認
 			result := cell.toString()
 			if result != c.expected {
 				t.Errorf("Result: %v, Expected: %v", result, c.expected)
