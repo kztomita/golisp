@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestParser(t *testing.T) {
+func TestTokenizer(t *testing.T) {
 	testCases := []struct{
 		expression	string
 		results		[]token
