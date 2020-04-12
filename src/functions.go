@@ -80,6 +80,46 @@ func funcSetq(ev *evaluator, c *consCell) node {
 	return &nilNode{}
 }
 
+func funcDefun(ev *evaluator, c *consCell) node {
+	if c == nil {
+		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
+		return nil
+	}
+	if !c.isList() {
+		fmt.Fprintf(os.Stderr, "Wrong type argument.")
+		return nil
+	}
+	if c.length() < 3 {
+		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
+		return nil
+	}
+
+	p := c
+	arg0, ok := p.car.(*symbolNode)	// func name
+	if !ok {
+		fmt.Fprintf(os.Stderr, "Wrong type argument.")
+		return nil
+	}
+
+	p = p.next()
+	var arguments *consCell
+	arg1, ok1 := p.car.(*consCell)	// arguments
+	if ok1 {
+		arguments = arg1
+	}
+
+	p = p.next()	// body list
+
+	fn := &funcNode{
+		arguments: arguments,
+		body: p,
+	}
+
+	ev.symbolTable[arg0.name] = fn
+
+	return &nilNode{}
+}
+
 func funcPlus(ev *evaluator, c *consCell) *intNode {
 	result := 0		// XXX 取り敢えずintのみ対応
 

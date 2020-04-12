@@ -143,3 +143,33 @@ func TestEvalSetq(t *testing.T) {
 
 	t.Logf("%v", ev.eval(&symbolNode{name: "foo"}))
 }
+
+func TestFunc(t *testing.T) {
+	ev := newEvaluator()
+
+	// 関数の定義
+	// (defun foo () (+ 1 2))
+	fdef := createList([]node{
+		&symbolNode{name: "defun"},
+		&symbolNode{name: "foo"},
+		&nilNode{},
+		createList([]node{
+			&symbolNode{name: "+"},
+			&intNode{value: 1},
+			&intNode{value: 2},
+		}),
+	})
+	//t.Logf("%v", f.toString())
+
+	result := ev.eval(fdef)
+	if result != nil {
+		t.Logf("%v", result.toString())
+	}
+
+	// 関数の実行
+	// (foo)
+	result = ev.eval(createList([]node{
+		&symbolNode{name: "foo"},
+	}))
+	t.Logf("%v", result.toString())
+}

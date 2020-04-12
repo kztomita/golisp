@@ -15,6 +15,7 @@ const (
 	ntNil
 	ntSymbol
 	ntString
+	ntFunc
 )
 
 type intNode struct {
@@ -55,6 +56,18 @@ func (n *stringNode) getNodeType() int {
 func (n *stringNode) toString() string {
 	// TODO escape
 	return `"` + n.value + `"`
+}
+
+type funcNode struct {
+	arguments	*consCell
+	body		*consCell
+}
+func (n *funcNode) getNodeType() int {
+	return ntFunc
+}
+func (n *funcNode) toString() string {
+	// TODO escape
+	return "function"
 }
 
 type consCell struct {
