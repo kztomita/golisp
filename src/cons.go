@@ -14,6 +14,7 @@ const (
 	ntInt
 	ntNil
 	ntSymbol
+	ntString
 )
 
 type intNode struct {
@@ -43,6 +44,17 @@ func (n *symbolNode) getNodeType() int {
 }
 func (n *symbolNode) toString() string {
 	return n.name
+}
+
+type stringNode struct {
+	value	string
+}
+func (n *stringNode) getNodeType() int {
+	return ntString
+}
+func (n *stringNode) toString() string {
+	// TODO escape
+	return `"` + n.value + `"`
 }
 
 type consCell struct {

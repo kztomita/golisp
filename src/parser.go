@@ -31,8 +31,7 @@ func createList(tk *tokenizer) (*consCell, error) {
 	for true {
 		token := tk.nextToken()
 		if token == nil {
-			// TODO message
-			break
+			return nil, fmt.Errorf("list is not terminated.")
 		}
 	
 		var cc *consCell
@@ -55,7 +54,7 @@ func createList(tk *tokenizer) (*consCell, error) {
 		case tokenSymbol:
 			cc = &consCell{car: &symbolNode{name: token.literal}}
 		case tokenString:
-			// TODO
+			cc = &consCell{car: &stringNode{value: token.literal}}
 		default:
 			return nil, fmt.Errorf("Unknown token (%v)", token)	
 		}
@@ -71,5 +70,6 @@ func createList(tk *tokenizer) (*consCell, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("list is not terminated.")
+	// not to reach
+	return nil, fmt.Errorf("not to reach")
 }

@@ -5,13 +5,14 @@ import (
 )
 
 func TestParser(t *testing.T) {
-	cell, err := parse("(1 2 (foo 4 5) 3)")
+	cell, err := parse(`(1 2 (foo 4 5 "bar") 3)`)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
 	result := cell.toString()
-	if result != "(1 2 (foo 4 5) 3)" {
-		t.Errorf("Result: %v, Expected: %v", result, "(1 2 (foo 4 5) 3)")
+	expected := `(1 2 (foo 4 5 "bar") 3)`
+	if result != expected {
+		t.Errorf("Result: %v, Expected: %v", result, expected)
 	}
 	t.Logf("%v", result)
 }
