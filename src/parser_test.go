@@ -13,6 +13,10 @@ func TestParser(t *testing.T) {
 			`(1 2 (foo 4 5 "bar") 3)`,
 			`(1 2 (foo 4 5 "bar") 3)`,
 		},
+		{
+			`(1 . 2)`,
+			`(1 . 2)`,
+		},
 	}
 
 	for _, c := range testCases {

@@ -28,6 +28,8 @@ func createList(tk *tokenizer) (*consCell, error) {
 	var head *consCell
 	var tail *consCell
 
+	foundDot := false
+
 	for true {
 		token := tk.nextToken()
 		if token == nil {
@@ -43,8 +45,12 @@ func createList(tk *tokenizer) (*consCell, error) {
 			}
 			cc = &consCell{car: listcc}
 		case tokenRightParentheses:
-			tail.cdr = &nilNode{}
+			if tail.cdr == nil {
+				tail.cdr = &nilNode{}
+			}
 			return head, nil
+		case tokenDot:
+			foundDot  = true
 		case tokenInt:
 			i, err := strconv.Atoi(token.literal)
 			if err != nil {
@@ -56,16 +62,29 @@ func createList(tk *tokenizer) (*consCell, error) {
 		case tokenString:
 			cc = &consCell{car: &stringNode{value: token.literal}}
 		default:
-			return nil, fmt.Errorf("Unknown token (%v)", token)	
+			return nil, fmt.Errorf("Unknown token (%v)", token)
 		}
 
 		if cc != nil {
-			if tail == nil {
-				head = cc
-				tail = head
+			if !foundDot {
+				if tail == nil {
+					head = cc
+					tail = head
+				} else {
+					if tail.cdr != nil {
+						// dot listの後に要素がまだある
+						return nil, fmt.Errorf("syntax error")
+					}
+					tail.cdr = cc
+					tail = cc
+				}
 			} else {
-				tail.cdr = cc
-				tail = cc
+				if tail == nil {
+					return nil, fmt.Errorf("syntax error")
+				} else {
+					// dot listを作る(conscellを追加するのではなくcdrに設定する)
+					tail.cdr = cc.car
+				}
 			}
 		}
 	}
