@@ -16,7 +16,7 @@ func parse(s string) (*consCell, error) {
 
 		switch (token.tokenId) {
 		case tokenLeftParentheses:
-			return createList(tk)
+			return readAsList(tk)
 		default:
 			return nil, fmt.Errorf("xxxxxx")
 		}
@@ -24,7 +24,7 @@ func parse(s string) (*consCell, error) {
 	return nil, fmt.Errorf("xxxxxx")
 }
 
-func createList(tk *tokenizer) (*consCell, error) {
+func readAsList(tk *tokenizer) (*consCell, error) {
 	var head *consCell
 	var tail *consCell
 
@@ -39,7 +39,7 @@ func createList(tk *tokenizer) (*consCell, error) {
 		var cc *consCell
 		switch (token.tokenId) {
 		case tokenLeftParentheses:
-			listcc, err := createList(tk)
+			listcc, err := readAsList(tk)
 			if err != nil {
 				return nil, err
 			}
