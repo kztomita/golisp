@@ -10,6 +10,7 @@ const (
 	tokenInt
 	tokenSymbol
 	tokenString
+	tokenDot
 )
 
 type token struct {
@@ -44,6 +45,13 @@ func (t *tokenizer) nextToken() *token {
 			found = true
 		case ' ':
 			found = true
+		case '.':
+			if literal == "" {
+				if t.pos == slen - 1 || t.s[t.pos + 1] == ' ' {
+					t.pos++
+					return &token{tokenId: tokenDot, literal: "."}
+				}
+			}
 		case '"':
 			// TODO escape seq
 			if literal == "" {

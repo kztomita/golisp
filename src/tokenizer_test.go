@@ -45,6 +45,16 @@ func TestTokenizer(t *testing.T) {
 				{tokenId: tokenRightParentheses, literal: ")"},
 			},
 		},
+		{
+			`(1 . 2)`,
+			[]token{
+				{tokenId: tokenLeftParentheses, literal: "("},
+				{tokenId: tokenInt, literal: "1"},
+				{tokenId: tokenDot, literal: "."},
+				{tokenId: tokenInt, literal: "2"},
+				{tokenId: tokenRightParentheses, literal: ")"},
+			},
+		},
 	}
 
 	for _, c := range testCases {
