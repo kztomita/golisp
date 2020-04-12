@@ -71,10 +71,6 @@ func createList(tk *tokenizer) (*consCell, error) {
 					head = cc
 					tail = head
 				} else {
-					if tail.cdr != nil {
-						// dot listの後に要素がまだある
-						return nil, fmt.Errorf("syntax error")
-					}
 					tail.cdr = cc
 					tail = cc
 				}
@@ -83,6 +79,10 @@ func createList(tk *tokenizer) (*consCell, error) {
 					return nil, fmt.Errorf("syntax error")
 				} else {
 					// dot listを作る(conscellを追加するのではなくcdrに設定する)
+					if tail.cdr != nil {
+						// dot list作成済み。後に要素がまだある。
+						return nil, fmt.Errorf("syntax error")
+					}
 					tail.cdr = cc.car
 				}
 			}
