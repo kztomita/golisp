@@ -2,7 +2,6 @@ package golisp
 
 import (
 	"fmt"
-	"os"
 )
 
 type lexicalScope struct {
@@ -57,8 +56,7 @@ func (e *evaluator) eval(n node) (node, error) {
 		symbol := n.(*symbolNode)
 		value, ok := e.symbolTable[symbol.name]
 		if !ok {
-			// TODO error
-			fmt.Fprintf(os.Stderr, "%v not found.", symbol.name)
+			return nil, fmt.Errorf("%v not found.", symbol.name)
 		}
 		return value, nil
 	} else if n.getNodeType() == ntFunc {
