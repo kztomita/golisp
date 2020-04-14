@@ -8,13 +8,15 @@ type lexicalScope struct {
 	parent	*lexicalScope
 }
 
+type symbolTable map[string]node
+
 type evaluator struct {
-	symbolTable map[string]node
+	symbolTable symbolTable
 }
 
 func newEvaluator() *evaluator {
 	return &evaluator{
-		symbolTable: make(map[string]node),
+		symbolTable: make(symbolTable),
 	}
 }
 
