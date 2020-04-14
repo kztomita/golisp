@@ -2,103 +2,90 @@ package golisp
 
 import (
 	"fmt"
-	"os"
 )
 
 // (car list)
 // Ex. (car '(1 2 3))
-func funcCar(c *consCell) node {
+func funcCar(c *consCell) (node, error) {
 	if c == nil {
-		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
-		return nil
+		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 	if !c.isList() {
-		fmt.Fprintf(os.Stderr, "Wrong type argument.")
-		return nil
+		return nil, fmt.Errorf("Wrong type argument.")
 	}
 	if c.length() != 1 {
-		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
-		return nil
+		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
 	arg0, ok := c.car.(*consCell)
 	if !ok {
-		fmt.Fprintf(os.Stderr, "Wrong type argument.")
-		return nil
+		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	return arg0.car
+	return arg0.car, nil
 }
 
 // (cdr list)
 // Ex. (cdr '(1 2 3))
-func funcCdr(c *consCell) node {
+func funcCdr(c *consCell) (node, error) {
 	if c == nil {
-		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
-		return nil
+		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 	if !c.isList() {
-		fmt.Fprintf(os.Stderr, "Wrong type argument.")
-		return nil
+		return nil, fmt.Errorf("Wrong type argument.")
 	}
 	if c.length() != 1 {
-		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
-		return nil
+		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
 	arg0, ok := c.car.(*consCell)
 	if !ok {
-		fmt.Fprintf(os.Stderr, "Wrong type argument.")
-		return nil
+		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	return arg0.cdr
+	return arg0.cdr, nil
 }
 
-func funcSetq(ev *evaluator, c *consCell) node {
+func funcSetq(ev *evaluator, c *consCell) (node, error) {
 	if c == nil {
-		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
-		return nil
+		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 	if !c.isList() {
-		fmt.Fprintf(os.Stderr, "Wrong type argument.")
-		return nil
+		return nil, fmt.Errorf("Wrong type argument.")
 	}
 	if c.length() != 2 {
-		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
-		return nil
+		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
 	arg0, ok := c.car.(*symbolNode)	// symbolname
 	if !ok {
-		fmt.Fprintf(os.Stderr, "Wrong type argument.")
-		return nil
+		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
 	arg1 := c.next().car
 
-	ev.symbolTable[arg0.name] = ev.eval(arg1)
+	result, err := ev.eval(arg1)
+	if err != nil {
+		return nil, err
+	}
+	ev.symbolTable[arg0.name] = result
 
-	return &nilNode{}
+	return &nilNode{}, nil
 }
 
-func funcDefun(ev *evaluator, c *consCell) node {
+func funcDefun(ev *evaluator, c *consCell) (node, error) {
 	if c == nil {
-		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
-		return nil
+		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 	if !c.isList() {
-		fmt.Fprintf(os.Stderr, "Wrong type argument.")
-		return nil
+		return nil, fmt.Errorf("Wrong type argument.")
 	}
 	if c.length() < 3 {
-		fmt.Fprintf(os.Stderr, "Wrong number of arguments.")
-		return nil
+		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
 	p := c
 	arg0, ok := p.car.(*symbolNode)	// func name
 	if !ok {
-		fmt.Fprintf(os.Stderr, "Wrong type argument.")
-		return nil
+		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
 	p = p.next()
@@ -117,30 +104,31 @@ func funcDefun(ev *evaluator, c *consCell) node {
 
 	ev.symbolTable[arg0.name] = fn
 
-	return &nilNode{}
+	return &nilNode{}, nil
 }
 
-func funcPlus(ev *evaluator, c *consCell) *intNode {
+func funcPlus(ev *evaluator, c *consCell) (*intNode, error) {
 	result := 0		// XXX 取り敢えずintのみ対応
 
 	if c != nil && !c.isList() {
-		fmt.Fprintf(os.Stderr, "Wrong type argument.")
-		return nil
+		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
 	c2 := c
 	for c2 != nil {
-		element := ev.eval(c2.car)
+		element, err := ev.eval(c2.car)
+		if err != nil {
+			return nil, err
+		}
 		intResult, ok := element.(*intNode)
 		if ok {
 			result += intResult.value
 		} else {
-			fmt.Fprintf(os.Stderr, "not integer element")
-			return nil
+			return nil, fmt.Errorf("not integer element")
 		}
 
 		c2 = c2.next()
 	}
 
-	return &intNode{value: result}
+	return &intNode{value: result}, nil
 }

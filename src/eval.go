@@ -19,7 +19,7 @@ func newEvaluator() *evaluator {
 	}
 }
 
-func (e *evaluator) eval(n node) node {
+func (e *evaluator) eval(n node) (node, error) {
 	if n.getNodeType() == ntConsCell {
 		// list
 		cell := n.(*consCell)
@@ -41,13 +41,11 @@ func (e *evaluator) eval(n node) node {
 			default:
 				value, ok := e.symbolTable[funcName]
 				if !ok {
-					fmt.Fprintf(os.Stderr, "%v not found.", symbol.name)
-					return nil
+					return nil, fmt.Errorf("%v not found.", symbol.name)
 				}
 				fn, ok := value.(*funcNode)
 				if !ok {
-					fmt.Fprintf(os.Stderr, "%v is not function.", symbol.name)
-					return nil
+					return nil, fmt.Errorf("%v is not function.", symbol.name)
 				}
 				return e.eval(fn)	// 関数実行
 			}
@@ -62,7 +60,7 @@ func (e *evaluator) eval(n node) node {
 			// TODO error
 			fmt.Fprintf(os.Stderr, "%v not found.", symbol.name)
 		}
-		return value
+		return value, nil
 	} else if n.getNodeType() == ntFunc {
 		// TODO 引数
 		function := n.(*funcNode)
@@ -71,14 +69,16 @@ func (e *evaluator) eval(n node) node {
 		lastResult = &nilNode{}
 		// bodyのlistを順番に評価していく
 		for current != nil {
+			var err error
 			list := current.car
-			lastResult = e.eval(list)
+			lastResult, err = e.eval(list)
+			if err != nil {
+				return nil, err
+			}
 			current = current.next()
 		}
-		return lastResult
-	} else {
-		return n
+		return lastResult, nil
 	}
 
-	return nil
+	return n, nil
 }

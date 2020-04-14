@@ -8,8 +8,10 @@ func TestEvalPlus(t *testing.T) {
 	ev := newEvaluator()
 
 	{
-		result := ev.eval(&intNode{value: 1})
-		if result != nil {
+		result, err := ev.eval(&intNode{value: 1})
+		if err != nil {
+			t.Errorf("%v", err)
+		} else {
 			t.Logf("%v", result.toString());
 		}
 	}
@@ -27,8 +29,10 @@ func TestEvalPlus(t *testing.T) {
 		}
 		expr := c.toString()
 		t.Logf("%v", expr)
-		result := ev.eval(c)
-		if result != nil {
+		result, err := ev.eval(c)
+		if err != nil {
+			t.Errorf("%v", err)
+		} else {
 			t.Logf("%v", result.toString());
 		}
 	}
@@ -55,8 +59,10 @@ func TestEvalPlus(t *testing.T) {
 		}
 		expr := c.toString()
 		t.Logf("%v", expr)
-		result := ev.eval(c)
-		if result != nil {
+		result, err := ev.eval(c)
+		if err != nil {
+			t.Errorf("%v", err)
+		} else {
 			t.Logf("%v", result.toString());
 		}
 	}
@@ -81,15 +87,17 @@ func TestEvalCar(t *testing.T) {
 	t.Logf("%v", expr)
 
 	// (car '(1 2 3))
-	result := ev.eval(&consCell{
+	result, err := ev.eval(&consCell{
 		car: &symbolNode{name: "car"},
 		cdr: &consCell{
 			car: list,
 			cdr: &nilNode{},
 		},
 	})
-	if result != nil {
-		t.Logf("%v", result.toString())
+	if err != nil {
+		t.Errorf("%v", err)
+	} else {
+		t.Logf("%v", result.toString());
 	}
 }
 
@@ -111,15 +119,17 @@ func TestEvalCdr(t *testing.T) {
 	t.Logf("%v", expr)
 
 	// (cdr '(1 2 3))
-	result := ev.eval(&consCell{
+	result, err := ev.eval(&consCell{
 		car: &symbolNode{name: "cdr"},
 		cdr: &consCell{
 			car: list,
 			cdr: &nilNode{},
 		},
 	})
-	if result != nil {
-		t.Logf("%v", result.toString())
+	if err != nil {
+		t.Errorf("%v", err)
+	} else {
+		t.Logf("%v", result.toString());
 	}
 }
 
@@ -127,7 +137,7 @@ func TestEvalSetq(t *testing.T) {
 	ev := newEvaluator()
 
 	// (setq foo 100)
-	result := ev.eval(&consCell{
+	result, err := ev.eval(&consCell{
 		car: &symbolNode{name: "setq"},
 		cdr: &consCell{
 			car: &symbolNode{name: "foo"},
@@ -137,11 +147,18 @@ func TestEvalSetq(t *testing.T) {
 			},
 		},
 	})
-	if result != nil {
-		t.Logf("%v", result.toString())
+	if err != nil {
+		t.Errorf("%v", err)
+	} else {
+		t.Logf("%v", result.toString());
 	}
 
-	t.Logf("%v", ev.eval(&symbolNode{name: "foo"}))
+	result, err = ev.eval(&symbolNode{name: "foo"})
+	if err != nil {
+		t.Errorf("%v", err)
+	} else {
+		t.Logf("%v", result.toString());
+	}
 }
 
 func TestFunc(t *testing.T) {
@@ -161,15 +178,21 @@ func TestFunc(t *testing.T) {
 	})
 	//t.Logf("%v", f.toString())
 
-	result := ev.eval(fdef)
-	if result != nil {
-		t.Logf("%v", result.toString())
+	result, err := ev.eval(fdef)
+	if err != nil {
+		t.Errorf("%v", err)
+	} else {
+		t.Logf("%v", result.toString());
 	}
 
 	// 関数の実行
 	// (foo)
-	result = ev.eval(createList([]node{
+	result, err = ev.eval(createList([]node{
 		&symbolNode{name: "foo"},
 	}))
-	t.Logf("%v", result.toString())
+	if err != nil {
+		t.Errorf("%v", err)
+	} else {
+		t.Logf("%v", result.toString());
+	}
 }
