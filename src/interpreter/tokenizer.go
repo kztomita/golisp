@@ -30,6 +30,10 @@ func (t *tokenizer) nextToken() *token {
 	literal := ""
 	found := false
 	for ; t.pos < slen ; t.pos++ {
+		if isDelimiter(t.s[t.pos]) {
+			break
+		}
+
 		switch t.s[t.pos] {
 		case '(':
 			if literal == "" {
@@ -43,11 +47,9 @@ func (t *tokenizer) nextToken() *token {
 				return &token{tokenId: tokenRightParentheses, literal: ")"}
 			}
 			found = true
-		case ' ':
-			found = true
 		case '.':
 			if literal == "" {
-				if t.pos == slen - 1 || t.s[t.pos + 1] == ' ' {
+				if t.pos == slen - 1 || isDelimiter(t.s[t.pos + 1]) {
 					t.pos++
 					return &token{tokenId: tokenDot, literal: "."}
 				}
@@ -87,7 +89,11 @@ func (t *tokenizer) nextToken() *token {
 
 func (t *tokenizer) skipSpace() {
 	slen := len(t.s)
-	for t.pos < slen && t.s[t.pos] == ' ' {
+	for t.pos < slen && isDelimiter(t.s[t.pos]) {
 		t.pos++
 	}
+}
+
+func isDelimiter(c byte) bool {
+	return c == ' ' || c == '\n'
 }
