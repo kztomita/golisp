@@ -5,10 +5,10 @@ import (
 )
 
 func TestEvalPlus(t *testing.T) {
-	ev := newEvaluator()
+	ev := NewEvaluator()
 
 	{
-		result, err := ev.eval(&intNode{value: 1})
+		result, err := ev.Eval(&intNode{value: 1})
 		if err != nil {
 			t.Errorf("%v", err)
 		} else {
@@ -29,7 +29,7 @@ func TestEvalPlus(t *testing.T) {
 		}
 		expr := c.toString()
 		t.Logf("%v", expr)
-		result, err := ev.eval(c)
+		result, err := ev.Eval(c)
 		if err != nil {
 			t.Errorf("%v", err)
 		} else {
@@ -59,7 +59,7 @@ func TestEvalPlus(t *testing.T) {
 		}
 		expr := c.toString()
 		t.Logf("%v", expr)
-		result, err := ev.eval(c)
+		result, err := ev.Eval(c)
 		if err != nil {
 			t.Errorf("%v", err)
 		} else {
@@ -70,7 +70,7 @@ func TestEvalPlus(t *testing.T) {
 }
 
 func TestEvalCar(t *testing.T) {
-	ev := newEvaluator()
+	ev := NewEvaluator()
 
 	// list
 	list := &consCell{
@@ -87,7 +87,7 @@ func TestEvalCar(t *testing.T) {
 	t.Logf("%v", expr)
 
 	// (car '(1 2 3))
-	result, err := ev.eval(&consCell{
+	result, err := ev.Eval(&consCell{
 		car: &symbolNode{name: "car"},
 		cdr: &consCell{
 			car: list,
@@ -102,7 +102,7 @@ func TestEvalCar(t *testing.T) {
 }
 
 func TestEvalCdr(t *testing.T) {
-	ev := newEvaluator()
+	ev := NewEvaluator()
 
 	// list
 	list := &consCell{
@@ -119,7 +119,7 @@ func TestEvalCdr(t *testing.T) {
 	t.Logf("%v", expr)
 
 	// (cdr '(1 2 3))
-	result, err := ev.eval(&consCell{
+	result, err := ev.Eval(&consCell{
 		car: &symbolNode{name: "cdr"},
 		cdr: &consCell{
 			car: list,
@@ -134,10 +134,10 @@ func TestEvalCdr(t *testing.T) {
 }
 
 func TestEvalSetq(t *testing.T) {
-	ev := newEvaluator()
+	ev := NewEvaluator()
 
 	// (setq foo 100)
-	result, err := ev.eval(&consCell{
+	result, err := ev.Eval(&consCell{
 		car: &symbolNode{name: "setq"},
 		cdr: &consCell{
 			car: &symbolNode{name: "foo"},
@@ -153,7 +153,7 @@ func TestEvalSetq(t *testing.T) {
 		t.Logf("%v", result.toString());
 	}
 
-	result, err = ev.eval(&symbolNode{name: "foo"})
+	result, err = ev.Eval(&symbolNode{name: "foo"})
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
@@ -162,7 +162,7 @@ func TestEvalSetq(t *testing.T) {
 }
 
 func TestFunc(t *testing.T) {
-	ev := newEvaluator()
+	ev := NewEvaluator()
 
 	// 関数の定義
 	// (defun foo () (+ 1 2))
@@ -178,7 +178,7 @@ func TestFunc(t *testing.T) {
 	})
 	//t.Logf("%v", f.toString())
 
-	result, err := ev.eval(fdef)
+	result, err := ev.Eval(fdef)
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
@@ -187,7 +187,7 @@ func TestFunc(t *testing.T) {
 
 	// 関数の実行
 	// (foo)
-	result, err = ev.eval(createList([]node{
+	result, err = ev.Eval(createList([]node{
 		&symbolNode{name: "foo"},
 	}))
 	if err != nil {
@@ -197,11 +197,11 @@ func TestFunc(t *testing.T) {
 	}
 }
 func TestFunc2(t *testing.T) {
-	ev := newEvaluator()
+	ev := NewEvaluator()
 
 	{
 		// (setq c 100)
-		_, err := ev.eval(&consCell{
+		_, err := ev.Eval(&consCell{
 			car: &symbolNode{name: "setq"},
 			cdr: &consCell{
 				car: &symbolNode{name: "c"},
@@ -235,7 +235,7 @@ func TestFunc2(t *testing.T) {
 		})
 		//t.Logf("%v", fdef.toString())
 
-		result, err := ev.eval(fdef)
+		result, err := ev.Eval(fdef)
 		if err != nil {
 			t.Errorf("%v", err)
 		} else {
@@ -246,7 +246,7 @@ func TestFunc2(t *testing.T) {
 	{
 		// 関数の実行
 		// (foo 1 2)
-		result, err := ev.eval(createList([]node{
+		result, err := ev.Eval(createList([]node{
 			&symbolNode{name: "foo"},
 			&intNode{value: 1},
 			&intNode{value: 2},
@@ -260,7 +260,7 @@ func TestFunc2(t *testing.T) {
 }
 
 func TestEvalLet(t *testing.T) {
-	ev := newEvaluator()
+	ev := NewEvaluator()
 
 	// (let ((x 100) (y 200)) (+ x y))
 	let := createList([]node{
@@ -283,7 +283,7 @@ func TestEvalLet(t *testing.T) {
 	})
 	t.Logf("%v", let.toString())
 
-	result, err := ev.eval(let)
+	result, err := ev.Eval(let)
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
@@ -292,11 +292,11 @@ func TestEvalLet(t *testing.T) {
 }
 
 func TestEvalLet2(t *testing.T) {
-	ev := newEvaluator()
+	ev := NewEvaluator()
 
 	{
 		// (setq c 100)
-		_, err := ev.eval(&consCell{
+		_, err := ev.Eval(&consCell{
 			car: &symbolNode{name: "setq"},
 			cdr: &consCell{
 				car: &symbolNode{name: "c"},
@@ -312,7 +312,7 @@ func TestEvalLet2(t *testing.T) {
 	}
 	{
 		// (setq x 200)
-		_, err := ev.eval(&consCell{
+		_, err := ev.Eval(&consCell{
 			car: &symbolNode{name: "setq"},
 			cdr: &consCell{
 				car: &symbolNode{name: "x"},
@@ -361,7 +361,7 @@ func TestEvalLet2(t *testing.T) {
 		})
 		t.Logf("%v", fdef.toString())
 
-		result, err := ev.eval(fdef)
+		result, err := ev.Eval(fdef)
 		if err != nil {
 			t.Errorf("%v", err)
 		} else {
@@ -372,7 +372,7 @@ func TestEvalLet2(t *testing.T) {
 	{
 		// 関数の実行
 		// (foo 1 2)
-		result, err := ev.eval(createList([]node{
+		result, err := ev.Eval(createList([]node{
 			&symbolNode{name: "foo"},
 			&intNode{value: 1},
 			&intNode{value: 2},

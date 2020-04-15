@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-func parse(s string) (*consCell, error) {
+func Parse(s string) (*consCell, error) {
 	tk := &tokenizer{s: s, pos: 0}
 
 	for true {

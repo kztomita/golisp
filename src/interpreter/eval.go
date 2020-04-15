@@ -8,7 +8,7 @@ type evaluator struct {
 	scopeStack	[]*lexicalScope
 }
 
-func newEvaluator() *evaluator {
+func NewEvaluator() *evaluator {
 	return &evaluator{
 		scopeStack: []*lexicalScope{newLexicalScope(nil)},
 	}
@@ -18,7 +18,7 @@ func (e *evaluator) topScope() *lexicalScope {
 	return e.scopeStack[len(e.scopeStack) - 1]
 }
 
-func (e *evaluator) eval(n node) (node, error) {
+func (e *evaluator) Eval(n node) (node, error) {
 	if n.getNodeType() == ntConsCell {
 		// list
 		cell := n.(*consCell)
@@ -52,7 +52,7 @@ func (e *evaluator) eval(n node) (node, error) {
 				arguments := []node{}
 				acell := cell.next()
 				for acell != nil {
-					argNode, err := e.eval(acell.car)
+					argNode, err := e.Eval(acell.car)
 					if err != nil {
 						return nil, err
 					}
@@ -105,7 +105,7 @@ func evalFunc(e *evaluator, fn *funcNode, arguments []node) (node, error) {
 	for current != nil {
 		var err error
 		list := current.car
-		lastResult, err = e.eval(list)
+		lastResult, err = e.Eval(list)
 		if err != nil {
 			return nil, err
 		}

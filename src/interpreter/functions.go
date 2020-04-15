@@ -62,7 +62,7 @@ func funcSetq(ev *evaluator, c *consCell) (node, error) {
 
 	arg1 := c.next().car
 
-	result, err := ev.eval(arg1)
+	result, err := ev.Eval(arg1)
 	if err != nil {
 		return nil, err
 	}
@@ -175,7 +175,7 @@ func funcLet_(ev *evaluator, c *consCell) (node, error) {
 		if value == nil {
 			return nil, fmt.Errorf("Wrong type argument(binding-list).")
 		}
-		bindingValue, err := ev.eval(value.car)
+		bindingValue, err := ev.Eval(value.car)
 		if err != nil {
 			return nil, err
 		}
@@ -195,7 +195,7 @@ func funcLet_(ev *evaluator, c *consCell) (node, error) {
 	for p != nil {
 		var err error
 		list := p.car
-		lastResult, err = ev.eval(list)
+		lastResult, err = ev.Eval(list)
 		if err != nil {
 			return nil, err
 		}
@@ -214,7 +214,7 @@ func funcPlus(ev *evaluator, c *consCell) (*intNode, error) {
 
 	c2 := c
 	for c2 != nil {
-		element, err := ev.eval(c2.car)
+		element, err := ev.Eval(c2.car)
 		if err != nil {
 			return nil, err
 		}

@@ -33,7 +33,7 @@ func TestParser(t *testing.T) {
 	}
 
 	for _, c := range testCases {
-		cell, err := parse(c.expression)
+		cell, err := Parse(c.expression)
 		if !c.err {
 			if err != nil {
 				t.Errorf("%v", err)
@@ -57,13 +57,13 @@ func TestParser(t *testing.T) {
 
 func TestParseAndEval(t *testing.T) {
 	// parse & eval
-	cell, err := parse("(+ 1 2 3)")
+	cell, err := Parse("(+ 1 2 3)")
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
 
-	ev := newEvaluator()
-	result, err := ev.eval(cell)
+	ev := NewEvaluator()
+	result, err := ev.Eval(cell)
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
