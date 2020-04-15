@@ -59,8 +59,9 @@ func (n *stringNode) toString() string {
 }
 
 type funcNode struct {
-	arguments	*consCell
+	parameters	[]*symbolNode	// 仮引数名のsymbolNode
 	body		*consCell
+	scope		*lexicalScope
 }
 func (n *funcNode) getNodeType() int {
 	return ntFunc

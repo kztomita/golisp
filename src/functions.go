@@ -66,7 +66,8 @@ func funcSetq(ev *evaluator, c *consCell) (node, error) {
 	if err != nil {
 		return nil, err
 	}
-	ev.symbolTable[arg0.name] = result
+
+	ev.scopeStack[0].symbolTableStack[0][arg0.name] = result
 
 	return &nilNode{}, nil
 }
@@ -89,20 +90,30 @@ func funcDefun(ev *evaluator, c *consCell) (node, error) {
 	}
 
 	p = p.next()
-	var arguments *consCell
-	arg1, ok1 := p.car.(*consCell)	// arguments
+	parameters := []*symbolNode{}	// 仮引数名のsymbolNode
+	arg1, ok1 := p.car.(*consCell)	// parameters
 	if ok1 {
-		arguments = arg1
+		acell := arg1
+		for acell != nil {
+			sym, ok := acell.car.(*symbolNode)
+			if !ok {
+				return nil, fmt.Errorf("Wrong type argument.")
+			}
+			parameters = append(parameters, sym)
+			acell = acell.next()
+		}
 	}
 
 	p = p.next()	// body list
 
 	fn := &funcNode{
-		arguments: arguments,
+		parameters: parameters,
 		body: p,
+		scope: newLexicalScope(ev.topScope()),	// 関数定義時にLexicalScope作成
 	}
 
-	ev.symbolTable[arg0.name] = fn
+	symTable := ev.topScope().topSymbolTable()
+	symTable[arg0.name] = fn
 
 	return &nilNode{}, nil
 }

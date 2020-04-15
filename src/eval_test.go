@@ -196,3 +196,65 @@ func TestFunc(t *testing.T) {
 		t.Logf("%v", result.toString());
 	}
 }
+func TestFunc2(t *testing.T) {
+	ev := newEvaluator()
+
+	{
+		// (setq c 100)
+		_, err := ev.eval(&consCell{
+			car: &symbolNode{name: "setq"},
+			cdr: &consCell{
+				car: &symbolNode{name: "c"},
+				cdr: &consCell{
+					car: &intNode{value: 100},
+					cdr: &nilNode{},
+				},
+			},
+		})
+		if err != nil {
+			t.Errorf("%v", err)
+		}
+	}
+
+	{
+		// 関数の定義
+		// (defun foo (a b) (+ a b))
+		fdef := createList([]node{
+			&symbolNode{name: "defun"},
+			&symbolNode{name: "foo"},
+			createList([]node{
+				&symbolNode{name: "a"},
+				&symbolNode{name: "b"},
+			}),
+			createList([]node{
+				&symbolNode{name: "+"},
+				&symbolNode{name: "a"},
+				&symbolNode{name: "b"},
+				&symbolNode{name: "c"},		// 外部の変数
+			}),
+		})
+		//t.Logf("%v", fdef.toString())
+
+		result, err := ev.eval(fdef)
+		if err != nil {
+			t.Errorf("%v", err)
+		} else {
+			t.Logf("%v", result.toString());
+		}
+	}
+
+	{
+		// 関数の実行
+		// (foo 1 2)
+		result, err := ev.eval(createList([]node{
+			&symbolNode{name: "foo"},
+			&intNode{value: 1},
+			&intNode{value: 2},
+		}))
+		if err != nil {
+			t.Errorf("%v", err)
+		} else {
+			t.Logf("%v", result.toString());
+		}
+	}
+}
