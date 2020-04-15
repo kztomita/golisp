@@ -1,4 +1,4 @@
-package golisp
+package interpreter
 
 type symbolTable map[string]node
 

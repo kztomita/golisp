@@ -1,4 +1,4 @@
-package golisp
+package interpreter
 
 import (
 	"fmt"

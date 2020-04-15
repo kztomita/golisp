@@ -1,4 +1,4 @@
-package golisp
+package interpreter
 
 func createList(elements []node) node {
 	if len(elements) == 0 {
