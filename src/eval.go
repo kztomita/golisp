@@ -37,6 +37,8 @@ func (e *evaluator) eval(n node) (node, error) {
 				return funcSetq(e, cell.next())
 			case "defun":
 				return funcDefun(e, cell.next())
+			case "let":
+				return funcLet(e, cell.next())
 			default:
 				value, ok := e.topScope().lookupSymbol(funcName)
 				if !ok {

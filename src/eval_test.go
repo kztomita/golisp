@@ -258,3 +258,133 @@ func TestFunc2(t *testing.T) {
 		}
 	}
 }
+
+func TestEvalLet(t *testing.T) {
+	ev := newEvaluator()
+
+	// (let ((x 100) (y 200)) (+ x y))
+	let := createList([]node{
+		&symbolNode{name: "let"},
+		createList([]node{
+			createList([]node{
+				&symbolNode{name: "x"},
+				&intNode{value: 100},
+			}),
+			createList([]node{
+				&symbolNode{name: "y"},
+				&intNode{value: 200},
+			}),
+		}),
+		createList([]node{
+			&symbolNode{name: "+"},
+			&symbolNode{name: "x"},
+			&symbolNode{name: "y"},
+		}),
+	})
+	t.Logf("%v", let.toString())
+
+	result, err := ev.eval(let)
+	if err != nil {
+		t.Errorf("%v", err)
+	} else {
+		t.Logf("%v", result.toString());
+	}
+}
+
+func TestEvalLet2(t *testing.T) {
+	ev := newEvaluator()
+
+	{
+		// (setq c 100)
+		_, err := ev.eval(&consCell{
+			car: &symbolNode{name: "setq"},
+			cdr: &consCell{
+				car: &symbolNode{name: "c"},
+				cdr: &consCell{
+					car: &intNode{value: 100},
+					cdr: &nilNode{},
+				},
+			},
+		})
+		if err != nil {
+			t.Errorf("%v", err)
+		}
+	}
+	{
+		// (setq x 200)
+		_, err := ev.eval(&consCell{
+			car: &symbolNode{name: "setq"},
+			cdr: &consCell{
+				car: &symbolNode{name: "x"},
+				cdr: &consCell{
+					car: &intNode{value: 200},
+					cdr: &nilNode{},
+				},
+			},
+		})
+		if err != nil {
+			t.Errorf("%v", err)
+		}
+	}
+
+	{
+		// 関数の定義
+		// (defun foo (a b) (let ((x 100) (y 200)) (+ a b x y c)))
+		fdef := createList([]node{
+			&symbolNode{name: "defun"},
+			&symbolNode{name: "foo"},
+			createList([]node{
+				&symbolNode{name: "a"},
+				&symbolNode{name: "b"},
+			}),
+			createList([]node{
+				&symbolNode{name: "let"},
+				createList([]node{
+					createList([]node{
+						&symbolNode{name: "x"},
+						&intNode{value: 100},
+					}),
+					createList([]node{
+						&symbolNode{name: "y"},
+						&intNode{value: 200},
+					}),
+				}),
+				createList([]node{
+					&symbolNode{name: "+"},
+					&symbolNode{name: "a"},
+					&symbolNode{name: "b"},
+					&symbolNode{name: "x"},
+					&symbolNode{name: "y"},
+					&symbolNode{name: "c"},
+				}),
+			}),
+		})
+		t.Logf("%v", fdef.toString())
+
+		result, err := ev.eval(fdef)
+		if err != nil {
+			t.Errorf("%v", err)
+		} else {
+			t.Logf("%v", result.toString());
+		}
+	}
+
+	{
+		// 関数の実行
+		// (foo 1 2)
+		result, err := ev.eval(createList([]node{
+			&symbolNode{name: "foo"},
+			&intNode{value: 1},
+			&intNode{value: 2},
+		}))
+		if err != nil {
+			t.Errorf("%v", err)
+		} else {
+			t.Logf("%v", result.toString());
+		}
+
+		if result.toString() != "403" {
+			t.Errorf("Result: %v", result.toString())
+		}
+	}
+}
