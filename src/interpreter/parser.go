@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-func Parse(s string) (*consCell, error) {
+func Parse(s string) (*ConsCell, error) {
 	tk := &tokenizer{s: s, pos: 0}
 
 	for true {
@@ -24,9 +24,9 @@ func Parse(s string) (*consCell, error) {
 	return nil, fmt.Errorf("xxxxxx")
 }
 
-func readAsList(tk *tokenizer) (*consCell, error) {
-	var head *consCell
-	var tail *consCell
+func readAsList(tk *tokenizer) (*ConsCell, error) {
+	var head *ConsCell
+	var tail *ConsCell
 
 	foundDot := false
 
@@ -36,17 +36,17 @@ func readAsList(tk *tokenizer) (*consCell, error) {
 			return nil, fmt.Errorf("list is not terminated.")
 		}
 	
-		var cc *consCell
+		var cc *ConsCell
 		switch (token.tokenId) {
 		case tokenLeftParentheses:
 			listcc, err := readAsList(tk)
 			if err != nil {
 				return nil, err
 			}
-			cc = &consCell{car: listcc}
+			cc = &ConsCell{car: listcc}
 		case tokenRightParentheses:
 			if tail.cdr == nil {
-				tail.cdr = &nilNode{}
+				tail.cdr = &NilNode{}
 			}
 			return head, nil
 		case tokenDot:
@@ -56,11 +56,11 @@ func readAsList(tk *tokenizer) (*consCell, error) {
 			if err != nil {
 				return nil, fmt.Errorf("can't parse literal as integer.")
 			}
-			cc = &consCell{car: &intNode{value: i}}
+			cc = &ConsCell{car: &IntNode{value: i}}
 		case tokenSymbol:
-			cc = &consCell{car: &symbolNode{name: token.literal}}
+			cc = &ConsCell{car: &SymbolNode{name: token.literal}}
 		case tokenString:
-			cc = &consCell{car: &stringNode{value: token.literal}}
+			cc = &ConsCell{car: &StringNode{value: token.literal}}
 		default:
 			return nil, fmt.Errorf("Unknown token (%v)", token)
 		}

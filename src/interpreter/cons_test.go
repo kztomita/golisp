@@ -7,8 +7,8 @@ import (
 func TestFxx(t *testing.T) {
 	{
 		// dot list
-		c := consCell{car: &intNode{value: 1}, cdr: &intNode{value: 2}}
-		result := c.toString()
+		c := ConsCell{car: &IntNode{value: 1}, cdr: &IntNode{value: 2}}
+		result := c.ToString()
 		t.Logf("%v", result)
 		if result != "(1 . 2)" {
 			t.Errorf("expected: (1 . 2), result: %v", result)
@@ -17,14 +17,14 @@ func TestFxx(t *testing.T) {
 
 	{
 		// list
-		c := consCell{
-			car: &intNode{value: 1},
-			cdr: &consCell{
-				car: &intNode{value: 2},
-				cdr: &nilNode{},
+		c := ConsCell{
+			car: &IntNode{value: 1},
+			cdr: &ConsCell{
+				car: &IntNode{value: 2},
+				cdr: &NilNode{},
 			},
 		}
-		result := c.toString()
+		result := c.ToString()
 		t.Logf("%v", result)
 		if result != "(1 2)" {
 			t.Errorf("expected: (1 2), result: %v", result)
@@ -33,20 +33,20 @@ func TestFxx(t *testing.T) {
 
 	{
 		// child list
-		c := consCell{
-			car: &consCell{
-				car: &intNode{value: 1},
-				cdr: &consCell{
-					car: &intNode{value: 2},
-					cdr: &nilNode{},
+		c := ConsCell{
+			car: &ConsCell{
+				car: &IntNode{value: 1},
+				cdr: &ConsCell{
+					car: &IntNode{value: 2},
+					cdr: &NilNode{},
 				},
 			},
-			cdr: &consCell{
-				car: &intNode{value: 3},
-				cdr: &nilNode{},
+			cdr: &ConsCell{
+				car: &IntNode{value: 3},
+				cdr: &NilNode{},
 			},
 		}
-		result := c.toString()
+		result := c.ToString()
 		t.Logf("%v", result)
 		if result != "((1 2) 3)" {
 			t.Errorf("expected: ((1 2) 3), result: %v", result)
@@ -55,14 +55,14 @@ func TestFxx(t *testing.T) {
 
 	{
 		// listの末尾がdot list
-		c := consCell{
-			car: &intNode{value: 1},
-			cdr: &consCell{
-				car: &intNode{value: 2},
-				cdr: &intNode{value: 3},
+		c := ConsCell{
+			car: &IntNode{value: 1},
+			cdr: &ConsCell{
+				car: &IntNode{value: 2},
+				cdr: &IntNode{value: 3},
 			},
 		}
-		result := c.toString()
+		result := c.ToString()
 		t.Logf("%v", result)
 		if result != "(1 2 . 3)" {
 			t.Errorf("expected: (1 2 . 3), result: %v", result)

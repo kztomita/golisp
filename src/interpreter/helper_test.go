@@ -15,20 +15,20 @@ func TestCreateList(t *testing.T) {
 		},
 		{
 			[]node{
-				&intNode{value: 1},
-				&intNode{value: 2},
+				&IntNode{value: 1},
+				&IntNode{value: 2},
 			},
 			"(1 2)",
 		},
 		{
 			[]node{
-				&intNode{value: 1},
-				&intNode{value: 2},
-				&consCell{
-					car: &intNode{value: 3},
-					cdr: &consCell{
-						car: &intNode{value: 4},
-						cdr: &nilNode{},
+				&IntNode{value: 1},
+				&IntNode{value: 2},
+				&ConsCell{
+					car: &IntNode{value: 3},
+					cdr: &ConsCell{
+						car: &IntNode{value: 4},
+						cdr: &NilNode{},
 					},
 				},
 			},
@@ -37,7 +37,7 @@ func TestCreateList(t *testing.T) {
 	}
 
 	for _, c := range testCases {
-		result := createList(c.elements).toString()
+		result := createList(c.elements).ToString()
 		if result != c.expected {
 			t.Errorf("Result: %v, Expected: %v", result, c.expected)
 		}

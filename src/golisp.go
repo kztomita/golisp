@@ -39,5 +39,5 @@ func main() {
 	}
 
 	// nodeのexportが必要？
-	fmt.Printf("%v", result);
+	fmt.Printf("%v", result.ToString());
 }

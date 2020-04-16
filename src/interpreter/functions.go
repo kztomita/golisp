@@ -6,7 +6,7 @@ import (
 
 // (car list)
 // Ex. (car '(1 2 3))
-func funcCar(c *consCell) (node, error) {
+func funcCar(c *ConsCell) (node, error) {
 	if c == nil {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
@@ -17,7 +17,7 @@ func funcCar(c *consCell) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	arg0, ok := c.car.(*consCell)
+	arg0, ok := c.car.(*ConsCell)
 	if !ok {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
@@ -26,7 +26,7 @@ func funcCar(c *consCell) (node, error) {
 
 // (cdr list)
 // Ex. (cdr '(1 2 3))
-func funcCdr(c *consCell) (node, error) {
+func funcCdr(c *ConsCell) (node, error) {
 	if c == nil {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
@@ -37,14 +37,14 @@ func funcCdr(c *consCell) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	arg0, ok := c.car.(*consCell)
+	arg0, ok := c.car.(*ConsCell)
 	if !ok {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 	return arg0.cdr, nil
 }
 
-func funcSetq(ev *evaluator, c *consCell) (node, error) {
+func funcSetq(ev *evaluator, c *ConsCell) (node, error) {
 	if c == nil {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
@@ -55,7 +55,7 @@ func funcSetq(ev *evaluator, c *consCell) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	arg0, ok := c.car.(*symbolNode)	// symbolname
+	arg0, ok := c.car.(*SymbolNode)	// symbolname
 	if !ok {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
@@ -69,10 +69,10 @@ func funcSetq(ev *evaluator, c *consCell) (node, error) {
 
 	ev.scopeStack[0].symbolTableStack[0][arg0.name] = result
 
-	return &nilNode{}, nil
+	return &NilNode{}, nil
 }
 
-func funcDefun(ev *evaluator, c *consCell) (node, error) {
+func funcDefun(ev *evaluator, c *ConsCell) (node, error) {
 	if c == nil {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
@@ -84,18 +84,18 @@ func funcDefun(ev *evaluator, c *consCell) (node, error) {
 	}
 
 	p := c
-	arg0, ok := p.car.(*symbolNode)	// func name
+	arg0, ok := p.car.(*SymbolNode)	// func name
 	if !ok {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
 	p = p.next()
-	parameters := []*symbolNode{}	// 仮引数名のsymbolNode
-	arg1, ok1 := p.car.(*consCell)	// parameters
+	parameters := []*SymbolNode{}	// 仮引数名のsymbolNode
+	arg1, ok1 := p.car.(*ConsCell)	// parameters
 	if ok1 {
 		acell := arg1
 		for acell != nil {
-			sym, ok := acell.car.(*symbolNode)
+			sym, ok := acell.car.(*SymbolNode)
 			if !ok {
 				return nil, fmt.Errorf("Wrong type argument.")
 			}
@@ -106,7 +106,7 @@ func funcDefun(ev *evaluator, c *consCell) (node, error) {
 
 	p = p.next()	// body list
 
-	fn := &funcNode{
+	fn := &FuncNode{
 		parameters: parameters,
 		body: p,
 		scope: newLexicalScope(ev.topScope()),	// 関数定義時にLexicalScope作成
@@ -115,10 +115,10 @@ func funcDefun(ev *evaluator, c *consCell) (node, error) {
 	symTable := ev.topScope().topSymbolTable()
 	symTable[arg0.name] = fn
 
-	return &nilNode{}, nil
+	return &NilNode{}, nil
 }
 
-func funcLet(ev *evaluator, c *consCell) (node, error) {
+func funcLet(ev *evaluator, c *ConsCell) (node, error) {
 	// lexicalScopeを作成してscopeを切り替え。
 	// 作成したlexicalScopeのsymbolStackに新しいテーブルを追加。
 	scope := newLexicalScope(ev.topScope())
@@ -132,7 +132,7 @@ func funcLet(ev *evaluator, c *consCell) (node, error) {
 	return result, err
 }
 
-func funcLet_(ev *evaluator, c *consCell) (node, error) {
+func funcLet_(ev *evaluator, c *ConsCell) (node, error) {
 	if c == nil {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
@@ -144,7 +144,7 @@ func funcLet_(ev *evaluator, c *consCell) (node, error) {
 	}
 
 	p := c
-	arg0, ok := p.car.(*consCell)	// binding-list
+	arg0, ok := p.car.(*ConsCell)	// binding-list
 	if !ok {
 		return nil, fmt.Errorf("Wrong type argument(binding-list).")
 	}
@@ -156,7 +156,7 @@ func funcLet_(ev *evaluator, c *consCell) (node, error) {
 
 	pBinding := arg0
 	for pBinding != nil {
-		binding, ok := pBinding.car.(*consCell)
+		binding, ok := pBinding.car.(*ConsCell)
 		if !ok {
 			return nil, fmt.Errorf("Wrong type argument(binding-list).")
 		}
@@ -165,7 +165,7 @@ func funcLet_(ev *evaluator, c *consCell) (node, error) {
 		}
 
 		// first element
-		bindingSymbol, ok := binding.car.(*symbolNode)
+		bindingSymbol, ok := binding.car.(*SymbolNode)
 		if !ok {
 			return nil, fmt.Errorf("Wrong type argument(binding-list).")
 		}
@@ -181,7 +181,7 @@ func funcLet_(ev *evaluator, c *consCell) (node, error) {
 		}
 
 		// 変数をシンボルテーブルに登録
-		//fmt.Printf("%v %v", bindingSymbol.name, bindingValue.toString())
+		//fmt.Printf("%v %v", bindingSymbol.name, bindingValue.ToString())
 		symTable[bindingSymbol.name] = bindingValue
 
 		pBinding = pBinding.next()
@@ -191,7 +191,7 @@ func funcLet_(ev *evaluator, c *consCell) (node, error) {
 	p = p.next()	// body list
 
 	var lastResult node
-	lastResult = &nilNode{}
+	lastResult = &NilNode{}
 	for p != nil {
 		var err error
 		list := p.car
@@ -205,7 +205,7 @@ func funcLet_(ev *evaluator, c *consCell) (node, error) {
 	return lastResult, nil
 }
 
-func funcPlus(ev *evaluator, c *consCell) (*intNode, error) {
+func funcPlus(ev *evaluator, c *ConsCell) (*IntNode, error) {
 	result := 0		// XXX 取り敢えずintのみ対応
 
 	if c != nil && !c.isList() {
@@ -218,7 +218,7 @@ func funcPlus(ev *evaluator, c *consCell) (*intNode, error) {
 		if err != nil {
 			return nil, err
 		}
-		intResult, ok := element.(*intNode)
+		intResult, ok := element.(*IntNode)
 		if ok {
 			result += intResult.value
 		} else {
@@ -228,5 +228,5 @@ func funcPlus(ev *evaluator, c *consCell) (*intNode, error) {
 		c2 = c2.next()
 	}
 
-	return &intNode{value: result}, nil
+	return &IntNode{value: result}, nil
 }

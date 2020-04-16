@@ -8,62 +8,62 @@ func TestEvalPlus(t *testing.T) {
 	ev := NewEvaluator()
 
 	{
-		result, err := ev.Eval(&intNode{value: 1})
+		result, err := ev.Eval(&IntNode{value: 1})
 		if err != nil {
 			t.Errorf("%v", err)
 		} else {
-			t.Logf("%v", result.toString());
+			t.Logf("%v", result.ToString());
 		}
 	}
 
 	{
-		c := &consCell{
-			car: &symbolNode{name: "+"},
-			cdr: &consCell{
-				car: &intNode{value: 1},
-				cdr: &consCell{
-					car: &intNode{value: 2},
-					cdr: &nilNode{},
+		c := &ConsCell{
+			car: &SymbolNode{name: "+"},
+			cdr: &ConsCell{
+				car: &IntNode{value: 1},
+				cdr: &ConsCell{
+					car: &IntNode{value: 2},
+					cdr: &NilNode{},
 				},
 			},
 		}
-		expr := c.toString()
+		expr := c.ToString()
 		t.Logf("%v", expr)
 		result, err := ev.Eval(c)
 		if err != nil {
 			t.Errorf("%v", err)
 		} else {
-			t.Logf("%v", result.toString());
+			t.Logf("%v", result.ToString());
 		}
 	}
 
 	{
-		c := &consCell{
-			car: &symbolNode{name: "+"},
-			cdr: &consCell{
-				car: &consCell{
-					car: &symbolNode{name: "+"},
-					cdr: &consCell{
-						car: &intNode{value: 1},
-						cdr: &consCell{
-							car: &intNode{value: 2},
-							cdr: &nilNode{},
+		c := &ConsCell{
+			car: &SymbolNode{name: "+"},
+			cdr: &ConsCell{
+				car: &ConsCell{
+					car: &SymbolNode{name: "+"},
+					cdr: &ConsCell{
+						car: &IntNode{value: 1},
+						cdr: &ConsCell{
+							car: &IntNode{value: 2},
+							cdr: &NilNode{},
 						},
 					},
 				},
-				cdr: &consCell{
-					car: &intNode{value: 3},
-					cdr: &nilNode{},
+				cdr: &ConsCell{
+					car: &IntNode{value: 3},
+					cdr: &NilNode{},
 				},
 			},
 		}
-		expr := c.toString()
+		expr := c.ToString()
 		t.Logf("%v", expr)
 		result, err := ev.Eval(c)
 		if err != nil {
 			t.Errorf("%v", err)
 		} else {
-			t.Logf("%v", result.toString());
+			t.Logf("%v", result.ToString());
 		}
 	}
 
@@ -73,31 +73,31 @@ func TestEvalCar(t *testing.T) {
 	ev := NewEvaluator()
 
 	// list
-	list := &consCell{
-		car: &intNode{value: 1},
-		cdr: &consCell{
-			car: &intNode{value: 2},
-			cdr: &consCell{
-				car: &intNode{value: 3},
-				cdr: &nilNode{},
+	list := &ConsCell{
+		car: &IntNode{value: 1},
+		cdr: &ConsCell{
+			car: &IntNode{value: 2},
+			cdr: &ConsCell{
+				car: &IntNode{value: 3},
+				cdr: &NilNode{},
 			},
 		},
 	}
-	expr := list.toString()
+	expr := list.ToString()
 	t.Logf("%v", expr)
 
 	// (car '(1 2 3))
-	result, err := ev.Eval(&consCell{
-		car: &symbolNode{name: "car"},
-		cdr: &consCell{
+	result, err := ev.Eval(&ConsCell{
+		car: &SymbolNode{name: "car"},
+		cdr: &ConsCell{
 			car: list,
-			cdr: &nilNode{},
+			cdr: &NilNode{},
 		},
 	})
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
-		t.Logf("%v", result.toString());
+		t.Logf("%v", result.ToString());
 	}
 }
 
@@ -105,31 +105,31 @@ func TestEvalCdr(t *testing.T) {
 	ev := NewEvaluator()
 
 	// list
-	list := &consCell{
-		car: &intNode{value: 1},
-		cdr: &consCell{
-			car: &intNode{value: 2},
-			cdr: &consCell{
-				car: &intNode{value: 3},
-				cdr: &nilNode{},
+	list := &ConsCell{
+		car: &IntNode{value: 1},
+		cdr: &ConsCell{
+			car: &IntNode{value: 2},
+			cdr: &ConsCell{
+				car: &IntNode{value: 3},
+				cdr: &NilNode{},
 			},
 		},
 	}
-	expr := list.toString()
+	expr := list.ToString()
 	t.Logf("%v", expr)
 
 	// (cdr '(1 2 3))
-	result, err := ev.Eval(&consCell{
-		car: &symbolNode{name: "cdr"},
-		cdr: &consCell{
+	result, err := ev.Eval(&ConsCell{
+		car: &SymbolNode{name: "cdr"},
+		cdr: &ConsCell{
 			car: list,
-			cdr: &nilNode{},
+			cdr: &NilNode{},
 		},
 	})
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
-		t.Logf("%v", result.toString());
+		t.Logf("%v", result.ToString());
 	}
 }
 
@@ -137,27 +137,27 @@ func TestEvalSetq(t *testing.T) {
 	ev := NewEvaluator()
 
 	// (setq foo 100)
-	result, err := ev.Eval(&consCell{
-		car: &symbolNode{name: "setq"},
-		cdr: &consCell{
-			car: &symbolNode{name: "foo"},
-			cdr: &consCell{
-				car: &intNode{value: 100},
-				cdr: &nilNode{},
+	result, err := ev.Eval(&ConsCell{
+		car: &SymbolNode{name: "setq"},
+		cdr: &ConsCell{
+			car: &SymbolNode{name: "foo"},
+			cdr: &ConsCell{
+				car: &IntNode{value: 100},
+				cdr: &NilNode{},
 			},
 		},
 	})
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
-		t.Logf("%v", result.toString());
+		t.Logf("%v", result.ToString());
 	}
 
-	result, err = ev.Eval(&symbolNode{name: "foo"})
+	result, err = ev.Eval(&SymbolNode{name: "foo"})
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
-		t.Logf("%v", result.toString());
+		t.Logf("%v", result.ToString());
 	}
 }
 
@@ -167,33 +167,33 @@ func TestFunc(t *testing.T) {
 	// 関数の定義
 	// (defun foo () (+ 1 2))
 	fdef := createList([]node{
-		&symbolNode{name: "defun"},
-		&symbolNode{name: "foo"},
-		&nilNode{},
+		&SymbolNode{name: "defun"},
+		&SymbolNode{name: "foo"},
+		&NilNode{},
 		createList([]node{
-			&symbolNode{name: "+"},
-			&intNode{value: 1},
-			&intNode{value: 2},
+			&SymbolNode{name: "+"},
+			&IntNode{value: 1},
+			&IntNode{value: 2},
 		}),
 	})
-	//t.Logf("%v", f.toString())
+	//t.Logf("%v", f.ToString())
 
 	result, err := ev.Eval(fdef)
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
-		t.Logf("%v", result.toString());
+		t.Logf("%v", result.ToString());
 	}
 
 	// 関数の実行
 	// (foo)
 	result, err = ev.Eval(createList([]node{
-		&symbolNode{name: "foo"},
+		&SymbolNode{name: "foo"},
 	}))
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
-		t.Logf("%v", result.toString());
+		t.Logf("%v", result.ToString());
 	}
 }
 func TestFunc2(t *testing.T) {
@@ -201,13 +201,13 @@ func TestFunc2(t *testing.T) {
 
 	{
 		// (setq c 100)
-		_, err := ev.Eval(&consCell{
-			car: &symbolNode{name: "setq"},
-			cdr: &consCell{
-				car: &symbolNode{name: "c"},
-				cdr: &consCell{
-					car: &intNode{value: 100},
-					cdr: &nilNode{},
+		_, err := ev.Eval(&ConsCell{
+			car: &SymbolNode{name: "setq"},
+			cdr: &ConsCell{
+				car: &SymbolNode{name: "c"},
+				cdr: &ConsCell{
+					car: &IntNode{value: 100},
+					cdr: &NilNode{},
 				},
 			},
 		})
@@ -220,26 +220,26 @@ func TestFunc2(t *testing.T) {
 		// 関数の定義
 		// (defun foo (a b) (+ a b))
 		fdef := createList([]node{
-			&symbolNode{name: "defun"},
-			&symbolNode{name: "foo"},
+			&SymbolNode{name: "defun"},
+			&SymbolNode{name: "foo"},
 			createList([]node{
-				&symbolNode{name: "a"},
-				&symbolNode{name: "b"},
+				&SymbolNode{name: "a"},
+				&SymbolNode{name: "b"},
 			}),
 			createList([]node{
-				&symbolNode{name: "+"},
-				&symbolNode{name: "a"},
-				&symbolNode{name: "b"},
-				&symbolNode{name: "c"},		// 外部の変数
+				&SymbolNode{name: "+"},
+				&SymbolNode{name: "a"},
+				&SymbolNode{name: "b"},
+				&SymbolNode{name: "c"},		// 外部の変数
 			}),
 		})
-		//t.Logf("%v", fdef.toString())
+		//t.Logf("%v", fdef.ToString())
 
 		result, err := ev.Eval(fdef)
 		if err != nil {
 			t.Errorf("%v", err)
 		} else {
-			t.Logf("%v", result.toString());
+			t.Logf("%v", result.ToString());
 		}
 	}
 
@@ -247,14 +247,14 @@ func TestFunc2(t *testing.T) {
 		// 関数の実行
 		// (foo 1 2)
 		result, err := ev.Eval(createList([]node{
-			&symbolNode{name: "foo"},
-			&intNode{value: 1},
-			&intNode{value: 2},
+			&SymbolNode{name: "foo"},
+			&IntNode{value: 1},
+			&IntNode{value: 2},
 		}))
 		if err != nil {
 			t.Errorf("%v", err)
 		} else {
-			t.Logf("%v", result.toString());
+			t.Logf("%v", result.ToString());
 		}
 	}
 }
@@ -264,30 +264,30 @@ func TestEvalLet(t *testing.T) {
 
 	// (let ((x 100) (y 200)) (+ x y))
 	let := createList([]node{
-		&symbolNode{name: "let"},
+		&SymbolNode{name: "let"},
 		createList([]node{
 			createList([]node{
-				&symbolNode{name: "x"},
-				&intNode{value: 100},
+				&SymbolNode{name: "x"},
+				&IntNode{value: 100},
 			}),
 			createList([]node{
-				&symbolNode{name: "y"},
-				&intNode{value: 200},
+				&SymbolNode{name: "y"},
+				&IntNode{value: 200},
 			}),
 		}),
 		createList([]node{
-			&symbolNode{name: "+"},
-			&symbolNode{name: "x"},
-			&symbolNode{name: "y"},
+			&SymbolNode{name: "+"},
+			&SymbolNode{name: "x"},
+			&SymbolNode{name: "y"},
 		}),
 	})
-	t.Logf("%v", let.toString())
+	t.Logf("%v", let.ToString())
 
 	result, err := ev.Eval(let)
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
-		t.Logf("%v", result.toString());
+		t.Logf("%v", result.ToString());
 	}
 }
 
@@ -296,13 +296,13 @@ func TestEvalLet2(t *testing.T) {
 
 	{
 		// (setq c 100)
-		_, err := ev.Eval(&consCell{
-			car: &symbolNode{name: "setq"},
-			cdr: &consCell{
-				car: &symbolNode{name: "c"},
-				cdr: &consCell{
-					car: &intNode{value: 100},
-					cdr: &nilNode{},
+		_, err := ev.Eval(&ConsCell{
+			car: &SymbolNode{name: "setq"},
+			cdr: &ConsCell{
+				car: &SymbolNode{name: "c"},
+				cdr: &ConsCell{
+					car: &IntNode{value: 100},
+					cdr: &NilNode{},
 				},
 			},
 		})
@@ -312,13 +312,13 @@ func TestEvalLet2(t *testing.T) {
 	}
 	{
 		// (setq x 200)
-		_, err := ev.Eval(&consCell{
-			car: &symbolNode{name: "setq"},
-			cdr: &consCell{
-				car: &symbolNode{name: "x"},
-				cdr: &consCell{
-					car: &intNode{value: 200},
-					cdr: &nilNode{},
+		_, err := ev.Eval(&ConsCell{
+			car: &SymbolNode{name: "setq"},
+			cdr: &ConsCell{
+				car: &SymbolNode{name: "x"},
+				cdr: &ConsCell{
+					car: &IntNode{value: 200},
+					cdr: &NilNode{},
 				},
 			},
 		})
@@ -331,41 +331,41 @@ func TestEvalLet2(t *testing.T) {
 		// 関数の定義
 		// (defun foo (a b) (let ((x 100) (y 200)) (+ a b x y c)))
 		fdef := createList([]node{
-			&symbolNode{name: "defun"},
-			&symbolNode{name: "foo"},
+			&SymbolNode{name: "defun"},
+			&SymbolNode{name: "foo"},
 			createList([]node{
-				&symbolNode{name: "a"},
-				&symbolNode{name: "b"},
+				&SymbolNode{name: "a"},
+				&SymbolNode{name: "b"},
 			}),
 			createList([]node{
-				&symbolNode{name: "let"},
+				&SymbolNode{name: "let"},
 				createList([]node{
 					createList([]node{
-						&symbolNode{name: "x"},
-						&intNode{value: 100},
+						&SymbolNode{name: "x"},
+						&IntNode{value: 100},
 					}),
 					createList([]node{
-						&symbolNode{name: "y"},
-						&intNode{value: 200},
+						&SymbolNode{name: "y"},
+						&IntNode{value: 200},
 					}),
 				}),
 				createList([]node{
-					&symbolNode{name: "+"},
-					&symbolNode{name: "a"},
-					&symbolNode{name: "b"},
-					&symbolNode{name: "x"},
-					&symbolNode{name: "y"},
-					&symbolNode{name: "c"},
+					&SymbolNode{name: "+"},
+					&SymbolNode{name: "a"},
+					&SymbolNode{name: "b"},
+					&SymbolNode{name: "x"},
+					&SymbolNode{name: "y"},
+					&SymbolNode{name: "c"},
 				}),
 			}),
 		})
-		t.Logf("%v", fdef.toString())
+		t.Logf("%v", fdef.ToString())
 
 		result, err := ev.Eval(fdef)
 		if err != nil {
 			t.Errorf("%v", err)
 		} else {
-			t.Logf("%v", result.toString());
+			t.Logf("%v", result.ToString());
 		}
 	}
 
@@ -373,18 +373,18 @@ func TestEvalLet2(t *testing.T) {
 		// 関数の実行
 		// (foo 1 2)
 		result, err := ev.Eval(createList([]node{
-			&symbolNode{name: "foo"},
-			&intNode{value: 1},
-			&intNode{value: 2},
+			&SymbolNode{name: "foo"},
+			&IntNode{value: 1},
+			&IntNode{value: 2},
 		}))
 		if err != nil {
 			t.Errorf("%v", err)
 		} else {
-			t.Logf("%v", result.toString());
+			t.Logf("%v", result.ToString());
 		}
 
-		if result.toString() != "403" {
-			t.Errorf("Result: %v", result.toString())
+		if result.ToString() != "403" {
+			t.Errorf("Result: %v", result.ToString())
 		}
 	}
 }

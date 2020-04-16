@@ -2,15 +2,15 @@ package interpreter
 
 func createList(elements []node) node {
 	if len(elements) == 0 {
-		return &nilNode{}
+		return &NilNode{}
 	}
 
 	var p node
 	var prev node
-	prev = &nilNode{}
+	prev = &NilNode{}
 	for i := len(elements) - 1 ; i >= 0 ; i-- {
 		el := elements[i]
-		p = &consCell{
+		p = &ConsCell{
 			car: el,
 			cdr: prev,
 		}

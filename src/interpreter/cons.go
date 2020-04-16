@@ -5,8 +5,8 @@ import (
 )
 
 type node interface {
-	getNodeType() int
-	toString() string
+	GetNodeType() int
+	ToString() string
 }
 
 const (
@@ -18,67 +18,67 @@ const (
 	ntFunc
 )
 
-type intNode struct {
+type IntNode struct {
 	value		int
 }
-func (n *intNode) getNodeType() int {
+func (n *IntNode) GetNodeType() int {
 	return ntInt
 }
-func (n *intNode) toString() string {
+func (n *IntNode) ToString() string {
 	return fmt.Sprintf("%v", n.value)
 }
 
-type nilNode struct {
+type NilNode struct {
 }
-func (n *nilNode) getNodeType() int {
+func (n *NilNode) GetNodeType() int {
 	return ntNil
 }
-func (n *nilNode) toString() string {
+func (n *NilNode) ToString() string {
 	return "nil"
 }
 
-type symbolNode struct {
+type SymbolNode struct {
 	name	string
 }
-func (n *symbolNode) getNodeType() int {
+func (n *SymbolNode) GetNodeType() int {
 	return ntSymbol
 }
-func (n *symbolNode) toString() string {
+func (n *SymbolNode) ToString() string {
 	return n.name
 }
 
-type stringNode struct {
+type StringNode struct {
 	value	string
 }
-func (n *stringNode) getNodeType() int {
+func (n *StringNode) GetNodeType() int {
 	return ntString
 }
-func (n *stringNode) toString() string {
+func (n *StringNode) ToString() string {
 	// TODO escape
 	return `"` + n.value + `"`
 }
 
-type funcNode struct {
-	parameters	[]*symbolNode	// 仮引数名のsymbolNode
-	body		*consCell
+type FuncNode struct {
+	parameters	[]*SymbolNode	// 仮引数名のsymbolNode
+	body		*ConsCell
 	scope		*lexicalScope
 }
-func (n *funcNode) getNodeType() int {
+func (n *FuncNode) GetNodeType() int {
 	return ntFunc
 }
-func (n *funcNode) toString() string {
+func (n *FuncNode) ToString() string {
 	// TODO escape
 	return "function"
 }
 
-type consCell struct {
+type ConsCell struct {
 	car		node
 	cdr		node
 }
-func (c *consCell) getNodeType() int {
+func (c *ConsCell) GetNodeType() int {
 	return ntConsCell
 }
-func (c *consCell) toString() string {
+func (c *ConsCell) ToString() string {
 	s:= "("
 
 	c2 := c
@@ -88,7 +88,7 @@ func (c *consCell) toString() string {
 		if c2.car == nil {
 			s += "car: empty"
 		} else {
-			s += c2.car.toString()
+			s += c2.car.ToString()
 		}
 
 		if c2.cdr == nil {
@@ -97,18 +97,18 @@ func (c *consCell) toString() string {
 		}
 
 		// end of list
-		if c2.cdr.getNodeType() == ntNil {
+		if c2.cdr.GetNodeType() == ntNil {
 			break
 		}
 
 		// 次もConsCellだった場合たどる
-		next, ok := c2.cdr.(*consCell)
+		next, ok := c2.cdr.(*ConsCell)
 		if ok {
 			s += " "
 			c2 = next
 		} else {
 			// dot list
-			s += " . " + c2.cdr.toString()
+			s += " . " + c2.cdr.ToString()
 			break
 		}
 	}
@@ -117,24 +117,24 @@ func (c *consCell) toString() string {
 	return s
 }
 
-func (c *consCell) next() *consCell {
-	next, ok := c.cdr.(*consCell)
+func (c *ConsCell) next() *ConsCell {
+	next, ok := c.cdr.(*ConsCell)
 	if !ok {
 		return nil
 	}
 	return next
 }
 
-func (c *consCell) isDotList() bool {
-	if c.cdr.getNodeType() != ntConsCell &&
-	   c.cdr.getNodeType() != ntNil {
+func (c *ConsCell) isDotList() bool {
+	if c.cdr.GetNodeType() != ntConsCell &&
+	   c.cdr.GetNodeType() != ntNil {
 		return true
 	}
 	return false
 }
 
 // 末尾がdot listでないかチェック
-func (c *consCell) isList() bool {
+func (c *ConsCell) isList() bool {
 	c2 := c
 	for c2 != nil {
 		if c2.isDotList() {
@@ -145,7 +145,7 @@ func (c *consCell) isList() bool {
 	return true
 }
 
-func (c *consCell) length() int {
+func (c *ConsCell) length() int {
 	length := 0
 
 	c2 := c

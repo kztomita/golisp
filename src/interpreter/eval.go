@@ -19,12 +19,12 @@ func (e *evaluator) topScope() *lexicalScope {
 }
 
 func (e *evaluator) Eval(n node) (node, error) {
-	if n.getNodeType() == ntConsCell {
+	if n.GetNodeType() == ntConsCell {
 		// list
-		cell := n.(*consCell)
+		cell := n.(*ConsCell)
 		// 最初の要素を関数名として扱う
-		if cell.car.getNodeType() == ntSymbol {
-			symbol := cell.car.(*symbolNode)
+		if cell.car.GetNodeType() == ntSymbol {
+			symbol := cell.car.(*SymbolNode)
 			funcName := symbol.name
 			switch (funcName) {
 			case "+":
@@ -44,7 +44,7 @@ func (e *evaluator) Eval(n node) (node, error) {
 				if !ok {
 					return nil, fmt.Errorf("%v not found.", symbol.name)
 				}
-				fn, ok := value.(*funcNode)
+				fn, ok := value.(*FuncNode)
 				if !ok {
 					return nil, fmt.Errorf("%v is not function.", symbol.name)
 				}
@@ -75,9 +75,9 @@ func (e *evaluator) Eval(n node) (node, error) {
 		} else {
 			return nil, fmt.Errorf("invalid function.")
 		}
-	} else if n.getNodeType() == ntSymbol {
+	} else if n.GetNodeType() == ntSymbol {
 		// symbol tableをlookup
-		symbol := n.(*symbolNode)
+		symbol := n.(*SymbolNode)
 		value, ok := e.topScope().lookupSymbol(symbol.name)
 		if !ok {
 			return nil, fmt.Errorf("%v not found.", symbol.name)
@@ -88,7 +88,7 @@ func (e *evaluator) Eval(n node) (node, error) {
 	return n, nil
 }
 
-func evalFunc(e *evaluator, fn *funcNode, arguments []node) (node, error) {
+func evalFunc(e *evaluator, fn *FuncNode, arguments []node) (node, error) {
 	// 実引数を関数のscopeのsymbolTableに登録
 	if len(fn.parameters) != len(arguments) {
 		return nil, fmt.Errorf("Number of arguments is mismatch.")
@@ -100,7 +100,7 @@ func evalFunc(e *evaluator, fn *funcNode, arguments []node) (node, error) {
 
 	current := fn.body
 	var lastResult node
-	lastResult = &nilNode{}
+	lastResult = &NilNode{}
 	// bodyのlistを順番に評価していく
 	for current != nil {
 		var err error

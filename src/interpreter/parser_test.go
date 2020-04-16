@@ -40,7 +40,7 @@ func TestParser(t *testing.T) {
 				continue
 			}
 			// 構文木を文字列に戻して確認
-			result := cell.toString()
+			result := cell.ToString()
 			if result != c.expected {
 				t.Errorf("Result: %v, Expected: %v", result, c.expected)
 			}
@@ -67,6 +67,6 @@ func TestParseAndEval(t *testing.T) {
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
-		t.Logf("%v", result.toString());
+		t.Logf("%v", result.ToString());
 	}
 }
