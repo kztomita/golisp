@@ -49,10 +49,10 @@ func readExpression(tk *tokenizer) (node, error) {
 }
 
 func readList(tk *tokenizer) (node, error) {
-	var head *ConsCell
-	var tail *ConsCell
 
-	foundDot := false
+	nodes := []node{}
+
+	foundDot := -1
 
 	for true {
 		token := tk.nextToken()
@@ -70,16 +70,25 @@ func readList(tk *tokenizer) (node, error) {
 			}
 		case tokenRightParentheses:
 			// empty list
-			if tail == nil {
-				return &NilNode{}, nil
+			if foundDot == -1 {
+				if len(nodes) == 0 {
+					return &NilNode{}, nil
+				}
+				return createList(nodes), nil
+			} else {
+				if foundDot != len(nodes) - 1 {
+					return nil, fmt.Errorf("syntax error.")
+				}
+				return createDotList(nodes), nil
 			}
-			// terminate
-			if tail.cdr == nil {
-				tail.cdr = &NilNode{}
-			}
-			return head, nil
 		case tokenDot:
-			foundDot  = true
+			if len(nodes) == 0 {
+				return nil, fmt.Errorf("syntax error.")
+			}
+			if foundDot != -1 {
+				return nil, fmt.Errorf("syntax error.")
+			}
+			foundDot = len(nodes)
 			continue
 		case tokenInt:
 			i, err := strconv.Atoi(token.literal)
@@ -99,28 +108,7 @@ func readList(tk *tokenizer) (node, error) {
 			return nil, fmt.Errorf("Logic error(nd is nil).");
 		}
 
-		cc := &ConsCell{car: nd}
-
-		if !foundDot {
-			if tail == nil {
-				head = cc
-				tail = head
-			} else {
-				tail.cdr = cc
-				tail = cc
-			}
-		} else {
-			if tail == nil {
-				return nil, fmt.Errorf("syntax error")
-			} else {
-				// dot listを作る(conscellを追加するのではなくcdrに設定する)
-				if tail.cdr != nil {
-					// dot list作成済み。後に要素がまだある。
-					return nil, fmt.Errorf("syntax error")
-				}
-				tail.cdr = cc.car
-			}
-		}
+		nodes = append(nodes, nd)
 	}
 
 	// not to reach

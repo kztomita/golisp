@@ -46,7 +46,17 @@ func TestParser(t *testing.T) {
 			true,
 		},
 		{
+			`(1 . 2 . 3)`,
+			"",
+			true,
+		},
+		{
 			`(. 2)`,
+			"",
+			true,
+		},
+		{
+			`(1 . )`,
 			"",
 			true,
 		},
