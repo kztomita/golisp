@@ -43,3 +43,33 @@ func TestCreateList(t *testing.T) {
 		}
 	}
 }
+
+func TestCreateDotList(t *testing.T) {
+	testCases := []struct{
+		elements	[]node
+		expected	string
+	}{
+		{
+			[]node{
+				&IntNode{value: 1},
+				&IntNode{value: 2},
+			},
+			"(1 . 2)",
+		},
+		{
+			[]node{
+				&IntNode{value: 1},
+				&IntNode{value: 2},
+				&IntNode{value: 3},
+			},
+			"(1 2 . 3)",
+		},
+	}
+
+	for _, c := range testCases {
+		result := createDotList(c.elements).ToString()
+		if result != c.expected {
+			t.Errorf("Result: %v, Expected: %v", result, c.expected)
+		}
+	}
+}
