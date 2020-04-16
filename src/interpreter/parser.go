@@ -38,7 +38,7 @@ func readExpression(tk *tokenizer) (node, error) {
 		if err != nil {
 			return nil, fmt.Errorf("can't parse literal as integer.")
 		}
-		return  &IntNode{value: i}, nil
+		return &IntNode{value: i}, nil
 	case tokenSymbol:
 		return &SymbolNode{name: token.literal}, nil
 	case tokenString:
@@ -60,14 +60,14 @@ func readList(tk *tokenizer) (node, error) {
 			return nil, fmt.Errorf("list is not terminated.")
 		}
 	
-		var cc *ConsCell
+		var nd node
 		switch (token.tokenId) {
 		case tokenLeftParentheses:
-			listcc, err := readList(tk)
+			var err error
+			nd, err = readList(tk)
 			if err != nil {
 				return nil, err
 			}
-			cc = &ConsCell{car: listcc}
 		case tokenRightParentheses:
 			// empty list
 			if tail == nil {
@@ -80,40 +80,45 @@ func readList(tk *tokenizer) (node, error) {
 			return head, nil
 		case tokenDot:
 			foundDot  = true
+			continue
 		case tokenInt:
 			i, err := strconv.Atoi(token.literal)
 			if err != nil {
 				return nil, fmt.Errorf("can't parse literal as integer.")
 			}
-			cc = &ConsCell{car: &IntNode{value: i}}
+			nd = &IntNode{value: i}
 		case tokenSymbol:
-			cc = &ConsCell{car: &SymbolNode{name: token.literal}}
+			nd = &SymbolNode{name: token.literal}
 		case tokenString:
-			cc = &ConsCell{car: &StringNode{value: token.literal}}
+			nd = &StringNode{value: token.literal}
 		default:
 			return nil, fmt.Errorf("Unknown token (%v)", token)
 		}
 
-		if cc != nil {
-			if !foundDot {
-				if tail == nil {
-					head = cc
-					tail = head
-				} else {
-					tail.cdr = cc
-					tail = cc
-				}
+		if nd == nil {
+			return nil, fmt.Errorf("Logic error(nd is nil).");
+		}
+
+		cc := &ConsCell{car: nd}
+
+		if !foundDot {
+			if tail == nil {
+				head = cc
+				tail = head
 			} else {
-				if tail == nil {
+				tail.cdr = cc
+				tail = cc
+			}
+		} else {
+			if tail == nil {
+				return nil, fmt.Errorf("syntax error")
+			} else {
+				// dot listを作る(conscellを追加するのではなくcdrに設定する)
+				if tail.cdr != nil {
+					// dot list作成済み。後に要素がまだある。
 					return nil, fmt.Errorf("syntax error")
-				} else {
-					// dot listを作る(conscellを追加するのではなくcdrに設定する)
-					if tail.cdr != nil {
-						// dot list作成済み。後に要素がまだある。
-						return nil, fmt.Errorf("syntax error")
-					}
-					tail.cdr = cc.car
 				}
+				tail.cdr = cc.car
 			}
 		}
 	}
