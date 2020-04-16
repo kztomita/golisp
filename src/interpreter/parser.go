@@ -33,6 +33,15 @@ func readExpression(tk *tokenizer) (node, error) {
 	switch (token.tokenId) {
 	case tokenLeftParentheses:
 		return readList(tk)
+	case tokenInt, tokenSymbol, tokenString:
+		return createLeafNode(token)
+	default:
+		return nil, fmt.Errorf("xxxxxx")
+	}
+}
+
+func createLeafNode(token *token) (node, error) {
+	switch (token.tokenId) {
 	case tokenInt:
 		i, err := strconv.Atoi(token.literal)
 		if err != nil {
@@ -44,7 +53,7 @@ func readExpression(tk *tokenizer) (node, error) {
 	case tokenString:
 		return &StringNode{value: token.literal}, nil
 	default:
-		return nil, fmt.Errorf("xxxxxx")
+		return nil, fmt.Errorf("Unknown token %v", token)
 	}
 }
 
@@ -90,16 +99,12 @@ func readList(tk *tokenizer) (node, error) {
 			}
 			foundDot = len(nodes)
 			continue
-		case tokenInt:
-			i, err := strconv.Atoi(token.literal)
+		case tokenInt, tokenSymbol, tokenString:
+			var err error
+			nd, err = createLeafNode(token)
 			if err != nil {
-				return nil, fmt.Errorf("can't parse literal as integer.")
+				return nil, err
 			}
-			nd = &IntNode{value: i}
-		case tokenSymbol:
-			nd = &SymbolNode{name: token.literal}
-		case tokenString:
-			nd = &StringNode{value: token.literal}
 		default:
 			return nil, fmt.Errorf("Unknown token (%v)", token)
 		}
