@@ -11,24 +11,31 @@ func Parse(s string) (node, error) {
 	container := &ContainerNode{}
 
 	for true {
-		token := tk.nextToken()
-		if token == nil {
+		nd, err := readExpression(tk)
+		if err != nil {
+			return nil, err
+		}
+		if nd == nil {
 			break
 		}
-
-		switch (token.tokenId) {
-		case tokenLeftParentheses:
-			cell, err := readList(tk)
-			if err != nil {
-				return nil, err
-			}
-			container.nodes = append(container.nodes, cell)
-		default:
-			return nil, fmt.Errorf("xxxxxx")
-		}
+		container.nodes = append(container.nodes, nd)
 	}
 
 	return container, nil
+}
+
+func readExpression(tk *tokenizer) (node, error) {
+	token := tk.nextToken()
+	if token == nil {
+		return nil, nil
+	}
+
+	switch (token.tokenId) {
+	case tokenLeftParentheses:
+		return readList(tk)
+	default:
+		return nil, fmt.Errorf("xxxxxx")
+	}
 }
 
 func readList(tk *tokenizer) (*ConsCell, error) {
