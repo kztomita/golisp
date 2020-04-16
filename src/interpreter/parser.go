@@ -33,6 +33,16 @@ func readExpression(tk *tokenizer) (node, error) {
 	switch (token.tokenId) {
 	case tokenLeftParentheses:
 		return readList(tk)
+	case tokenInt:
+		i, err := strconv.Atoi(token.literal)
+		if err != nil {
+			return nil, fmt.Errorf("can't parse literal as integer.")
+		}
+		return  &IntNode{value: i}, nil
+	case tokenSymbol:
+		return &SymbolNode{name: token.literal}, nil
+	case tokenString:
+		return &StringNode{value: token.literal}, nil
 	default:
 		return nil, fmt.Errorf("xxxxxx")
 	}
