@@ -41,7 +41,7 @@ func TestParser(t *testing.T) {
 			}
 			// 構文木を文字列に戻して確認
 			result := cell.ToString()
-			if result != c.expected {
+			if result != c.expected + "\n" {
 				t.Errorf("Result: %v, Expected: %v", result, c.expected)
 			}
 			t.Logf("%v", result)

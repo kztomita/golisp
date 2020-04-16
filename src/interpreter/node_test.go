@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestFxx(t *testing.T) {
+func TestConsCell(t *testing.T) {
 	{
 		// dot list
 		c := ConsCell{car: &IntNode{value: 1}, cdr: &IntNode{value: 2}}

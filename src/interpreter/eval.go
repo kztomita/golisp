@@ -19,7 +19,19 @@ func (e *evaluator) topScope() *lexicalScope {
 }
 
 func (e *evaluator) Eval(n node) (node, error) {
-	if n.GetNodeType() == NtConsCell {
+	if n.GetNodeType() == NtContainer {
+		container := n.(*ContainerNode)
+		var lastResult node
+		lastResult = &NilNode{}
+		for _, nd := range container.nodes {
+			var err error
+			lastResult, err = e.Eval(nd)
+			if err != nil {
+				return nil, err
+			}
+		}
+		return lastResult, nil
+	} else if n.GetNodeType() == NtConsCell {
 		// list
 		cell := n.(*ConsCell)
 		// 最初の要素を関数名として扱う

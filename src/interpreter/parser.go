@@ -5,8 +5,10 @@ import (
 	"strconv"
 )
 
-func Parse(s string) (*ConsCell, error) {
+func Parse(s string) (node, error) {
 	tk := &tokenizer{s: s, pos: 0}
+
+	container := &ContainerNode{}
 
 	for true {
 		token := tk.nextToken()
@@ -16,15 +18,20 @@ func Parse(s string) (*ConsCell, error) {
 
 		switch (token.tokenId) {
 		case tokenLeftParentheses:
-			return readAsList(tk)
+			cell, err := readList(tk)
+			if err != nil {
+				return nil, err
+			}
+			container.nodes = append(container.nodes, cell)
 		default:
 			return nil, fmt.Errorf("xxxxxx")
 		}
 	}
-	return nil, fmt.Errorf("xxxxxx")
+
+	return container, nil
 }
 
-func readAsList(tk *tokenizer) (*ConsCell, error) {
+func readList(tk *tokenizer) (*ConsCell, error) {
 	var head *ConsCell
 	var tail *ConsCell
 
@@ -39,7 +46,7 @@ func readAsList(tk *tokenizer) (*ConsCell, error) {
 		var cc *ConsCell
 		switch (token.tokenId) {
 		case tokenLeftParentheses:
-			listcc, err := readAsList(tk)
+			listcc, err := readList(tk)
 			if err != nil {
 				return nil, err
 			}

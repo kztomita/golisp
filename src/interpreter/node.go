@@ -10,13 +10,28 @@ type node interface {
 }
 
 const (
-	NtConsCell int = iota
+	NtContainer int = iota
+	NtConsCell
 	NtInt
 	NtNil
 	NtSymbol
 	NtString
 	NtFunc
 )
+
+type ContainerNode struct {
+	nodes	[]node
+}
+func (n *ContainerNode) GetNodeType() int {
+	return NtContainer
+}
+func (n *ContainerNode) ToString() string {
+	s := ""
+	for _, nd := range n.nodes {
+		s += nd.ToString() + "\n"
+	}
+	return s
+}
 
 type IntNode struct {
 	value		int

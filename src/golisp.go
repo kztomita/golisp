@@ -27,13 +27,14 @@ func main() {
 		log.Fatalf("%v\n", err)
 	}
 
-	cell, err := interpreter.Parse(string(lispBytes))
+	node, err := interpreter.Parse(string(lispBytes))
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
+	fmt.Printf("%v\n", node.ToString())
 
 	ev := interpreter.NewEvaluator()
-	result, err := ev.Eval(cell)
+	result, err := ev.Eval(node)
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
