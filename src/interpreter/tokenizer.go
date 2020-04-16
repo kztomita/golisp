@@ -94,6 +94,17 @@ func (t *tokenizer) skipSpace() {
 	}
 }
 
+func (t *tokenizer) peekToken(offset int) *token {
+	saved := t.pos
+	var token *token
+	for i := 0 ; i < offset ; i++ {
+		token = t.nextToken()
+	}
+	t.pos = saved
+	return token
+}
+
+
 func isDelimiter(c byte) bool {
 	return c == ' ' || c == '\n'
 }

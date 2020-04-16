@@ -80,3 +80,38 @@ func TestTokenizer(t *testing.T) {
 		}
 	}
 }
+
+func TestPeekToken(t *testing.T) {
+	tk := tokenizer{s: "(1 2 3 foo)", pos: 0}
+
+	{
+		token := tk.peekToken(1)
+		if token == nil {
+			t.Fatalf("Expected: %v, Result: nil", "(")
+		} else if token.tokenId != tokenLeftParentheses {
+			t.Fatalf("Expected: %v, Result: %v", "(", token.literal)
+		}
+	}
+	{
+		token := tk.peekToken(2)
+		if token == nil {
+			t.Fatalf("Expected: %v, Result: nil", "(")
+		} else if token.tokenId != tokenInt || token.literal != "1" {
+			t.Fatalf("Expected: %v, Result: %v", "1", token.literal)
+		}
+	}
+	{
+		token := tk.peekToken(7)
+		if token != nil {
+			t.Fatalf("Expected: nil")
+		}
+	}
+	{
+		token := tk.nextToken()
+		if token == nil {
+			t.Fatalf("Expected: %v, Result: nil", "(")
+		} else if token.tokenId != tokenLeftParentheses {
+			t.Fatalf("Expected: %v, Result: %v", "(", token.literal)
+		}
+	}
+}
