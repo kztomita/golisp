@@ -48,7 +48,7 @@ func readExpression(tk *tokenizer) (node, error) {
 	}
 }
 
-func readList(tk *tokenizer) (*ConsCell, error) {
+func readList(tk *tokenizer) (node, error) {
 	var head *ConsCell
 	var tail *ConsCell
 
@@ -69,6 +69,11 @@ func readList(tk *tokenizer) (*ConsCell, error) {
 			}
 			cc = &ConsCell{car: listcc}
 		case tokenRightParentheses:
+			// empty list
+			if tail == nil {
+				return &NilNode{}, nil
+			}
+			// terminate
 			if tail.cdr == nil {
 				tail.cdr = &NilNode{}
 			}

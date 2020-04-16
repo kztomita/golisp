@@ -16,9 +16,29 @@ func TestParser(t *testing.T) {
 			false,
 		},
 		{
+			`()`,
+			`nil`,
+			false,
+		},
+		{
 			`(1 . 2)`,
 			`(1 . 2)`,
 			false,
+		},
+		{
+			`1`,
+			`1`,
+			false,
+		},
+		{
+			`)`,
+			"",
+			true,
+		},
+		{
+			`(1 2`,
+			"",
+			true,
 		},
 		{
 			`(1 . 2 3)`,
@@ -43,6 +63,7 @@ func TestParser(t *testing.T) {
 			result := cell.ToString()
 			if result != c.expected + "\n" {
 				t.Errorf("Result: %v, Expected: %v", result, c.expected)
+				continue
 			}
 			t.Logf("%v", result)
 		} else {
