@@ -19,11 +19,11 @@ func (e *evaluator) topScope() *lexicalScope {
 }
 
 func (e *evaluator) Eval(n node) (node, error) {
-	if n.GetNodeType() == ntConsCell {
+	if n.GetNodeType() == NtConsCell {
 		// list
 		cell := n.(*ConsCell)
 		// 最初の要素を関数名として扱う
-		if cell.car.GetNodeType() == ntSymbol {
+		if cell.car.GetNodeType() == NtSymbol {
 			symbol := cell.car.(*SymbolNode)
 			funcName := symbol.name
 			switch (funcName) {
@@ -75,7 +75,7 @@ func (e *evaluator) Eval(n node) (node, error) {
 		} else {
 			return nil, fmt.Errorf("invalid function.")
 		}
-	} else if n.GetNodeType() == ntSymbol {
+	} else if n.GetNodeType() == NtSymbol {
 		// symbol tableをlookup
 		symbol := n.(*SymbolNode)
 		value, ok := e.topScope().lookupSymbol(symbol.name)

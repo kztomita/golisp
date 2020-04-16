@@ -10,19 +10,19 @@ type node interface {
 }
 
 const (
-	ntConsCell int = iota
-	ntInt
-	ntNil
-	ntSymbol
-	ntString
-	ntFunc
+	NtConsCell int = iota
+	NtInt
+	NtNil
+	NtSymbol
+	NtString
+	NtFunc
 )
 
 type IntNode struct {
 	value		int
 }
 func (n *IntNode) GetNodeType() int {
-	return ntInt
+	return NtInt
 }
 func (n *IntNode) ToString() string {
 	return fmt.Sprintf("%v", n.value)
@@ -31,7 +31,7 @@ func (n *IntNode) ToString() string {
 type NilNode struct {
 }
 func (n *NilNode) GetNodeType() int {
-	return ntNil
+	return NtNil
 }
 func (n *NilNode) ToString() string {
 	return "nil"
@@ -41,7 +41,7 @@ type SymbolNode struct {
 	name	string
 }
 func (n *SymbolNode) GetNodeType() int {
-	return ntSymbol
+	return NtSymbol
 }
 func (n *SymbolNode) ToString() string {
 	return n.name
@@ -51,7 +51,7 @@ type StringNode struct {
 	value	string
 }
 func (n *StringNode) GetNodeType() int {
-	return ntString
+	return NtString
 }
 func (n *StringNode) ToString() string {
 	// TODO escape
@@ -64,7 +64,7 @@ type FuncNode struct {
 	scope		*lexicalScope
 }
 func (n *FuncNode) GetNodeType() int {
-	return ntFunc
+	return NtFunc
 }
 func (n *FuncNode) ToString() string {
 	// TODO escape
@@ -76,7 +76,7 @@ type ConsCell struct {
 	cdr		node
 }
 func (c *ConsCell) GetNodeType() int {
-	return ntConsCell
+	return NtConsCell
 }
 func (c *ConsCell) ToString() string {
 	s:= "("
@@ -97,7 +97,7 @@ func (c *ConsCell) ToString() string {
 		}
 
 		// end of list
-		if c2.cdr.GetNodeType() == ntNil {
+		if c2.cdr.GetNodeType() == NtNil {
 			break
 		}
 
@@ -126,8 +126,8 @@ func (c *ConsCell) next() *ConsCell {
 }
 
 func (c *ConsCell) isDotList() bool {
-	if c.cdr.GetNodeType() != ntConsCell &&
-	   c.cdr.GetNodeType() != ntNil {
+	if c.cdr.GetNodeType() != NtConsCell &&
+	   c.cdr.GetNodeType() != NtNil {
 		return true
 	}
 	return false
