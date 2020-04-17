@@ -69,6 +69,45 @@ func TestEvalPlus(t *testing.T) {
 
 }
 
+func TestEvalMinus(t *testing.T) {
+	testCases := []struct{
+		expr        node
+		expected    string
+	}{
+		{
+			createList([]node{
+				&SymbolNode{name: "-"},
+				&IntNode{value: 3},
+				&IntNode{value: 1},
+			}),
+			"2",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "-"},
+				&IntNode{value: 6},
+				&IntNode{value: 3},
+				&IntNode{value: 1},
+			}),
+			"2",
+		},
+	}
+
+	ev := NewEvaluator()
+
+	for _, c := range testCases {
+		result, err := ev.Eval(c.expr)
+		if err != nil {
+			t.Errorf("%v", err)
+			continue
+		}
+		if result.ToString() != c.expected {
+			t.Errorf("Result: %v, Expected: %v", result.ToString(), c.expected)
+			continue
+		}
+	}
+}
+
 func TestEvalCar(t *testing.T) {
 	ev := NewEvaluator()
 
