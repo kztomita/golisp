@@ -15,13 +15,11 @@ func usage() {
 	os.Exit(1)
 }
 
-func main() {
-	if len(os.Args) < 2 {
-		usage()
-	}
+func repl() {
+	interpreter.Repl(os.Stdin)
+}
 
-	file := os.Args[1]
-
+func evaluateFile(file string) {
 	lispBytes, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.Fatalf("%v\n", err)
@@ -31,7 +29,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	fmt.Printf("%v\n", node.ToString())
+	//fmt.Printf("%v\n", node.ToString())
 
 	ev := interpreter.NewEvaluator()
 	result, err := ev.Eval(node)
@@ -41,4 +39,14 @@ func main() {
 
 	// nodeのexportが必要？
 	fmt.Printf("%v", result.ToString());
+}
+
+func main() {
+	if len(os.Args) < 2 {
+		repl()
+		return
+	}
+
+	file := os.Args[1]
+	evaluateFile(file)
 }
