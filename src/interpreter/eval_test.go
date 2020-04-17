@@ -133,6 +133,94 @@ func TestEvalCdr(t *testing.T) {
 	}
 }
 
+func TestEvalAnd(t *testing.T) {
+	testCases := []struct{
+		expr        node
+		expected    string
+	}{
+		{
+			createList([]node{
+				&SymbolNode{name: "and"},
+			}),
+			"t",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "and"},
+				&TrueNode{},
+				&TrueNode{},
+			}),
+			"t",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "and"},
+				&NilNode{},
+				&TrueNode{},
+			}),
+			"nil",
+		},
+	}
+
+	ev := NewEvaluator()
+
+	for _, c := range testCases {
+		result, err := ev.Eval(c.expr)
+		if err != nil {
+			t.Errorf("%v", err)
+			continue
+		}
+		if result.ToString() != c.expected {
+			t.Errorf("Result: %v, Expected: %v", result.ToString(), c.expected)
+			continue
+		}
+	}
+}
+
+func TestEvalOr(t *testing.T) {
+	testCases := []struct{
+		expr        node
+		expected    string
+	}{
+		{
+			createList([]node{
+				&SymbolNode{name: "or"},
+			}),
+			"nil",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "or"},
+				&NilNode{},
+				&TrueNode{},
+			}),
+			"t",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "or"},
+				&NilNode{},
+				&NilNode{},
+			}),
+			"nil",
+		},
+	}
+
+	ev := NewEvaluator()
+
+	for _, c := range testCases {
+		result, err := ev.Eval(c.expr)
+		if err != nil {
+			t.Errorf("%v", err)
+			continue
+		}
+		if result.ToString() != c.expected {
+			t.Errorf("Result: %v, Expected: %v", result.ToString(), c.expected)
+			continue
+		}
+	}
+}
+
 func TestEvalSetq(t *testing.T) {
 	ev := NewEvaluator()
 
