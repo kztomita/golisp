@@ -212,9 +212,10 @@ func funcPlus(ev *evaluator, c *ConsCell) (*IntNode, error) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
-	c2 := c
-	for c2 != nil {
-		element, err := ev.Eval(c2.car)
+	args := createSliceFromList(c)
+
+	for _, arg := range args {
+		element, err := ev.Eval(arg)
 		if err != nil {
 			return nil, err
 		}
@@ -224,8 +225,6 @@ func funcPlus(ev *evaluator, c *ConsCell) (*IntNode, error) {
 		} else {
 			return nil, fmt.Errorf("not integer element")
 		}
-
-		c2 = c2.next()
 	}
 
 	return &IntNode{value: result}, nil
