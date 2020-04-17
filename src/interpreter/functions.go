@@ -106,16 +106,6 @@ func funcDefun(ev *evaluator, c *ConsCell) (node, error) {
 
 	bodyHead := c.next().next()		// body list
 
-	// 全てリストかチェック
-	p := bodyHead
-	for p != nil {
-		_, ok := p.car.(*ConsCell)
-		if !ok {
-			return nil, fmt.Errorf("Wrong type body.")
-		}
-		p = p.next()
-	}
-
 	fn := &FuncNode{
 		parameters: parameters,
 		body: bodyHead,
