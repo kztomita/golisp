@@ -40,3 +40,30 @@ func createDotList(elements []node) node {
 
 	return p
 }
+
+func createSliceFromList(head *ConsCell) []node {
+	result := []node{}
+
+	c := head
+	for c != nil {
+		result = append(result, c.car)
+
+		// 正しく作成されていればcdrはnilにはならない(終端は&NilNode)。
+		if c.cdr == nil {
+			break
+		}
+
+		switch cdr := c.cdr.(type) {
+		case *ConsCell:
+			c = cdr		// next cons cell
+		case *NilNode:
+			c = nil		// terminate
+		default:
+			// dot list
+			result = append(result, cdr)
+			c = nil
+		}
+	}
+
+	return result
+}
