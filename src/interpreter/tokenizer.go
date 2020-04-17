@@ -36,7 +36,7 @@ func (t *tokenizer) peekChar(offset int) byte {
 		if !t.scanner.Scan() {
 			return 0
 		}
-		t.s += t.scanner.Text()
+		t.s += t.scanner.Text() + "\n"
 	}
 	return t.s[t.pos + offset]
 }
