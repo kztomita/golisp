@@ -79,19 +79,19 @@ func funcDefun(ev *evaluator, c *ConsCell) (node, error) {
 	if !c.isList() {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	if c.length() < 3 {
+
+	args := createSliceFromList(c)
+	if len(args) < 3 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	p := c
-	arg0, ok := p.car.(*SymbolNode)	// func name
+	arg0, ok := args[0].(*SymbolNode)	// func name
 	if !ok {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
-	p = p.next()
 	parameters := []*SymbolNode{}	// 仮引数名のsymbolNode
-	arg1, ok1 := p.car.(*ConsCell)	// parameters
+	arg1, ok1 := args[1].(*ConsCell)	// parameters
 	if ok1 {
 		acell := arg1
 		for acell != nil {
@@ -104,11 +104,21 @@ func funcDefun(ev *evaluator, c *ConsCell) (node, error) {
 		}
 	}
 
-	p = p.next()	// body list
+	bodyHead := c.next().next()		// body list
+
+	// 全てリストかチェック
+	p := bodyHead
+	for p != nil {
+		_, ok := p.car.(*ConsCell)
+		if !ok {
+			return nil, fmt.Errorf("Wrong type body.")
+		}
+		p = p.next()
+	}
 
 	fn := &FuncNode{
 		parameters: parameters,
-		body: p,
+		body: bodyHead,
 		scope: newLexicalScope(ev.topScope()),	// 関数定義時にLexicalScope作成
 	}
 
