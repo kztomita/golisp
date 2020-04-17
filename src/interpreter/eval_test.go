@@ -389,7 +389,7 @@ func TestEvalLet2(t *testing.T) {
 	}
 }
 
-func TestProgn(t *testing.T) {
+func TestEvalProgn(t *testing.T) {
 	ev := NewEvaluator()
 
 	{
@@ -413,7 +413,7 @@ func TestProgn(t *testing.T) {
 	}
 }
 
-func TestPrint(t *testing.T) {
+func TestEvalPrint(t *testing.T) {
 	ev := NewEvaluator()
 
 	{
@@ -423,6 +423,30 @@ func TestPrint(t *testing.T) {
 			createList([]node{
 				&SymbolNode{name: "+"},
 				&IntNode{value: 1},
+				&IntNode{value: 2},
+			}),
+		}))
+		if err != nil {
+			t.Errorf("%v", err)
+		}
+	}
+}
+
+func TestEvalIf(t *testing.T) {
+	ev := NewEvaluator()
+
+	{
+		// (if nil (print 1) (print 2))
+		_, err := ev.Eval(createList([]node{
+			&SymbolNode{name: "if"},
+			&NilNode{},
+			//&IntNode{value: 1},
+			createList([]node{
+				&SymbolNode{name: "print"},
+				&IntNode{value: 1},
+			}),
+			createList([]node{
+				&SymbolNode{name: "print"},
 				&IntNode{value: 2},
 			}),
 		}))
