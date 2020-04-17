@@ -51,18 +51,18 @@ func funcSetq(ev *evaluator, c *ConsCell) (node, error) {
 	if !c.isList() {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	if c.length() != 2 {
+
+	args := createSliceFromList(c)
+	if len(args) != 2 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	arg0, ok := c.car.(*SymbolNode)	// symbolname
+	arg0, ok := args[0].(*SymbolNode)	// symbolname
 	if !ok {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
-	arg1 := c.next().car
-
-	result, err := ev.Eval(arg1)
+	result, err := ev.Eval(args[1])
 	if err != nil {
 		return nil, err
 	}
