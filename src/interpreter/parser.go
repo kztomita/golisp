@@ -2,6 +2,7 @@ package interpreter
 
 import (
 	"fmt"
+	"io"
 	"strconv"
 	"strings"
 )
@@ -23,6 +24,13 @@ func Parse(s string) (node, error) {
 	}
 
 	return container, nil
+}
+
+// io.Readerからexpressionを一つ分解析
+func ParseExpression(rd io.Reader) (node, error) {
+	tk := newTokenizer(rd)
+
+	return readExpression(tk)
 }
 
 func readExpression(tk *tokenizer) (node, error) {
