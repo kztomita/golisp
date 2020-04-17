@@ -12,8 +12,9 @@ type node interface {
 const (
 	NtContainer int = iota
 	NtConsCell
-	NtInt
 	NtNil
+	NtTrue
+	NtInt
 	NtSymbol
 	NtString
 	NtFunc
@@ -33,6 +34,24 @@ func (n *ContainerNode) ToString() string {
 	return s
 }
 
+type NilNode struct {
+}
+func (n *NilNode) GetNodeType() int {
+	return NtNil
+}
+func (n *NilNode) ToString() string {
+	return "nil"
+}
+
+type TrueNode struct {
+}
+func (n *TrueNode) GetNodeType() int {
+	return NtTrue
+}
+func (n *TrueNode) ToString() string {
+	return "t"
+}
+
 type IntNode struct {
 	value		int
 }
@@ -41,15 +60,6 @@ func (n *IntNode) GetNodeType() int {
 }
 func (n *IntNode) ToString() string {
 	return fmt.Sprintf("%v", n.value)
-}
-
-type NilNode struct {
-}
-func (n *NilNode) GetNodeType() int {
-	return NtNil
-}
-func (n *NilNode) ToString() string {
-	return "nil"
 }
 
 type SymbolNode struct {
