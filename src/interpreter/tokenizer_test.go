@@ -11,12 +11,13 @@ func TestTokenizer(t *testing.T) {
 		results		[]token
 	}{
 		{
-			"(1 2 3 foo)",
+			"(1 2 +3 -4 foo)",
 			[]token{
 				{tokenId: tokenLeftParentheses, literal: "("},
 				{tokenId: tokenInt, literal: "1"},
 				{tokenId: tokenInt, literal: "2"},
-				{tokenId: tokenInt, literal: "3"},
+				{tokenId: tokenInt, literal: "+3"},
+				{tokenId: tokenInt, literal: "-4"},
 				{tokenId: tokenSymbol, literal: "foo"},
 				{tokenId: tokenRightParentheses, literal: ")"},
 			},	

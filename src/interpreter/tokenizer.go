@@ -135,7 +135,7 @@ func (t *tokenizer) nextToken() *token {
 		return nil
 	}
 
-	matched, err := regexp.MatchString(`^\d+$`, literal)
+	matched, err := regexp.MatchString(`^(\+|-|)\d+$`, literal)
 	if err == nil && matched {
 		return &token{tokenId: tokenInt, literal: literal}
 	}
