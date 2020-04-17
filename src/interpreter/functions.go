@@ -192,14 +192,12 @@ func funcLet_(ev *evaluator, c *ConsCell) (node, error) {
 
 	var lastResult node
 	lastResult = &NilNode{}
-	for p != nil {
+	for ; p != nil ; p = p.next() {
 		var err error
-		list := p.car
-		lastResult, err = ev.Eval(list)
+		lastResult, err = ev.Eval(p.car)
 		if err != nil {
 			return nil, err
 		}
-		p = p.next()
 	}
 
 	return lastResult, nil

@@ -112,18 +112,15 @@ func evalFunc(e *evaluator, fn *FuncNode, arguments []node) (node, error) {
 		symTable[fn.parameters[i].name] = arguments[i]
 	}
 
-	current := fn.body
 	var lastResult node
 	lastResult = &NilNode{}
 	// bodyのlistを順番に評価していく
-	for current != nil {
+	for current := fn.body ; current != nil ; current = current.next() {
 		var err error
-		list := current.car
-		lastResult, err = e.Eval(list)
+		lastResult, err = e.Eval(current.car)
 		if err != nil {
 			return nil, err
 		}
-		current = current.next()
 	}
 	return lastResult, nil
 }
