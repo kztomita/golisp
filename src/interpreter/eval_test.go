@@ -5,68 +5,61 @@ import (
 )
 
 func TestEvalPlus(t *testing.T) {
-	ev := NewEvaluator()
-
-	{
-		result, err := ev.Eval(&IntNode{value: 1})
-		if err != nil {
-			t.Errorf("%v", err)
-		} else {
-			t.Logf("%v", result.ToString());
-		}
-	}
-
-	{
-		c := &ConsCell{
-			car: &SymbolNode{name: "+"},
-			cdr: &ConsCell{
-				car: &IntNode{value: 1},
+	testCases := []struct{
+		expr        node
+		expected    string
+	}{
+		{
+			&ConsCell{
+				car: &SymbolNode{name: "+"},
 				cdr: &ConsCell{
-					car: &IntNode{value: 2},
-					cdr: &NilNode{},
-				},
-			},
-		}
-		expr := c.ToString()
-		t.Logf("%v", expr)
-		result, err := ev.Eval(c)
-		if err != nil {
-			t.Errorf("%v", err)
-		} else {
-			t.Logf("%v", result.ToString());
-		}
-	}
-
-	{
-		c := &ConsCell{
-			car: &SymbolNode{name: "+"},
-			cdr: &ConsCell{
-				car: &ConsCell{
-					car: &SymbolNode{name: "+"},
+					car: &IntNode{value: 1},
 					cdr: &ConsCell{
-						car: &IntNode{value: 1},
-						cdr: &ConsCell{
-							car: &IntNode{value: 2},
-							cdr: &NilNode{},
-						},
+						car: &IntNode{value: 2},
+						cdr: &NilNode{},
 					},
 				},
+			},
+			"3",
+		},
+		{
+			&ConsCell{
+				car: &SymbolNode{name: "+"},
 				cdr: &ConsCell{
-					car: &IntNode{value: 3},
-					cdr: &NilNode{},
+					car: &ConsCell{
+						car: &SymbolNode{name: "+"},
+						cdr: &ConsCell{
+							car: &IntNode{value: 1},
+							cdr: &ConsCell{
+								car: &IntNode{value: 2},
+								cdr: &NilNode{},
+							},
+						},
+					},
+					cdr: &ConsCell{
+						car: &IntNode{value: 3},
+						cdr: &NilNode{},
+					},
 				},
 			},
-		}
-		expr := c.ToString()
-		t.Logf("%v", expr)
-		result, err := ev.Eval(c)
-		if err != nil {
-			t.Errorf("%v", err)
-		} else {
-			t.Logf("%v", result.ToString());
-		}
+			"6",
+		},
 	}
 
+	ev := NewEvaluator()
+
+	for _, c := range testCases {
+		t.Logf("%v", c.expr.ToString());
+		result, err := ev.Eval(c.expr)
+		if err != nil {
+			t.Errorf("%v", err)
+			continue
+		}
+		if result.ToString() != c.expected {
+			t.Errorf("Result: %v, Expected: %v", result.ToString(), c.expected)
+			continue
+		}
+	}
 }
 
 func TestEvalMinus(t *testing.T) {
