@@ -51,6 +51,8 @@ func (e *evaluator) Eval(n node) (node, error) {
 				return funcDefun(e, cell.next())
 			case "let":
 				return funcLet(e, cell.next())
+			case "progn":
+				return funcProgn(e, cell.next())
 			default:
 				value, ok := e.topScope().lookupSymbol(funcName)
 				if !ok {

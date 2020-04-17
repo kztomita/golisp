@@ -205,6 +205,20 @@ func funcLet_(ev *evaluator, c *ConsCell) (node, error) {
 	return lastResult, nil
 }
 
+func funcProgn(ev *evaluator, c *ConsCell) (node, error) {
+	var lastResult node
+	lastResult = &NilNode{}
+	for p := c ; p != nil ; p = p.next() {
+		var err error
+		lastResult, err = ev.Eval(p.car)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return lastResult, nil
+}
+
 func funcPlus(ev *evaluator, c *ConsCell) (*IntNode, error) {
 	result := 0		// XXX 取り敢えずintのみ対応
 
