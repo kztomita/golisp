@@ -1,6 +1,8 @@
 package interpreter
 
 import (
+	"bufio"
+	"io"
 	"regexp"
 )
 
@@ -19,37 +21,87 @@ type token struct {
 }
 
 type tokenizer struct {
+	scanner	*bufio.Scanner
 	s	string
-	pos	int
+	pos	int			// next position
+}
+func newTokenizer(rd io.Reader) *tokenizer {
+	return &tokenizer{
+		scanner: bufio.NewScanner(rd),
+	}
+}
+
+func (t *tokenizer) peekChar(offset int) byte {
+	for t.pos + offset >= len(t.s) {
+		if !t.scanner.Scan() {
+			return 0
+		}
+		t.s += t.scanner.Text()
+	}
+	return t.s[t.pos + offset]
+}
+
+func (t *tokenizer) nextChar() byte {
+	b := t.peekChar(0)
+	if b == 0 {
+		return 0
+	}
+
+	t.pos++
+
+	return b
+}
+
+func (t *tokenizer) skipWhiteSpace() {
+	for true {
+		c := t.nextChar()
+		if c == 0 {
+			break
+		}
+		if !isWhiteSpace(c) {
+			t.pos--
+			break
+		}
+	}
 }
 
 func (t *tokenizer) nextToken() *token {
-	slen := len(t.s)
-	t.skipSpace()
+	t.skipWhiteSpace()
 
 	literal := ""
 	found := false
-	for ; t.pos < slen ; t.pos++ {
-		if isDelimiter(t.s[t.pos]) {
-			break
+
+	for true {
+		c := t.peekChar(0)
+		if c == 0 {
+			break		// eof
 		}
 
-		switch t.s[t.pos] {
+		if isWhiteSpace(c) {
+			if len(literal) > 0 {
+				break
+			} else {
+				continue	// 来ないはず
+			}
+		}
+
+		switch c {
 		case '(':
 			if literal == "" {
-				t.pos++
+				t.nextChar()
 				return &token{tokenId: tokenLeftParentheses, literal: "("}
 			}
 			found = true
 		case ')':
 			if literal == "" {
-				t.pos++
+				t.nextChar()
 				return &token{tokenId: tokenRightParentheses, literal: ")"}
 			}
 			found = true
 		case '.':
 			if literal == "" {
-				if t.pos == slen - 1 || isDelimiter(t.s[t.pos + 1]) {
+				next := t.peekChar(1)
+				if next == 0 || isWhiteSpace(next) {
 					t.pos++
 					return &token{tokenId: tokenDot, literal: "."}
 				}
@@ -57,22 +109,26 @@ func (t *tokenizer) nextToken() *token {
 		case '"':
 			// TODO escape seq
 			if literal == "" {
-				t.pos++
-				for t.pos < slen && t.s[t.pos] != '"' {
-					literal += string(t.s[t.pos])
-					t.pos++
+				t.nextChar()
+				for true {
+					c := t.nextChar()
+					if c == 0 || c == '"' {
+						break
+					}
+					literal += string(c)
 				}
-				t.pos++
 				return &token{tokenId: tokenString, literal: literal}
 			}
 			found = true
 		default:
-			literal += string(t.s[t.pos])
+			literal += string(c)
 		}
 
 		if (found) {
 			break
 		}
+
+		t.nextChar()
 	}
 
 	if literal == "" {
@@ -87,13 +143,6 @@ func (t *tokenizer) nextToken() *token {
 	return &token{tokenId: tokenSymbol, literal: literal}
 }
 
-func (t *tokenizer) skipSpace() {
-	slen := len(t.s)
-	for t.pos < slen && isDelimiter(t.s[t.pos]) {
-		t.pos++
-	}
-}
-
 func (t *tokenizer) peekToken(offset int) *token {
 	saved := t.pos
 	var token *token
@@ -105,6 +154,6 @@ func (t *tokenizer) peekToken(offset int) *token {
 }
 
 
-func isDelimiter(c byte) bool {
+func isWhiteSpace(c byte) bool {
 	return c == ' ' || c == '\n'
 }

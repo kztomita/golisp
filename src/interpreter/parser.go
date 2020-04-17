@@ -3,10 +3,11 @@ package interpreter
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 func Parse(s string) (node, error) {
-	tk := &tokenizer{s: s, pos: 0}
+	tk := newTokenizer(strings.NewReader(s))
 
 	container := &ContainerNode{}
 

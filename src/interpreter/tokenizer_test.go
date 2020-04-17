@@ -1,6 +1,7 @@
 package interpreter
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -55,10 +56,21 @@ func TestTokenizer(t *testing.T) {
 				{tokenId: tokenRightParentheses, literal: ")"},
 			},
 		},
+		{
+			"(1 2 3 \nfoo)",
+			[]token{
+				{tokenId: tokenLeftParentheses, literal: "("},
+				{tokenId: tokenInt, literal: "1"},
+				{tokenId: tokenInt, literal: "2"},
+				{tokenId: tokenInt, literal: "3"},
+				{tokenId: tokenSymbol, literal: "foo"},
+				{tokenId: tokenRightParentheses, literal: ")"},
+			},
+		},
 	}
 
 	for _, c := range testCases {
-		tk := tokenizer{s: c.expression, pos: 0}
+		tk := newTokenizer(strings.NewReader(c.expression))
 		tokens := []*token{}
 		for true {
 			token := tk.nextToken()
@@ -70,7 +82,7 @@ func TestTokenizer(t *testing.T) {
 		}
 
 		if len(tokens) != len(c.results) {
-			t.Fatalf("Number of tokens is incorrect.")
+			t.Fatalf("Number of tokens is incorrect. Expected: %v, Result: %v.", len(tokens), len(c.results))
 		}
 		for i := range tokens {
 			if tokens[i].tokenId != c.results[i].tokenId ||
@@ -82,7 +94,7 @@ func TestTokenizer(t *testing.T) {
 }
 
 func TestPeekToken(t *testing.T) {
-	tk := tokenizer{s: "(1 2 3 foo)", pos: 0}
+	tk := newTokenizer(strings.NewReader("(1 2 3 foo)"))
 
 	{
 		token := tk.peekToken(1)
