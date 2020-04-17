@@ -43,6 +43,8 @@ func (e *evaluator) Eval(n node) (node, error) {
 				return funcPlus(e, cell.next())
 			case "-":
 				return funcMinus(e, cell.next())
+			case "=":
+				return funcEqual(e, cell.next())
 			case "car":
 				return funcCar(cell.next())
 			case "cdr":
