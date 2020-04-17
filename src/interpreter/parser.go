@@ -26,12 +26,18 @@ func Parse(s string) (node, error) {
 	return container, nil
 }
 
-// io.Readerからexpressionを一つ分解析
-func ParseExpression(rd io.Reader) (node, error) {
-	tk := newTokenizer(rd)
 
-	return readExpression(tk)
+type ReaderParser struct {
+	tk	*tokenizer
 }
+func NewReaderParser(rd io.Reader) *ReaderParser {
+	return &ReaderParser{tk: newTokenizer(rd)}
+}
+// io.Readerからexpressionを一つ分解析
+func (p *ReaderParser) ParseExpression() (node, error) {
+	return readExpression(p.tk)
+}
+
 
 func readExpression(tk *tokenizer) (node, error) {
 	token := tk.nextToken()
