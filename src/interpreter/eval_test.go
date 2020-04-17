@@ -412,3 +412,22 @@ func TestProgn(t *testing.T) {
 		}
 	}
 }
+
+func TestPrint(t *testing.T) {
+	ev := NewEvaluator()
+
+	{
+		// (print (+ 1 2))
+		_, err := ev.Eval(createList([]node{
+			&SymbolNode{name: "print"},
+			createList([]node{
+				&SymbolNode{name: "+"},
+				&IntNode{value: 1},
+				&IntNode{value: 2},
+			}),
+		}))
+		if err != nil {
+			t.Errorf("%v", err)
+		}
+	}
+}
