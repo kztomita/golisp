@@ -105,7 +105,19 @@ func funcSetq(ev *evaluator, c *ConsCell) (node, error) {
 		return nil, err
 	}
 
-	ev.scopeStack[0].symbolTableStack[0][arg0.name] = result
+	scope := ev.topScope()
+	var symTable symbolTable
+	for ; scope != nil ; scope = scope.parent {
+		symTable = scope.topSymbolTable()
+		_, ok := symTable[arg0.name]
+		if ok {
+			break
+		}
+	}
+	if symTable == nil {
+		symTable = ev.scopeStack[0].symbolTableStack[0]
+	}
+	symTable[arg0.name] = result
 
 	return &NilNode{}, nil
 }
