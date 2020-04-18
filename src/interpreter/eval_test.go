@@ -10,10 +10,9 @@ type evalTestCase struct {
 }
 
 func evalTestCases(t *testing.T, testCases []evalTestCase) {
-	ev := NewEvaluator()
-
 	for _, c := range testCases {
 		t.Logf("%v", c.expr.ToString())
+		ev := NewEvaluator()
 		result, err := ev.Eval(c.expr)
 		if err != nil {
 			t.Errorf("%v", err)
