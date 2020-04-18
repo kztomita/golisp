@@ -18,6 +18,7 @@ const (
 	NtSymbol
 	NtString
 	NtFunc
+	NtMacro
 )
 
 type ContainerNode struct {
@@ -94,6 +95,18 @@ func (n *FuncNode) GetNodeType() int {
 func (n *FuncNode) ToString() string {
 	// TODO escape
 	return "function"
+}
+
+type MacroNode struct {
+	parameters	[]*SymbolNode	// 仮引数名のsymbolNode
+	body		*ConsCell
+	scope		*lexicalScope
+}
+func (n *MacroNode) GetNodeType() int {
+	return NtMacro
+}
+func (n *MacroNode) ToString() string {
+	return "macro"
 }
 
 type ConsCell struct {
