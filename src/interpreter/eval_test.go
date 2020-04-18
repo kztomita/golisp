@@ -254,31 +254,30 @@ func TestEvalOr(t *testing.T) {
 }
 
 func TestEvalSetq(t *testing.T) {
-	ev := NewEvaluator()
-
-	// (setq foo 100)
-	result, err := ev.Eval(&ConsCell{
-		car: &SymbolNode{name: "setq"},
-		cdr: &ConsCell{
-			car: &SymbolNode{name: "foo"},
-			cdr: &ConsCell{
-				car: &IntNode{value: 100},
-				cdr: &NilNode{},
+	testCases := []evalTestCase{
+		{
+			&ContainerNode{
+				nodes: []node{
+					// (setq foo 100)
+					&ConsCell{
+						car: &SymbolNode{name: "setq"},
+						cdr: &ConsCell{
+							car: &SymbolNode{name: "foo"},
+							cdr: &ConsCell{
+								car: &IntNode{value: 100},
+								cdr: &NilNode{},
+							},
+						},
+					},
+					// foo
+					&SymbolNode{name: "foo"},
+				},
 			},
+			"100",
 		},
-	})
-	if err != nil {
-		t.Errorf("%v", err)
-	} else {
-		t.Logf("%v", result.ToString());
 	}
 
-	result, err = ev.Eval(&SymbolNode{name: "foo"})
-	if err != nil {
-		t.Errorf("%v", err)
-	} else {
-		t.Logf("%v", result.ToString());
-	}
+	evalTestCases(t, testCases)
 }
 
 func TestFunc(t *testing.T) {
