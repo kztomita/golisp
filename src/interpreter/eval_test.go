@@ -4,11 +4,30 @@ import (
 	"testing"
 )
 
+type evalTestCase struct {
+	expr        node
+	expected    string
+}
+
+func evalTestCases(t *testing.T, testCases []evalTestCase) {
+	ev := NewEvaluator()
+
+	for _, c := range testCases {
+		t.Logf("%v", c.expr.ToString())
+		result, err := ev.Eval(c.expr)
+		if err != nil {
+			t.Errorf("%v", err)
+			continue
+		}
+		if result.ToString() != c.expected {
+			t.Errorf("Result: %v, Expected: %v", result.ToString(), c.expected)
+			continue
+		}
+	}
+}
+
 func TestEvalPlus(t *testing.T) {
-	testCases := []struct{
-		expr        node
-		expected    string
-	}{
+	testCases := []evalTestCase{
 		{
 			&ConsCell{
 				car: &SymbolNode{name: "+"},
@@ -46,27 +65,11 @@ func TestEvalPlus(t *testing.T) {
 		},
 	}
 
-	ev := NewEvaluator()
-
-	for _, c := range testCases {
-		t.Logf("%v", c.expr.ToString());
-		result, err := ev.Eval(c.expr)
-		if err != nil {
-			t.Errorf("%v", err)
-			continue
-		}
-		if result.ToString() != c.expected {
-			t.Errorf("Result: %v, Expected: %v", result.ToString(), c.expected)
-			continue
-		}
-	}
+	evalTestCases(t, testCases)
 }
 
 func TestEvalMinus(t *testing.T) {
-	testCases := []struct{
-		expr        node
-		expected    string
-	}{
+	testCases := []evalTestCase{
 		{
 			createList([]node{
 				&SymbolNode{name: "-"},
@@ -86,26 +89,11 @@ func TestEvalMinus(t *testing.T) {
 		},
 	}
 
-	ev := NewEvaluator()
-
-	for _, c := range testCases {
-		result, err := ev.Eval(c.expr)
-		if err != nil {
-			t.Errorf("%v", err)
-			continue
-		}
-		if result.ToString() != c.expected {
-			t.Errorf("Result: %v, Expected: %v", result.ToString(), c.expected)
-			continue
-		}
-	}
+	evalTestCases(t, testCases)
 }
 
 func TestEvalEqual(t *testing.T) {
-	testCases := []struct{
-		expr        node
-		expected    string
-	}{
+	testCases := []evalTestCase{
 		{
 			createList([]node{
 				&SymbolNode{name: "="},
@@ -141,20 +129,7 @@ func TestEvalEqual(t *testing.T) {
 			"nil",
 		},
 	}
-
-	ev := NewEvaluator()
-
-	for _, c := range testCases {
-		result, err := ev.Eval(c.expr)
-		if err != nil {
-			t.Errorf("%v", err)
-			continue
-		}
-		if result.ToString() != c.expected {
-			t.Errorf("Result: %v, Expected: %v", result.ToString(), c.expected)
-			continue
-		}
-	}
+	evalTestCases(t, testCases)
 }
 
 func TestEvalCar(t *testing.T) {
@@ -222,10 +197,7 @@ func TestEvalCdr(t *testing.T) {
 }
 
 func TestEvalAnd(t *testing.T) {
-	testCases := []struct{
-		expr        node
-		expected    string
-	}{
+	testCases := []evalTestCase{
 		{
 			createList([]node{
 				&SymbolNode{name: "and"},
@@ -250,26 +222,11 @@ func TestEvalAnd(t *testing.T) {
 		},
 	}
 
-	ev := NewEvaluator()
-
-	for _, c := range testCases {
-		result, err := ev.Eval(c.expr)
-		if err != nil {
-			t.Errorf("%v", err)
-			continue
-		}
-		if result.ToString() != c.expected {
-			t.Errorf("Result: %v, Expected: %v", result.ToString(), c.expected)
-			continue
-		}
-	}
+	evalTestCases(t, testCases)
 }
 
 func TestEvalOr(t *testing.T) {
-	testCases := []struct{
-		expr        node
-		expected    string
-	}{
+	testCases := []evalTestCase{
 		{
 			createList([]node{
 				&SymbolNode{name: "or"},
@@ -294,19 +251,7 @@ func TestEvalOr(t *testing.T) {
 		},
 	}
 
-	ev := NewEvaluator()
-
-	for _, c := range testCases {
-		result, err := ev.Eval(c.expr)
-		if err != nil {
-			t.Errorf("%v", err)
-			continue
-		}
-		if result.ToString() != c.expected {
-			t.Errorf("Result: %v, Expected: %v", result.ToString(), c.expected)
-			continue
-		}
-	}
+	evalTestCases(t, testCases)
 }
 
 func TestEvalSetq(t *testing.T) {
@@ -609,10 +554,7 @@ func TestEvalPrint(t *testing.T) {
 }
 
 func TestEvalQuote(t *testing.T) {
-	testCases := []struct{
-		expr        node
-		expected    string
-	}{
+	testCases := []evalTestCase{
 		{
 			// (quote (+ 1 2))
 			createList([]node{
@@ -627,19 +569,7 @@ func TestEvalQuote(t *testing.T) {
 		},
 	}
 
-	ev := NewEvaluator()
-
-	for _, c := range testCases {
-		result, err := ev.Eval(c.expr)
-		if err != nil {
-			t.Errorf("%v", err)
-			continue
-		}
-		if result.ToString() != c.expected {
-			t.Errorf("Result: %v, Expected: %v", result.ToString(), c.expected)
-			continue
-		}
-	}
+	evalTestCases(t, testCases)
 }
 
 func TestEvalIf(t *testing.T) {
