@@ -608,6 +608,40 @@ func TestEvalPrint(t *testing.T) {
 	}
 }
 
+func TestEvalQuote(t *testing.T) {
+	testCases := []struct{
+		expr        node
+		expected    string
+	}{
+		{
+			// (quote (+ 1 2))
+			createList([]node{
+				&SymbolNode{name: "quote"},
+				createList([]node{
+					&SymbolNode{name: "+"},
+					&IntNode{value: 1},
+					&IntNode{value: 2},
+				}),
+			}),
+			"(+ 1 2)",
+		},
+	}
+
+	ev := NewEvaluator()
+
+	for _, c := range testCases {
+		result, err := ev.Eval(c.expr)
+		if err != nil {
+			t.Errorf("%v", err)
+			continue
+		}
+		if result.ToString() != c.expected {
+			t.Errorf("Result: %v, Expected: %v", result.ToString(), c.expected)
+			continue
+		}
+	}
+}
+
 func TestEvalIf(t *testing.T) {
 	ev := NewEvaluator()
 

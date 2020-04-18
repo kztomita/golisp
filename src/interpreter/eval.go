@@ -63,6 +63,8 @@ func (e *evaluator) Eval(n node) (node, error) {
 				return funcProgn(e, cell.next())
 			case "print":
 				return funcPrint(e, cell.next())
+			case "quote":
+				return funcQuote(e, cell.next())
 			case "if":
 				return funcIf(e, cell.next())
 			default:
