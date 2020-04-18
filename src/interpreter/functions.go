@@ -6,7 +6,7 @@ import (
 
 // (car list)
 // Ex. (car '(1 2 3))
-func funcCar(c *ConsCell) (node, error) {
+func funcCar(ev *evaluator, c *ConsCell) (node, error) {
 	if c == nil {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
@@ -26,7 +26,7 @@ func funcCar(c *ConsCell) (node, error) {
 
 // (cdr list)
 // Ex. (cdr '(1 2 3))
-func funcCdr(c *ConsCell) (node, error) {
+func funcCdr(ev *evaluator, c *ConsCell) (node, error) {
 	if c == nil {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}

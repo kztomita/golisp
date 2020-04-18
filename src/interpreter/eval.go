@@ -46,9 +46,9 @@ func (e *evaluator) Eval(n node) (node, error) {
 			case "=":
 				return funcEqual(e, cell.next())
 			case "car":
-				return funcCar(cell.next())
+				return funcCar(e, cell.next())
 			case "cdr":
-				return funcCdr(cell.next())
+				return funcCdr(e, cell.next())
 			case "and":
 				return funcAnd(e, cell.next())
 			case "or":
