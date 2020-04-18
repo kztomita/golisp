@@ -13,6 +13,7 @@ const (
 	tokenSymbol
 	tokenString
 	tokenDot
+	tokenQuote
 )
 
 type token struct {
@@ -118,6 +119,12 @@ func (t *tokenizer) nextToken() *token {
 					literal += string(c)
 				}
 				return &token{tokenId: tokenString, literal: literal}
+			}
+			found = true
+		case '\'':
+			if literal == "" {
+				t.nextChar()
+				return &token{tokenId: tokenQuote, literal: "'"}
 			}
 			found = true
 		default:

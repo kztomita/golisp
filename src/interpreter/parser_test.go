@@ -31,6 +31,16 @@ func TestParser(t *testing.T) {
 			false,
 		},
 		{
+			`'foo`,
+			`(quote foo)`,
+			false,
+		},
+		{
+			`('foo '(1 2) 3)`,
+			`((quote foo) (quote (1 2)) 3)`,
+			false,
+		},
+		{
 			`)`,
 			"",
 			true,

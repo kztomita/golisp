@@ -50,6 +50,8 @@ func readExpression(tk *tokenizer) (node, error) {
 		return readList(tk)
 	case tokenInt, tokenSymbol, tokenString:
 		return createLeafNode(token)
+	case tokenQuote:
+		return quoteNextNode(tk)
 	default:
 		return nil, fmt.Errorf("xxxxxx")
 	}
@@ -72,6 +74,21 @@ func createLeafNode(token *token) (node, error) {
 	}
 }
 
+func quoteNextNode(tk *tokenizer) (node, error) {
+	nd, err := readExpression(tk)
+	if err != nil {
+		return nil, err
+	}
+	if nd == nil {
+		return nil, fmt.Errorf("Invalid quote literal.")
+	}
+
+	return createList([]node{
+		&SymbolNode{name: "quote"},
+		nd,
+	}), nil
+}
+
 func readList(tk *tokenizer) (node, error) {
 
 	nodes := []node{}
@@ -83,7 +100,7 @@ func readList(tk *tokenizer) (node, error) {
 		if token == nil {
 			return nil, fmt.Errorf("list is not terminated.")
 		}
-	
+
 		var nd node
 		switch (token.tokenId) {
 		case tokenLeftParentheses:
@@ -117,6 +134,12 @@ func readList(tk *tokenizer) (node, error) {
 		case tokenInt, tokenSymbol, tokenString:
 			var err error
 			nd, err = createLeafNode(token)
+			if err != nil {
+				return nil, err
+			}
+		case tokenQuote:
+			var err error
+			nd, err = quoteNextNode(tk)
 			if err != nil {
 				return nil, err
 			}
