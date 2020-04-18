@@ -3,6 +3,26 @@ package interpreter
 import (
 	"fmt"
 )
+var embeddedFunctions map[string]func(ev *evaluator, c *ConsCell)(node, error)
+
+func init() {
+	embeddedFunctions = map[string]func(ev *evaluator, c *ConsCell)(node, error){
+		"+": funcPlus,
+		"-": funcMinus,
+		"=": funcEqual,
+		"car": funcCar,
+		"cdr": funcCdr,
+		"and": funcAnd,
+		"or": funcOr,
+		"setq": funcSetq,
+		"defun": funcDefun,
+		"let": funcLet,
+		"progn": funcProgn,
+		"print": funcPrint,
+		"quote": funcQuote,
+		"if": funcIf,
+	}
+}
 
 type evaluator struct {
 	scopeStack	[]*lexicalScope
@@ -38,36 +58,10 @@ func (e *evaluator) Eval(n node) (node, error) {
 		if cell.car.GetNodeType() == NtSymbol {
 			symbol := cell.car.(*SymbolNode)
 			funcName := symbol.name
-			switch (funcName) {
-			case "+":
-				return funcPlus(e, cell.next())
-			case "-":
-				return funcMinus(e, cell.next())
-			case "=":
-				return funcEqual(e, cell.next())
-			case "car":
-				return funcCar(e, cell.next())
-			case "cdr":
-				return funcCdr(e, cell.next())
-			case "and":
-				return funcAnd(e, cell.next())
-			case "or":
-				return funcOr(e, cell.next())
-			case "setq":
-				return funcSetq(e, cell.next())
-			case "defun":
-				return funcDefun(e, cell.next())
-			case "let":
-				return funcLet(e, cell.next())
-			case "progn":
-				return funcProgn(e, cell.next())
-			case "print":
-				return funcPrint(e, cell.next())
-			case "quote":
-				return funcQuote(e, cell.next())
-			case "if":
-				return funcIf(e, cell.next())
-			default:
+			f, ok := embeddedFunctions[funcName]
+			if ok {
+				return f(e, cell.next())
+			} else {
 				value, ok := e.topScope().lookupSymbol(funcName)
 				if !ok {
 					return nil, fmt.Errorf("%v not found.", symbol.name)
@@ -79,13 +73,12 @@ func (e *evaluator) Eval(n node) (node, error) {
 
 				arguments := []node{}
 				acell := cell.next()
-				for acell != nil {
+				for ; acell != nil ; acell = acell.next() {
 					argNode, err := e.Eval(acell.car)
 					if err != nil {
 						return nil, err
 					}
 					arguments = append(arguments, argNode)
-					acell = acell.next()
 				}
 
 				// evaluatorに関数のlexicalScopeを積んでscopeを切り替え。

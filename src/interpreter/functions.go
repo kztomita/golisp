@@ -336,7 +336,7 @@ func funcIf(ev *evaluator, c *ConsCell) (node, error) {
 	return result, nil
 }
 
-func funcPlus(ev *evaluator, c *ConsCell) (*IntNode, error) {
+func funcPlus(ev *evaluator, c *ConsCell) (node, error) {
 	result := 0		// XXX 取り敢えずintのみ対応
 
 	if c != nil && !c.isList() {
@@ -361,7 +361,7 @@ func funcPlus(ev *evaluator, c *ConsCell) (*IntNode, error) {
 	return &IntNode{value: result}, nil
 }
 
-func funcMinus(ev *evaluator, c *ConsCell) (*IntNode, error) {
+func funcMinus(ev *evaluator, c *ConsCell) (node, error) {
 	if c == nil {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
