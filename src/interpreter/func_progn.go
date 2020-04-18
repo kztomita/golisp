@@ -1,9 +1,5 @@
 package interpreter
 
-import (
-	"fmt"
-)
-
 func funcProgn(ev *evaluator, c *ConsCell) (node, error) {
 	var lastResult node
 	lastResult = &NilNode{}
