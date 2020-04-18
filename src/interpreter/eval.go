@@ -20,6 +20,7 @@ func init() {
 		"progn": funcProgn,
 		"print": funcPrint,
 		"quote": funcQuote,
+		"list": funcList,
 		"if": funcIf,
 	}
 }

@@ -572,6 +572,27 @@ func TestEvalQuote(t *testing.T) {
 	evalTestCases(t, testCases)
 }
 
+func TestEvalList(t *testing.T) {
+	testCases := []evalTestCase{
+		{
+			// (list (+ 1 2) 4 5)
+			createList([]node{
+				&SymbolNode{name: "list"},
+				createList([]node{
+					&SymbolNode{name: "+"},
+					&IntNode{value: 1},
+					&IntNode{value: 2},
+				}),
+				&IntNode{value: 4},
+				&IntNode{value: 5},
+			}),
+			"(3 4 5)",
+		},
+	}
+
+	evalTestCases(t, testCases)
+}
+
 func TestEvalIf(t *testing.T) {
 	ev := NewEvaluator()
 
