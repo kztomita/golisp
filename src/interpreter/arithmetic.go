@@ -68,3 +68,58 @@ func arithmeticOp(op string, a node, b node) (node, error) {
 		return nil, fmt.Errorf("Unknown operation.")
 	}
 }
+
+func arithmeticComparisonOp(op string, a node, b node) (bool, error) {
+	if !isNumberNode(a) {
+		return false, fmt.Errorf("a is not a number.")
+	}
+	if !isNumberNode(b) {
+		return false, fmt.Errorf("b is not a number.")
+	}
+
+	aIntNode, aOk := a.(*IntNode)
+	bIntNode, bOk := b.(*IntNode)
+	if aOk && bOk {
+		switch op {
+		case "==":
+			if aIntNode.value == bIntNode.value {
+				return true, nil
+			} else {
+				return false, nil
+			}
+		default:
+			return false, fmt.Errorf("Unknown operation.")
+		}
+	}
+
+	var aFloat float64
+	switch nd := a.(type) {
+	case *IntNode:
+		aFloat = float64(nd.value)
+	case *FloatNode:
+		aFloat = nd.value
+	default:
+		return false, fmt.Errorf("Logic Error. Unknown type.")
+	}
+
+	var bFloat float64
+	switch nd := b.(type) {
+	case *IntNode:
+		bFloat = float64(nd.value)
+	case *FloatNode:
+		bFloat = nd.value
+	default:
+		return false, fmt.Errorf("Logic Error. Unknown type.")
+	}
+
+	switch op {
+	case "==":
+		if aFloat == bFloat {
+			return true, nil
+		} else {
+			return false, nil
+		}
+	default:
+		return false, fmt.Errorf("Unknown operation.")
+	}
+}

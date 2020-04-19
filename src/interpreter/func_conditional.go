@@ -17,13 +17,9 @@ func funcEqual(ev *evaluator, c *ConsCell) (node, error) {
 
 	args := createSliceFromList(c)
 
-	first, err := ev.Eval(args[0])
+	prev, err := ev.Eval(args[0])
 	if err != nil {
 		return nil, err
-	}
-	firstInt, ok := first.(*IntNode)
-	if !ok {
-		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
 	args = args[1:len(args)]
@@ -33,11 +29,11 @@ func funcEqual(ev *evaluator, c *ConsCell) (node, error) {
 		if err != nil {
 			return nil, err
 		}
-		intResult, ok := element.(*IntNode)
-		if !ok {
-			return nil, fmt.Errorf("not integer element")
+		result, err := arithmeticComparisonOp("==", prev, element)
+		if err != nil {
+			return nil, err
 		}
-		if firstInt.value != intResult.value {
+		if !result {
 			return &NilNode{}, nil
 		}
 	}

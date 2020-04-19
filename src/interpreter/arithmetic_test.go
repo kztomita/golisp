@@ -86,3 +86,49 @@ func TestArithmeticOp(t *testing.T) {
 		}
 	}
 }
+
+func TestArithmeticComparisonOp(t *testing.T) {
+	testCases := []struct{
+		op			string
+		a			node
+		b			node
+		expected	bool
+	}{
+		{
+			"==",
+			&IntNode{value: 1},
+			&IntNode{value: 1},
+			true,
+		},
+		{
+			"==",
+			&IntNode{value: 1},
+			&IntNode{value: 2},
+			false,
+		},
+		{
+			"==",
+			&IntNode{value: 1},
+			&FloatNode{value: 1.0},
+			true,
+		},
+		{
+			"==",
+			&FloatNode{value: 1.0},
+			&FloatNode{value: 1.0},
+			true,
+		},
+	}
+
+	for _, c := range testCases {
+		result, err := arithmeticComparisonOp(c.op, c.a, c.b)
+		if err != nil {
+			t.Errorf("%v", err)
+			continue
+		}
+		if result != c.expected {
+			t.Errorf("Result: %v, Expected: %v", result, c.expected)
+			continue
+		}
+	}
+}

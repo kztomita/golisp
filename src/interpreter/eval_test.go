@@ -251,6 +251,15 @@ func TestEvalEqual(t *testing.T) {
 			}),
 			"nil",
 		},
+		{
+			createList([]node{
+				&SymbolNode{name: "="},
+				&IntNode{value: 6},
+				&IntNode{value: 6},
+				&FloatNode{value: 6.0},
+			}),
+			"t",
+		},
 	}
 	evalTestCases(t, testCases)
 }
