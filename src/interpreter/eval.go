@@ -12,6 +12,7 @@ func init() {
 		"*": funcMultiply,
 		"/": funcDivide,
 		"=": funcEqual,
+		"/=": funcNotEqual,
 		"car": funcCar,
 		"cdr": funcCdr,
 		"and": funcAnd,

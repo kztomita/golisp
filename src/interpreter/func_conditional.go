@@ -41,6 +41,34 @@ func funcEqual(ev *evaluator, c *ConsCell) (node, error) {
 	return &TrueNode{}, nil
 }
 
+func funcNotEqual(ev *evaluator, c *ConsCell) (node, error) {
+	if c == nil {
+		return nil, fmt.Errorf("Wrong number of arguments.")
+	}
+	if !c.isList() {
+		return nil, fmt.Errorf("Wrong type argument.")
+	}
+	if c.length() < 2 {
+		return nil, fmt.Errorf("Wrong number of arguments.")
+	}
+
+	args := createSliceFromList(c)
+
+	for pivot := 0 ; pivot < len(args) - 1 ; pivot++ {
+		for i := pivot + 1 ; i < len(args) ; i++ {
+			result, err := arithmeticComparisonOp("==", args[pivot], args[i])
+			if err != nil {
+				return nil, err
+			}
+			if result {
+				return &NilNode{}, nil
+			}
+		}
+	}
+
+	return &TrueNode{}, nil
+}
+
 func funcAnd(ev *evaluator, c *ConsCell) (node, error) {
 	if c != nil && !c.isList() {
 		return nil, fmt.Errorf("Wrong type argument.")
