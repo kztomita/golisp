@@ -13,6 +13,7 @@ func init() {
 		"/": funcDivide,
 		"=": funcEqual,
 		"/=": funcNotEqual,
+		">": funcGreaterThan,
 		"car": funcCar,
 		"cdr": funcCdr,
 		"and": funcAnd,

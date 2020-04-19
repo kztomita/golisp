@@ -4,6 +4,31 @@ import (
 	"fmt"
 )
 
+func compareAdjacentArguments(ev *evaluator, args []node, op string) (node, error) {
+	prev, err := ev.Eval(args[0])
+	if err != nil {
+		return nil, err
+	}
+
+	args = args[1:len(args)]
+
+	for _, arg := range args {
+		element, err := ev.Eval(arg)
+		if err != nil {
+			return nil, err
+		}
+		result, err := arithmeticComparisonOp(op, prev, element)
+		if err != nil {
+			return nil, err
+		}
+		if !result {
+			return &NilNode{}, nil
+		}
+	}
+
+	return &TrueNode{}, nil
+}
+
 func funcEqual(ev *evaluator, c *ConsCell) (node, error) {
 	if c == nil {
 		return nil, fmt.Errorf("Wrong number of arguments.")
@@ -17,28 +42,7 @@ func funcEqual(ev *evaluator, c *ConsCell) (node, error) {
 
 	args := createSliceFromList(c)
 
-	prev, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
-
-	args = args[1:len(args)]
-
-	for _, arg := range args {
-		element, err := ev.Eval(arg)
-		if err != nil {
-			return nil, err
-		}
-		result, err := arithmeticComparisonOp("==", prev, element)
-		if err != nil {
-			return nil, err
-		}
-		if !result {
-			return &NilNode{}, nil
-		}
-	}
-
-	return &TrueNode{}, nil
+	return compareAdjacentArguments(ev, args, "==")
 }
 
 func funcNotEqual(ev *evaluator, c *ConsCell) (node, error) {
@@ -67,6 +71,22 @@ func funcNotEqual(ev *evaluator, c *ConsCell) (node, error) {
 	}
 
 	return &TrueNode{}, nil
+}
+
+func funcGreaterThan(ev *evaluator, c *ConsCell) (node, error) {
+	if c == nil {
+		return nil, fmt.Errorf("Wrong number of arguments.")
+	}
+	if !c.isList() {
+		return nil, fmt.Errorf("Wrong type argument.")
+	}
+	if c.length() < 2 {
+		return nil, fmt.Errorf("Wrong number of arguments.")
+	}
+
+	args := createSliceFromList(c)
+
+	return compareAdjacentArguments(ev, args, ">")
 }
 
 func funcAnd(ev *evaluator, c *ConsCell) (node, error) {
