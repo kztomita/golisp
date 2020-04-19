@@ -352,6 +352,150 @@ func TestEvalGreaterThan(t *testing.T) {
 	evalTestCases(t, testCases)
 }
 
+func TestEvalGreaterThanOrEqualTo(t *testing.T) {
+	testCases := []evalTestCase{
+		{
+			createList([]node{
+				&SymbolNode{name: ">="},
+				&IntNode{value: 3},
+				&IntNode{value: 2},
+			}),
+			"t",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: ">="},
+				&IntNode{value: 3},
+				&IntNode{value: 3},
+			}),
+			"t",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: ">="},
+				&IntNode{value: 2},
+				&IntNode{value: 3},
+			}),
+			"nil",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: ">="},
+				&IntNode{value: 3},
+				&IntNode{value: 2},
+				&IntNode{value: 2},
+			}),
+			"t",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: ">="},
+				&IntNode{value: 3},
+				&IntNode{value: 2},
+				&IntNode{value: 3},
+			}),
+			"nil",
+		},
+	}
+	evalTestCases(t, testCases)
+}
+
+func TestEvalLessThan(t *testing.T) {
+	testCases := []evalTestCase{
+		{
+			createList([]node{
+				&SymbolNode{name: "<"},
+				&IntNode{value: 2},
+				&IntNode{value: 3},
+			}),
+			"t",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "<"},
+				&IntNode{value: 3},
+				&IntNode{value: 3},
+			}),
+			"nil",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "<"},
+				&IntNode{value: 3},
+				&IntNode{value: 2},
+			}),
+			"nil",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "<"},
+				&IntNode{value: 1},
+				&IntNode{value: 2},
+				&IntNode{value: 3},
+			}),
+			"t",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "<"},
+				&IntNode{value: 3},
+				&IntNode{value: 2},
+				&IntNode{value: 3},
+			}),
+			"nil",
+		},
+	}
+	evalTestCases(t, testCases)
+}
+
+func TestEvalLessThanOrEqualTo(t *testing.T) {
+	testCases := []evalTestCase{
+		{
+			createList([]node{
+				&SymbolNode{name: "<="},
+				&IntNode{value: 2},
+				&IntNode{value: 3},
+			}),
+			"t",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "<="},
+				&IntNode{value: 3},
+				&IntNode{value: 3},
+			}),
+			"t",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "<="},
+				&IntNode{value: 3},
+				&IntNode{value: 2},
+			}),
+			"nil",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "<="},
+				&IntNode{value: 1},
+				&IntNode{value: 2},
+				&IntNode{value: 2},
+			}),
+			"t",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "<="},
+				&IntNode{value: 1},
+				&IntNode{value: 2},
+				&IntNode{value: 1},
+			}),
+			"nil",
+		},
+	}
+	evalTestCases(t, testCases)
+}
+
 func TestEvalCar(t *testing.T) {
 	ev := NewEvaluator()
 

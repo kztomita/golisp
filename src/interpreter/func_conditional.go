@@ -24,6 +24,7 @@ func compareAdjacentArguments(ev *evaluator, args []node, op string) (node, erro
 		if !result {
 			return &NilNode{}, nil
 		}
+		prev = element
 	}
 
 	return &TrueNode{}, nil
@@ -87,6 +88,54 @@ func funcGreaterThan(ev *evaluator, c *ConsCell) (node, error) {
 	args := createSliceFromList(c)
 
 	return compareAdjacentArguments(ev, args, ">")
+}
+
+func funcGreaterThanOrEqualTo(ev *evaluator, c *ConsCell) (node, error) {
+	if c == nil {
+		return nil, fmt.Errorf("Wrong number of arguments.")
+	}
+	if !c.isList() {
+		return nil, fmt.Errorf("Wrong type argument.")
+	}
+	if c.length() < 2 {
+		return nil, fmt.Errorf("Wrong number of arguments.")
+	}
+
+	args := createSliceFromList(c)
+
+	return compareAdjacentArguments(ev, args, ">=")
+}
+
+func funcLessThan(ev *evaluator, c *ConsCell) (node, error) {
+	if c == nil {
+		return nil, fmt.Errorf("Wrong number of arguments.")
+	}
+	if !c.isList() {
+		return nil, fmt.Errorf("Wrong type argument.")
+	}
+	if c.length() < 2 {
+		return nil, fmt.Errorf("Wrong number of arguments.")
+	}
+
+	args := createSliceFromList(c)
+
+	return compareAdjacentArguments(ev, args, "<")
+}
+
+func funcLessThanOrEqualTo(ev *evaluator, c *ConsCell) (node, error) {
+	if c == nil {
+		return nil, fmt.Errorf("Wrong number of arguments.")
+	}
+	if !c.isList() {
+		return nil, fmt.Errorf("Wrong type argument.")
+	}
+	if c.length() < 2 {
+		return nil, fmt.Errorf("Wrong number of arguments.")
+	}
+
+	args := createSliceFromList(c)
+
+	return compareAdjacentArguments(ev, args, "<=")
 }
 
 func funcAnd(ev *evaluator, c *ConsCell) (node, error) {
