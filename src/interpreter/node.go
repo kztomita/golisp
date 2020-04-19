@@ -208,3 +208,12 @@ func (c *ConsCell) length() int {
 	return length
 }
 
+func isNumberNode(n node) bool {
+	switch n.(type) {
+	case *IntNode, *FloatNode:
+		return true
+	default:
+		return false
+	}
+}
+

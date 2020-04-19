@@ -4,15 +4,6 @@ import (
 	"fmt"
 )
 
-func isNumberNode(n node) bool {
-	switch n.(type) {
-	case *IntNode, *FloatNode:
-		return true
-	default:
-		return false
-	}
-}
-
 func arithmeticOp(op string, a node, b node) (node, error) {
 	if !isNumberNode(a) {
 		return nil, fmt.Errorf("a is not a number.")
