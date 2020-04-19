@@ -118,6 +118,90 @@ func TestArithmeticComparisonOp(t *testing.T) {
 			&FloatNode{value: 1.0},
 			true,
 		},
+		{
+			"!=",
+			&IntNode{value: 1},
+			&IntNode{value: 1},
+			false,
+		},
+		{
+			"!=",
+			&IntNode{value: 1},
+			&IntNode{value: 2},
+			true,
+		},
+		{
+			"<",
+			&IntNode{value: 1},
+			&IntNode{value: 2},
+			true,
+		},
+		{
+			"<",
+			&IntNode{value: 2},
+			&IntNode{value: 1},
+			false,
+		},
+		{
+			"<",
+			&IntNode{value: 2},
+			&IntNode{value: 2},
+			false,
+		},
+		{
+			"<=",
+			&IntNode{value: 1},
+			&IntNode{value: 2},
+			true,
+		},
+		{
+			"<=",
+			&IntNode{value: 2},
+			&IntNode{value: 1},
+			false,
+		},
+		{
+			"<=",
+			&IntNode{value: 2},
+			&IntNode{value: 2},
+			true,
+		},
+		{
+			">",
+			&IntNode{value: 1},
+			&IntNode{value: 2},
+			false,
+		},
+		{
+			">",
+			&IntNode{value: 2},
+			&IntNode{value: 1},
+			true,
+		},
+		{
+			">",
+			&IntNode{value: 2},
+			&IntNode{value: 2},
+			false,
+		},
+		{
+			">=",
+			&IntNode{value: 1},
+			&IntNode{value: 2},
+			false,
+		},
+		{
+			">=",
+			&IntNode{value: 2},
+			&IntNode{value: 1},
+			true,
+		},
+		{
+			">=",
+			&IntNode{value: 2},
+			&IntNode{value: 2},
+			true,
+		},
 	}
 
 	for _, c := range testCases {

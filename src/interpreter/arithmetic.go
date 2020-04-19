@@ -77,12 +77,49 @@ func arithmeticComparisonOp(op string, a node, b node) (bool, error) {
 		return false, fmt.Errorf("b is not a number.")
 	}
 
+	switch op {
+	case "!=":
+		result, err := arithmeticComparisonOp("==", a, b)
+		if err != nil {
+			return false, nil
+		}
+		return !result, nil
+	case "<=":
+		result, err := arithmeticComparisonOp("==", a, b)
+		if err != nil {
+			return false, nil
+		}
+		result2, err2 := arithmeticComparisonOp("<", a, b)
+		if err2 != nil {
+			return false, nil
+		}
+		return (result || result2), nil
+	case ">":
+		result, err := arithmeticComparisonOp("<=", a, b)
+		if err != nil {
+			return false, nil
+		}
+		return !result, nil
+	case ">=":
+		result, err := arithmeticComparisonOp("<", a, b)
+		if err != nil {
+			return false, nil
+		}
+		return !result, nil
+	}
+
 	aIntNode, aOk := a.(*IntNode)
 	bIntNode, bOk := b.(*IntNode)
 	if aOk && bOk {
 		switch op {
 		case "==":
 			if aIntNode.value == bIntNode.value {
+				return true, nil
+			} else {
+				return false, nil
+			}
+		case "<":
+			if aIntNode.value < bIntNode.value {
 				return true, nil
 			} else {
 				return false, nil
@@ -115,6 +152,12 @@ func arithmeticComparisonOp(op string, a node, b node) (bool, error) {
 	switch op {
 	case "==":
 		if aFloat == bFloat {
+			return true, nil
+		} else {
+			return false, nil
+		}
+	case "<":
+		if aFloat < bFloat {
 			return true, nil
 		} else {
 			return false, nil
