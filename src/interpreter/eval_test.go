@@ -25,8 +25,15 @@ func evalTestCases(t *testing.T, testCases []evalTestCase) {
 	}
 }
 
-func TestEvalPlus(t *testing.T) {
+func TestEvalAdd(t *testing.T) {
 	testCases := []evalTestCase{
+		{
+			&ConsCell{
+				car: &SymbolNode{name: "+"},
+				cdr: &NilNode{},
+			},
+			"0",
+		},
 		{
 			&ConsCell{
 				car: &SymbolNode{name: "+"},
@@ -62,13 +69,33 @@ func TestEvalPlus(t *testing.T) {
 			},
 			"6",
 		},
+		{
+			&ConsCell{
+				car: &SymbolNode{name: "+"},
+				cdr: &ConsCell{
+					car: &IntNode{value: 1},
+					cdr: &ConsCell{
+						car: &FloatNode{value: 2.5},
+						cdr: &NilNode{},
+					},
+				},
+			},
+			"3.5",
+		},
 	}
 
 	evalTestCases(t, testCases)
 }
 
-func TestEvalMinus(t *testing.T) {
+func TestEvalSubtract(t *testing.T) {
 	testCases := []evalTestCase{
+		{
+			createList([]node{
+				&SymbolNode{name: "-"},
+				&IntNode{value: 3},
+			}),
+			"-3",
+		},
 		{
 			createList([]node{
 				&SymbolNode{name: "-"},
@@ -85,6 +112,14 @@ func TestEvalMinus(t *testing.T) {
 				&IntNode{value: 1},
 			}),
 			"2",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "-"},
+				&IntNode{value: 3},
+				&FloatNode{value: 0.5},
+			}),
+			"2.5",
 		},
 	}
 

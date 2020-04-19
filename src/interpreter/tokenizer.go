@@ -10,6 +10,7 @@ const (
 	tokenLeftParentheses int = iota
 	tokenRightParentheses
 	tokenInt
+	tokenFloat
 	tokenSymbol
 	tokenString
 	tokenDot
@@ -107,6 +108,7 @@ func (t *tokenizer) nextToken() *token {
 					return &token{tokenId: tokenDot, literal: "."}
 				}
 			}
+			literal += string(c)
 		case '"':
 			// TODO escape seq
 			if literal == "" {
@@ -145,6 +147,11 @@ func (t *tokenizer) nextToken() *token {
 	matched, err := regexp.MatchString(`^(\+|-|)\d+$`, literal)
 	if err == nil && matched {
 		return &token{tokenId: tokenInt, literal: literal}
+	}
+	// TODO exponential
+	matched, err = regexp.MatchString(`^(\+|-|)(\d+\.\d+|\.\d+|\d+.)$`, literal)
+	if err == nil && matched {
+		return &token{tokenId: tokenFloat, literal: literal}
 	}
 
 	return &token{tokenId: tokenSymbol, literal: literal}

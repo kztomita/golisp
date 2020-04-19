@@ -48,7 +48,7 @@ func readExpression(tk *tokenizer) (node, error) {
 	switch (token.tokenId) {
 	case tokenLeftParentheses:
 		return readList(tk)
-	case tokenInt, tokenSymbol, tokenString:
+	case tokenInt, tokenFloat, tokenSymbol, tokenString:
 		return createLeafNode(token)
 	case tokenQuote:
 		return quoteNextNode(tk)
@@ -65,6 +65,12 @@ func createLeafNode(token *token) (node, error) {
 			return nil, fmt.Errorf("can't parse literal as integer.")
 		}
 		return &IntNode{value: i}, nil
+	case tokenFloat:
+		f, err := strconv.ParseFloat(token.literal, 64)
+		if err != nil {
+			return nil, fmt.Errorf("can't parse literal as integer.")
+		}
+		return &FloatNode{value: f}, nil
 	case tokenSymbol:
 		return &SymbolNode{name: token.literal}, nil
 	case tokenString:
@@ -131,7 +137,7 @@ func readList(tk *tokenizer) (node, error) {
 			}
 			foundDot = len(nodes)
 			continue
-		case tokenInt, tokenSymbol, tokenString:
+		case tokenInt, tokenFloat, tokenSymbol, tokenString:
 			var err error
 			nd, err = createLeafNode(token)
 			if err != nil {

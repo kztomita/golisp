@@ -11,8 +11,8 @@ func TestParser(t *testing.T) {
 		err			bool
 	}{
 		{
-			`(1 2 (foo 4 5 "bar") 3)`,
-			`(1 2 (foo 4 5 "bar") 3)`,
+			`(1 2 (foo 4 5 "bar") 3 4.1)`,
+			`(1 2 (foo 4 5 "bar") 3 4.1)`,
 			false,
 		},
 		{

@@ -7,8 +7,8 @@ var embeddedFunctions map[string]func(ev *evaluator, c *ConsCell)(node, error)
 
 func init() {
 	embeddedFunctions = map[string]func(ev *evaluator, c *ConsCell)(node, error){
-		"+": funcPlus,
-		"-": funcMinus,
+		"+": funcAdd,
+		"-": funcSubtract,
 		"=": funcEqual,
 		"car": funcCar,
 		"cdr": funcCdr,

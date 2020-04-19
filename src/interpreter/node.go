@@ -15,6 +15,7 @@ const (
 	NtNil
 	NtTrue
 	NtInt
+	NtFloat
 	NtSymbol
 	NtString
 	NtFunc
@@ -60,6 +61,16 @@ func (n *IntNode) GetNodeType() int {
 	return NtInt
 }
 func (n *IntNode) ToString() string {
+	return fmt.Sprintf("%v", n.value)
+}
+
+type FloatNode struct {
+	value		float64
+}
+func (n *FloatNode) GetNodeType() int {
+	return NtFloat
+}
+func (n *FloatNode) ToString() string {
 	return fmt.Sprintf("%v", n.value)
 }
 
