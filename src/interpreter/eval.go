@@ -10,6 +10,7 @@ func init() {
 		"+": funcAdd,
 		"-": funcSubtract,
 		"*": funcMultiply,
+		"/": funcDivide,
 		"=": funcEqual,
 		"car": funcCar,
 		"cdr": funcCdr,

@@ -176,6 +176,45 @@ func TestEvalMultiply(t *testing.T) {
 	evalTestCases(t, testCases)
 }
 
+func TestEvalDivide(t *testing.T) {
+	testCases := []evalTestCase{
+		{
+			createList([]node{
+				&SymbolNode{name: "/"},
+				&FloatNode{value: 2.0},
+			}),
+			"0.5",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "/"},
+				&IntNode{value: 6},
+				&IntNode{value: 2},
+			}),
+			"3",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "/"},
+				&IntNode{value: 12},
+				&IntNode{value: 2},
+				&IntNode{value: 3},
+			}),
+			"2",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "/"},
+				&IntNode{value: 3},
+				&FloatNode{value: 2.0},
+			}),
+			"1.5",
+		},
+	}
+
+	evalTestCases(t, testCases)
+}
+
 func TestEvalEqual(t *testing.T) {
 	testCases := []evalTestCase{
 		{
