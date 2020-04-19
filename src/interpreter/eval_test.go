@@ -126,6 +126,56 @@ func TestEvalSubtract(t *testing.T) {
 	evalTestCases(t, testCases)
 }
 
+func TestEvalMultiply(t *testing.T) {
+	testCases := []evalTestCase{
+		{
+			&ConsCell{
+				car: &SymbolNode{name: "*"},
+				cdr: &NilNode{},
+			},
+			"1",
+		},
+		{
+			&ConsCell{
+				car: &SymbolNode{name: "*"},
+				cdr: &ConsCell{
+					car: &IntNode{value: 2},
+					cdr: &NilNode{},
+				},
+			},
+			"2",
+		},
+		{
+			&ConsCell{
+				car: &SymbolNode{name: "*"},
+				cdr: &ConsCell{
+					car: &IntNode{value: 2},
+					cdr: &ConsCell{
+						car: &IntNode{value: 3},
+						cdr: &NilNode{},
+					},
+				},
+			},
+			"6",
+		},
+		{
+			&ConsCell{
+				car: &SymbolNode{name: "*"},
+				cdr: &ConsCell{
+					car: &IntNode{value: 3},
+					cdr: &ConsCell{
+						car: &FloatNode{value: 2.5},
+						cdr: &NilNode{},
+					},
+				},
+			},
+			"7.5",
+		},
+	}
+
+	evalTestCases(t, testCases)
+}
+
 func TestEvalEqual(t *testing.T) {
 	testCases := []evalTestCase{
 		{

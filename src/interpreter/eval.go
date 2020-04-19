@@ -9,6 +9,7 @@ func init() {
 	embeddedFunctions = map[string]func(ev *evaluator, c *ConsCell)(node, error){
 		"+": funcAdd,
 		"-": funcSubtract,
+		"*": funcMultiply,
 		"=": funcEqual,
 		"car": funcCar,
 		"cdr": funcCdr,

@@ -68,3 +68,27 @@ func funcSubtract(ev *evaluator, c *ConsCell) (node, error) {
 
 	return result, nil
 }
+
+func funcMultiply(ev *evaluator, c *ConsCell) (node, error) {
+	if c != nil && !c.isList() {
+		return nil, fmt.Errorf("Wrong type argument.")
+	}
+
+	args := createSliceFromList(c)
+
+	var result node
+	result = &IntNode{value: 1}
+
+	for _, arg := range args {
+		element, err := ev.Eval(arg)
+		if err != nil {
+			return nil, err
+		}
+		result, err = arithmeticOp("*", result, element)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return result, nil
+}
