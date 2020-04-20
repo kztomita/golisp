@@ -4,7 +4,15 @@ import (
 	"fmt"
 )
 
-func arithmeticOp(op string, a node, b node) (node, error) {
+type arithmeticOperationType int
+const (
+	arithmeticOpAdd arithmeticOperationType = iota
+	arithmeticOpSubtract
+	arithmeticOpMultiply
+	arithmeticOpDivide
+)
+
+func arithmeticOp(op arithmeticOperationType, a node, b node) (node, error) {
 	if !isNumberNode(a) {
 		return nil, fmt.Errorf("a is not a number.")
 	}
@@ -16,13 +24,13 @@ func arithmeticOp(op string, a node, b node) (node, error) {
 	bIntNode, bOk := b.(*IntNode)
 	if aOk && bOk {
 		switch op {
-		case "+":
+		case arithmeticOpAdd:
 			return &IntNode{value: aIntNode.value + bIntNode.value}, nil
-		case "-":
+		case arithmeticOpSubtract:
 			return &IntNode{value: aIntNode.value - bIntNode.value}, nil
-		case "*":
+		case arithmeticOpMultiply:
 			return &IntNode{value: aIntNode.value * bIntNode.value}, nil
-		case "/":
+		case arithmeticOpDivide:
 			if bIntNode.value == 0 {
 				return nil, fmt.Errorf("Division by zero.")
 			}
@@ -53,13 +61,13 @@ func arithmeticOp(op string, a node, b node) (node, error) {
 	}
 
 	switch op {
-	case "+":
+	case arithmeticOpAdd:
 		return &FloatNode{value: aFloat + bFloat}, nil
-	case "-":
+	case arithmeticOpSubtract:
 		return &FloatNode{value: aFloat - bFloat}, nil
-	case "*":
+	case arithmeticOpMultiply:
 		return &FloatNode{value: aFloat * bFloat}, nil
-	case "/":
+	case arithmeticOpDivide:
 		if bFloat == 0.0 {
 			return nil, fmt.Errorf("Division by zero.")
 		}
@@ -69,7 +77,17 @@ func arithmeticOp(op string, a node, b node) (node, error) {
 	}
 }
 
-func arithmeticComparisonOp(op string, a node, b node) (bool, error) {
+type arithmeticComparisonType int
+const (
+	arithmeticComparisonEqual arithmeticComparisonType = iota
+	arithmeticComparisonNotEqual
+	arithmeticComparisonGreaterThan
+	arithmeticComparisonGreaterThanOrEqualTo
+	arithmeticComparisonLessThan
+	arithmeticComparisonLessThanOrEqualTo
+)
+
+func arithmeticComparison(cmp arithmeticComparisonType, a node, b node) (bool, error) {
 	if !isNumberNode(a) {
 		return false, fmt.Errorf("a is not a number.")
 	}
@@ -77,31 +95,31 @@ func arithmeticComparisonOp(op string, a node, b node) (bool, error) {
 		return false, fmt.Errorf("b is not a number.")
 	}
 
-	switch op {
-	case "!=":
-		result, err := arithmeticComparisonOp("==", a, b)
+	switch cmp {
+	case arithmeticComparisonNotEqual:			// ==
+		result, err := arithmeticComparison(arithmeticComparisonEqual, a, b)
 		if err != nil {
 			return false, nil
 		}
 		return !result, nil
-	case "<=":
-		result, err := arithmeticComparisonOp("==", a, b)
+	case arithmeticComparisonLessThanOrEqualTo:	// <=
+		result, err := arithmeticComparison(arithmeticComparisonEqual, a, b)
 		if err != nil {
 			return false, nil
 		}
-		result2, err2 := arithmeticComparisonOp("<", a, b)
+		result2, err2 := arithmeticComparison(arithmeticComparisonLessThan, a, b)
 		if err2 != nil {
 			return false, nil
 		}
 		return (result || result2), nil
-	case ">":
-		result, err := arithmeticComparisonOp("<=", a, b)
+	case arithmeticComparisonGreaterThan:		// >
+		result, err := arithmeticComparison(arithmeticComparisonLessThanOrEqualTo, a, b)
 		if err != nil {
 			return false, nil
 		}
 		return !result, nil
-	case ">=":
-		result, err := arithmeticComparisonOp("<", a, b)
+	case arithmeticComparisonGreaterThanOrEqualTo:	// >=
+		result, err := arithmeticComparison(arithmeticComparisonLessThan, a, b)
 		if err != nil {
 			return false, nil
 		}
@@ -111,14 +129,14 @@ func arithmeticComparisonOp(op string, a node, b node) (bool, error) {
 	aIntNode, aOk := a.(*IntNode)
 	bIntNode, bOk := b.(*IntNode)
 	if aOk && bOk {
-		switch op {
-		case "==":
+		switch cmp {
+		case arithmeticComparisonEqual:		// ==
 			if aIntNode.value == bIntNode.value {
 				return true, nil
 			} else {
 				return false, nil
 			}
-		case "<":
+		case arithmeticComparisonLessThan:	// <
 			if aIntNode.value < bIntNode.value {
 				return true, nil
 			} else {
@@ -149,14 +167,14 @@ func arithmeticComparisonOp(op string, a node, b node) (bool, error) {
 		return false, fmt.Errorf("Logic Error. Unknown type.")
 	}
 
-	switch op {
-	case "==":
+	switch cmp {
+	case arithmeticComparisonEqual:		// ==
 		if aFloat == bFloat {
 			return true, nil
 		} else {
 			return false, nil
 		}
-	case "<":
+	case arithmeticComparisonLessThan:	// <
 		if aFloat < bFloat {
 			return true, nil
 		} else {

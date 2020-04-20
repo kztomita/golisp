@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func compareAdjacentArguments(ev *evaluator, args []node, op string) (node, error) {
+func compareAdjacentArguments(ev *evaluator, args []node, op arithmeticComparisonType) (node, error) {
 	prev, err := ev.Eval(args[0])
 	if err != nil {
 		return nil, err
@@ -17,7 +17,7 @@ func compareAdjacentArguments(ev *evaluator, args []node, op string) (node, erro
 		if err != nil {
 			return nil, err
 		}
-		result, err := arithmeticComparisonOp(op, prev, element)
+		result, err := arithmeticComparison(op, prev, element)
 		if err != nil {
 			return nil, err
 		}
@@ -43,7 +43,7 @@ func funcEqual(ev *evaluator, c *ConsCell) (node, error) {
 
 	args := createSliceFromList(c)
 
-	return compareAdjacentArguments(ev, args, "==")
+	return compareAdjacentArguments(ev, args, arithmeticComparisonEqual)
 }
 
 func funcNotEqual(ev *evaluator, c *ConsCell) (node, error) {
@@ -61,7 +61,7 @@ func funcNotEqual(ev *evaluator, c *ConsCell) (node, error) {
 
 	for pivot := 0 ; pivot < len(args) - 1 ; pivot++ {
 		for i := pivot + 1 ; i < len(args) ; i++ {
-			result, err := arithmeticComparisonOp("==", args[pivot], args[i])
+			result, err := arithmeticComparison(arithmeticComparisonEqual, args[pivot], args[i])
 			if err != nil {
 				return nil, err
 			}
@@ -87,7 +87,7 @@ func funcGreaterThan(ev *evaluator, c *ConsCell) (node, error) {
 
 	args := createSliceFromList(c)
 
-	return compareAdjacentArguments(ev, args, ">")
+	return compareAdjacentArguments(ev, args, arithmeticComparisonGreaterThan)
 }
 
 func funcGreaterThanOrEqualTo(ev *evaluator, c *ConsCell) (node, error) {
@@ -103,7 +103,7 @@ func funcGreaterThanOrEqualTo(ev *evaluator, c *ConsCell) (node, error) {
 
 	args := createSliceFromList(c)
 
-	return compareAdjacentArguments(ev, args, ">=")
+	return compareAdjacentArguments(ev, args, arithmeticComparisonGreaterThanOrEqualTo)
 }
 
 func funcLessThan(ev *evaluator, c *ConsCell) (node, error) {
@@ -119,7 +119,7 @@ func funcLessThan(ev *evaluator, c *ConsCell) (node, error) {
 
 	args := createSliceFromList(c)
 
-	return compareAdjacentArguments(ev, args, "<")
+	return compareAdjacentArguments(ev, args, arithmeticComparisonLessThan)
 }
 
 func funcLessThanOrEqualTo(ev *evaluator, c *ConsCell) (node, error) {
@@ -135,7 +135,7 @@ func funcLessThanOrEqualTo(ev *evaluator, c *ConsCell) (node, error) {
 
 	args := createSliceFromList(c)
 
-	return compareAdjacentArguments(ev, args, "<=")
+	return compareAdjacentArguments(ev, args, arithmeticComparisonLessThanOrEqualTo)
 }
 
 func funcAnd(ev *evaluator, c *ConsCell) (node, error) {

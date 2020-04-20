@@ -74,7 +74,18 @@ func TestArithmeticOp(t *testing.T) {
 	}
 
 	for _, c := range testCases {
-		result, err := arithmeticOp(c.op, c.a, c.b)
+		var op arithmeticOperationType
+		switch  c.op {
+		case "+":
+			op = arithmeticOpAdd
+		case "-":
+			op = arithmeticOpSubtract
+		case "*":
+			op = arithmeticOpMultiply
+		case "/":
+			op = arithmeticOpDivide
+		}
+		result, err := arithmeticOp(op, c.a, c.b)
 		if err != nil {
 			t.Errorf("%v", err)
 			continue
@@ -205,7 +216,22 @@ func TestArithmeticComparisonOp(t *testing.T) {
 	}
 
 	for _, c := range testCases {
-		result, err := arithmeticComparisonOp(c.op, c.a, c.b)
+		var cmp arithmeticComparisonType
+		switch  c.op {
+		case "==":
+			cmp = arithmeticComparisonEqual
+		case "!=":
+			cmp = arithmeticComparisonNotEqual
+		case ">":
+			cmp = arithmeticComparisonGreaterThan
+		case ">=":
+			cmp = arithmeticComparisonGreaterThanOrEqualTo
+		case "<":
+			cmp = arithmeticComparisonLessThan
+		case "<=":
+			cmp = arithmeticComparisonLessThanOrEqualTo
+		}
+		result, err := arithmeticComparison(cmp, c.a, c.b)
 		if err != nil {
 			t.Errorf("%v", err)
 			continue

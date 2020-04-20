@@ -19,7 +19,7 @@ func funcAdd(ev *evaluator, c *ConsCell) (node, error) {
 		if err != nil {
 			return nil, err
 		}
-		result, err = arithmeticOp("+", result, element)
+		result, err = arithmeticOp(arithmeticOpAdd, result, element)
 		if err != nil {
 			return nil, err
 		}
@@ -47,7 +47,7 @@ func funcSubtract(ev *evaluator, c *ConsCell) (node, error) {
 	}
 
 	if len(args) == 1 {
-		return arithmeticOp("-", &IntNode{value: 0}, first)
+		return arithmeticOp(arithmeticOpSubtract, &IntNode{value: 0}, first)
 	}
 
 	var result node
@@ -60,7 +60,7 @@ func funcSubtract(ev *evaluator, c *ConsCell) (node, error) {
 		if err != nil {
 			return nil, err
 		}
-		result, err = arithmeticOp("-", result, element)
+		result, err = arithmeticOp(arithmeticOpSubtract, result, element)
 		if err != nil {
 			return nil, err
 		}
@@ -84,7 +84,7 @@ func funcMultiply(ev *evaluator, c *ConsCell) (node, error) {
 		if err != nil {
 			return nil, err
 		}
-		result, err = arithmeticOp("*", result, element)
+		result, err = arithmeticOp(arithmeticOpMultiply, result, element)
 		if err != nil {
 			return nil, err
 		}
@@ -112,7 +112,7 @@ func funcDivide(ev *evaluator, c *ConsCell) (node, error) {
 	}
 
 	if len(args) == 1 {
-		return arithmeticOp("/", &IntNode{value: 1}, first)
+		return arithmeticOp(arithmeticOpDivide, &IntNode{value: 1}, first)
 	}
 
 	var result node
@@ -125,7 +125,7 @@ func funcDivide(ev *evaluator, c *ConsCell) (node, error) {
 		if err != nil {
 			return nil, err
 		}
-		result, err = arithmeticOp("/", result, element)
+		result, err = arithmeticOp(arithmeticOpDivide, result, element)
 		if err != nil {
 			return nil, err
 		}
