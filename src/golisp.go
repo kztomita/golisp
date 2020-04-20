@@ -37,7 +37,6 @@ func evaluateFile(file string) {
 		log.Fatalf("%v", err)
 	}
 
-	// nodeのexportが必要？
 	fmt.Printf("%v", result.ToString());
 }
 
