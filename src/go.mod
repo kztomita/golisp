@@ -1,3 +1,3 @@
-module kztomita/golisp
+module github.com/kztomita/golisp
 
 go 1.13

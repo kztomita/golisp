@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"kztomita/golisp/interpreter"
+	"github.com/kztomita/golisp/interpreter"
 )
 
 func usage() {
