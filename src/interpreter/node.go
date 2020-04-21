@@ -96,7 +96,7 @@ func (n *StringNode) ToString() string {
 }
 
 type FuncNode struct {
-	parameters	[]*SymbolNode	// 仮引数名のsymbolNode
+	parameters	[]*lambdaListParameter
 	body		*ConsCell
 	scope		*lexicalScope
 }

@@ -76,7 +76,7 @@ func main() {
 - list
 - if
 
-(*1) lambda list keywordは未対応。
+(*1) lambda list keywordは&optionalのみ対応。
 
 # TODO
 

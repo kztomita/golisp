@@ -145,12 +145,26 @@ func (e *evaluator) Eval(n node) (node, error) {
 
 func evalFunc(e *evaluator, fn *FuncNode, arguments []node) (node, error) {
 	// 実引数を関数のscopeのsymbolTableに登録
-	if len(fn.parameters) != len(arguments) {
-		return nil, fmt.Errorf("Number of arguments is mismatch.")
-	}
 	symTable := e.topScope().topSymbolTable()
-	for i := range fn.parameters {
-		symTable[fn.parameters[i].name] = arguments[i]
+	ai := 0	// arguments index
+	for pi := range fn.parameters {
+		if fn.parameters[pi].required {
+			if ai >= len(arguments)	{
+				return nil, fmt.Errorf("Insufficient arguments")
+			}
+			symTable[fn.parameters[pi].name] = arguments[ai]
+			ai++
+		} else if fn.parameters[pi].optional {
+			if ai <= len(arguments) - 1	{
+				symTable[fn.parameters[pi].name] = arguments[ai]
+				ai++
+			} else {
+				symTable[fn.parameters[pi].name] = fn.parameters[pi].defValue
+			}
+		}
+	}
+	if ai < len(arguments) {
+		return nil, fmt.Errorf("Too many arguments given.")
 	}
 
 	var lastResult node
