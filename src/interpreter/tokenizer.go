@@ -193,5 +193,5 @@ func (t *tokenizer) peekToken(offset int) *token {
 
 
 func isWhiteSpace(c byte) bool {
-	return c == ' ' || c == '\n'
+	return c == ' ' || c == '\t' || c == 0x0d || c == 0x0a
 }
