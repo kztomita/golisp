@@ -8,7 +8,7 @@ import (
 func TestTokenizer(t *testing.T) {
 	testCases := []struct{
 		expression	string
-		results		[]token
+		expected	[]token
 	}{
 		{
 			"(1 2 +3 -4 0.1 .1 -1. foo)",
@@ -119,6 +119,26 @@ func TestTokenizer(t *testing.T) {
 				{tokenId: tokenRightParentheses, literal: ")"},
 			},
 		},
+		{
+//			"(1) ;(2)\n(3)",
+			"(1) ;(2)\n(3)",
+			[]token{
+				{tokenId: tokenLeftParentheses, literal: "("},
+				{tokenId: tokenInt, literal: "1"},
+				{tokenId: tokenRightParentheses, literal: ")"},
+				{tokenId: tokenLeftParentheses, literal: "("},
+				{tokenId: tokenInt, literal: "3"},
+				{tokenId: tokenRightParentheses, literal: ")"},
+			},
+		},
+		{
+			"(1) ;(2)\n ;(3)",
+			[]token{
+				{tokenId: tokenLeftParentheses, literal: "("},
+				{tokenId: tokenInt, literal: "1"},
+				{tokenId: tokenRightParentheses, literal: ")"},
+			},
+		},
 	}
 
 	for _, c := range testCases {
@@ -133,13 +153,13 @@ func TestTokenizer(t *testing.T) {
 			//t.Logf("%v", token)
 		}
 
-		if len(tokens) != len(c.results) {
-			t.Fatalf("Number of tokens is incorrect. Expected: %v, Result: %v.", len(tokens), len(c.results))
+		if len(tokens) != len(c.expected) {
+			t.Fatalf("Number of tokens is incorrect. Expected: %v, Result: %v.", len(c.expected), len(tokens))
 		}
 		for i := range tokens {
-			if tokens[i].tokenId != c.results[i].tokenId ||
-				tokens[i].literal != c.results[i].literal {
-				t.Fatalf("Expected: %v, Result: %v", c.results[i], tokens[i])
+			if tokens[i].tokenId != c.expected[i].tokenId ||
+				tokens[i].literal != c.expected[i].literal {
+				t.Fatalf("Expected: %v, Result: %v", c.expected[i], tokens[i])
 			}
 		}
 	}

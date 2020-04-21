@@ -67,13 +67,31 @@ func (t *tokenizer) skipWhiteSpace() {
 	}
 }
 
+func (t *tokenizer) skipLine() {
+	for true {
+		c := t.nextChar()
+		if c == 0 {
+			break
+		}
+
+		// \x0d\x0a
+		if c == 0x0d && t.peekChar(0) == 0x0a {
+			t.pos += 1
+			break
+		}
+		if c == 0x0a || c == 0x0d {
+			break
+		}
+	}
+}
+
 func (t *tokenizer) nextToken() *token {
 	t.skipWhiteSpace()
 
 	literal := ""
 	found := false
 
-	for true {
+	for ; true ; t.nextChar() {
 		c := t.peekChar(0)
 		if c == 0 {
 			break		// eof
@@ -83,7 +101,7 @@ func (t *tokenizer) nextToken() *token {
 			if len(literal) > 0 {
 				break
 			} else {
-				continue	// 来ないはず
+				continue
 			}
 		}
 
@@ -129,6 +147,14 @@ func (t *tokenizer) nextToken() *token {
 				return &token{tokenId: tokenQuote, literal: "'"}
 			}
 			found = true
+		case ';':
+			if literal == "" {
+				// ignore comment
+				t.skipLine()
+				t.pos--
+				continue
+			}
+			found = true
 		default:
 			literal += string(c)
 		}
@@ -136,8 +162,6 @@ func (t *tokenizer) nextToken() *token {
 		if (found) {
 			break
 		}
-
-		t.nextChar()
 	}
 
 	if literal == "" {
