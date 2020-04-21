@@ -1,0 +1,30 @@
+(print (+))
+(print (+ 1))
+(print (+ 1 2))
+(print (+ 1 2 3))
+(print (+ 1.1 2))
+(print (+ 1 2.1))
+(print (+ 1.1 2.1))
+
+(print "----")
+(print (- 1))
+(print (- 1 2))
+(print (- 1 2 3))
+(print (- 1 0.1))
+
+(print "----")
+(print (*))
+(print (* 2))
+(print (* 2 3))
+(print (* 2 3 4))
+(print (* 2 3.3))
+
+(print "----")
+(print (/ 2.0))
+(print (/ 4 2))
+(print (/ 4 3)); Common Lispでは分数4/3だが、本実装では整数型の切り捨てで1となる
+(print (/ 100 2 5))
+(print (/ 3 4.0))
+
+(print "----")
+(print (+ 4 (* 3 4)))
