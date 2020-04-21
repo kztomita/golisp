@@ -37,7 +37,9 @@ func evaluateFile(file string) {
 		log.Fatalf("%v", err)
 	}
 
-	fmt.Printf("%v", result.ToString());
+	if false {
+		fmt.Printf("%v", result.ToString());
+	}
 }
 
 func main() {
