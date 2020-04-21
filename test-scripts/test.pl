@@ -49,7 +49,13 @@ sub main {
 
     my ($ok, $err) = (0, 0);
 
-    my @files = glob "*\.lsp";
+    my @files;
+    if (@ARGV == 0) {
+	@files = glob "*\.lsp";
+    } else {
+	@files = (@ARGV[@ARGV - 1]);
+    }
+
     foreach my $file (@files) {
 	my $ret = eval_test_script $file;
 	if ($ret) {
