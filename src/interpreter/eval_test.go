@@ -517,14 +517,25 @@ func TestEvalCar(t *testing.T) {
 	result, err := ev.Eval(&ConsCell{
 		car: &SymbolNode{name: "car"},
 		cdr: &ConsCell{
-			car: list,
+			car: &ConsCell{
+				car: &SymbolNode{name: "quote"},
+				cdr: &ConsCell{
+					car: list,
+					cdr: &NilNode{},
+				},
+			},
 			cdr: &NilNode{},
 		},
 	})
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
-		t.Logf("%v", result.ToString());
+		resultString := result.ToString()
+		if resultString != "1" {
+			t.Errorf("Expected: %v, Result: %v", "1", resultString)
+		} else {
+			t.Logf("%v", resultString);
+		}
 	}
 }
 
@@ -549,14 +560,25 @@ func TestEvalCdr(t *testing.T) {
 	result, err := ev.Eval(&ConsCell{
 		car: &SymbolNode{name: "cdr"},
 		cdr: &ConsCell{
-			car: list,
+			car: &ConsCell{
+				car: &SymbolNode{name: "quote"},
+				cdr: &ConsCell{
+					car: list,
+					cdr: &NilNode{},
+				},
+			},
 			cdr: &NilNode{},
 		},
 	})
 	if err != nil {
 		t.Errorf("%v", err)
 	} else {
-		t.Logf("%v", result.ToString());
+		resultString := result.ToString()
+		if resultString != "(2 3)" {
+			t.Errorf("Expected: %v, Result: %v", "(2 3)", resultString)
+		} else {
+			t.Logf("%v", resultString);
+		}
 	}
 }
 

@@ -17,11 +17,15 @@ func funcCar(ev *evaluator, c *ConsCell) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	arg0, ok := c.car.(*ConsCell)
+	result, err := ev.Eval(c.car)
+	if err != nil {
+		return nil, err
+	}
+	cell, ok := result.(*ConsCell)
 	if !ok {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	return arg0.car, nil
+	return cell.car, nil
 }
 
 // (cdr list)
@@ -37,9 +41,13 @@ func funcCdr(ev *evaluator, c *ConsCell) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	arg0, ok := c.car.(*ConsCell)
+	result, err := ev.Eval(c.car)
+	if err != nil {
+		return nil, err
+	}
+	cell, ok := result.(*ConsCell)
 	if !ok {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	return arg0.cdr, nil
+	return cell.cdr, nil
 }
