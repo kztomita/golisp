@@ -1,5 +1,6 @@
 (setq outer_var 100)
-(setq y 10)
+(setq b 10)
+(setq y 20)
 
 (defun foo (a b)
   (let ((x 100) (y 200))
@@ -8,4 +9,4 @@
 
 (foo 2 3)
 
-(print (list outer_var y))
+(print (list outer_var b y))
