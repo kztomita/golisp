@@ -161,6 +161,12 @@ func evalFunc(e *evaluator, fn *FuncNode, arguments []node) (node, error) {
 			} else {
 				symTable[fn.parameters[pi].name] = fn.parameters[pi].defValue
 			}
+		} else if fn.parameters[pi].rest {
+			rest := []node{}
+			for ; ai < len(arguments) ; ai++ {
+				rest = append(rest, arguments[ai])
+			}
+			symTable[fn.parameters[pi].name] = createList(rest)
 		}
 	}
 	if ai < len(arguments) {

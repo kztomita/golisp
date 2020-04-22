@@ -9,16 +9,20 @@ type lambdaListParameter struct {
 	required	bool
 	optional	bool
 	defValue	node
+	rest		bool
 }
 
 const (
 	ordinaryLambdaListRequired int = iota
 	ordinaryLambdaListOptional
+	ordinaryLambdaListRest
 )
 func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*lambdaListParameter, error) {
 	parameters := []*lambdaListParameter{}
 
 	status := ordinaryLambdaListRequired
+	restKeyword := false
+	rest := 0
 
 	for ; c != nil ; c = c.next() {
 		if s, ok := c.car.(*SymbolNode); ok {
@@ -29,7 +33,14 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*lambdaListParameter
 				}
 				status = ordinaryLambdaListOptional
 				continue
-			case "&rest", "&key", "&aux":
+			case "&rest":
+				if status >= ordinaryLambdaListRest {
+					return nil, fmt.Errorf("&rest not allowed here..")
+				}
+				status = ordinaryLambdaListRest
+				restKeyword = true
+				continue
+			case "&key", "&aux":
 				return nil, fmt.Errorf("Unsupported parameter(%v).", s.name)
 			}	
 		}
@@ -84,7 +95,28 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*lambdaListParameter
 			default:
 				return nil, fmt.Errorf("Wrong type argument.")
 			}
+
+		case ordinaryLambdaListRest:
+			switch nd := c.car.(type) {
+			case *SymbolNode:
+				s := nd
+				parameters = append(parameters, &lambdaListParameter{
+					name: s.name,
+					rest: true,
+				})
+				rest++
+			default:
+				return nil, fmt.Errorf("Wrong type argument.")
+			}
 		}
 	}
+
+	if restKeyword && rest > 1 {
+		return nil, fmt.Errorf("Only one variable is allowed after &rest.")
+	}
+	if restKeyword && rest == 0 {
+		return nil, fmt.Errorf("Missing &rest parameter in lambda list.")
+	}
+
 	return parameters, nil
 }
