@@ -34,6 +34,7 @@ func NewReaderParser(rd io.Reader) *ReaderParser {
 	return &ReaderParser{tk: newTokenizer(rd)}
 }
 // io.Readerからexpressionを一つ分解析
+// 解析すべきexpressionがないなら(nil, nil)をリターン。
 func (p *ReaderParser) ParseExpression() (node, error) {
 	return readExpression(p.tk)
 }
@@ -45,6 +46,10 @@ func readExpression(tk *tokenizer) (node, error) {
 		return nil, nil
 	}
 
+	return createExpressionNode(tk, token)
+}
+
+func createExpressionNode(tk *tokenizer, token *token) (node, error) {
 	switch (token.tokenId) {
 	case tokenLeftParentheses:
 		return readList(tk)
@@ -53,7 +58,7 @@ func readExpression(tk *tokenizer) (node, error) {
 	case tokenQuote:
 		return quoteNextNode(tk)
 	default:
-		return nil, fmt.Errorf("xxxxxx")
+		return nil, fmt.Errorf("Syntax error.")
 	}
 }
 
@@ -109,14 +114,7 @@ func readList(tk *tokenizer) (node, error) {
 
 		var nd node
 		switch (token.tokenId) {
-		case tokenLeftParentheses:
-			var err error
-			nd, err = readList(tk)
-			if err != nil {
-				return nil, err
-			}
 		case tokenRightParentheses:
-			// empty list
 			if foundDot == -1 {
 				if len(nodes) == 0 {
 					return &NilNode{}, nil
@@ -137,20 +135,12 @@ func readList(tk *tokenizer) (node, error) {
 			}
 			foundDot = len(nodes)
 			continue
-		case tokenInt, tokenFloat, tokenSymbol, tokenString:
-			var err error
-			nd, err = createLeafNode(token)
-			if err != nil {
-				return nil, err
-			}
-		case tokenQuote:
-			var err error
-			nd, err = quoteNextNode(tk)
-			if err != nil {
-				return nil, err
-			}
 		default:
-			return nil, fmt.Errorf("Unknown token (%v)", token)
+			var err error
+			nd, err = createExpressionNode(tk, token)
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		if nd == nil {
