@@ -15,6 +15,8 @@ const (
 	tokenString
 	tokenDot
 	tokenQuote
+	tokenBackQuote
+	tokenComma
 )
 
 type token struct {
@@ -145,6 +147,18 @@ func (t *tokenizer) nextToken() *token {
 			if literal == "" {
 				t.nextChar()
 				return &token{tokenId: tokenQuote, literal: "'"}
+			}
+			found = true
+		case '`':
+			if literal == "" {
+				t.nextChar()
+				return &token{tokenId: tokenBackQuote, literal: "`"}
+			}
+			found = true
+		case ',':
+			if literal == "" {
+				t.nextChar()
+				return &token{tokenId: tokenComma, literal: ","}
 			}
 			found = true
 		case ';':

@@ -109,6 +109,42 @@ func TestTokenizer(t *testing.T) {
 			},
 		},
 		{
+			"`(foo `bar)",
+			[]token{
+				{tokenId: tokenBackQuote, literal: "`"},
+				{tokenId: tokenLeftParentheses, literal: "("},
+				{tokenId: tokenSymbol, literal: "foo"},
+				{tokenId: tokenBackQuote, literal: "`"},
+				{tokenId: tokenSymbol, literal: "bar"},
+				{tokenId: tokenRightParentheses, literal: ")"},
+			},
+		},
+		{
+			"(foo ,bar , baz,qux)",
+			[]token{
+				{tokenId: tokenLeftParentheses, literal: "("},
+				{tokenId: tokenSymbol, literal: "foo"},
+				{tokenId: tokenComma, literal: ","},
+				{tokenId: tokenSymbol, literal: "bar"},
+				{tokenId: tokenComma, literal: ","},
+				{tokenId: tokenSymbol, literal: "baz"},
+				{tokenId: tokenComma, literal: ","},
+				{tokenId: tokenSymbol, literal: "qux"},
+				{tokenId: tokenRightParentheses, literal: ")"},
+			},
+		},
+		{
+			"(foo ,,bar)",
+			[]token{
+				{tokenId: tokenLeftParentheses, literal: "("},
+				{tokenId: tokenSymbol, literal: "foo"},
+				{tokenId: tokenComma, literal: ","},
+				{tokenId: tokenComma, literal: ","},
+				{tokenId: tokenSymbol, literal: "bar"},
+				{tokenId: tokenRightParentheses, literal: ")"},
+			},
+		},
+		{
 			"(1 2 3 \nfoo)",
 			[]token{
 				{tokenId: tokenLeftParentheses, literal: "("},
