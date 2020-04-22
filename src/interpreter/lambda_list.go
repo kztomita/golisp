@@ -58,24 +58,28 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*lambdaListParameter
 				})
 			case *ConsCell:
 				if !nd.isList() {
-					return nil, fmt.Errorf("Syntax error.")
+					return nil, fmt.Errorf("Invalid lambda list element.")
 				}
 				pair := createSliceFromList(nd)
-				if len(pair) != 2 {
-					return nil, fmt.Errorf("Syntax error.")
+				if len(pair) > 2 {
+					return nil, fmt.Errorf("Invalid lambda list element.")
 				}
 				s, ok := pair[0].(*SymbolNode)
 				if !ok {
-					return nil, fmt.Errorf("Syntax error.")
+					return nil, fmt.Errorf("Invalid lambda list element.")
 				}
-				result, err := ev.Eval(pair[1])
-				if err != nil {
-					return nil, err
+				var value node = &NilNode{}
+				if len(pair) == 2 {
+					result, err := ev.Eval(pair[1])
+					if err != nil {
+						return nil, err
+					}
+					value = result
 				}
 				parameters = append(parameters, &lambdaListParameter{
 					name: s.name,
 					optional: true,
-					defValue: result,
+					defValue: value,
 				})
 			default:
 				return nil, fmt.Errorf("Wrong type argument.")
