@@ -8,12 +8,12 @@ import (
 )
 
 func Parse(s string) (node, error) {
-	tk := newTokenizer(strings.NewReader(s))
+	parser := NewReaderParser(strings.NewReader(s))
 
 	container := &ContainerNode{}
 
 	for true {
-		nd, err := readExpression(tk)
+		nd, err := parser.ParseExpression()
 		if err != nil {
 			return nil, err
 		}
