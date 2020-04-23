@@ -1,0 +1,8 @@
+(a b)
+a
+(a 2 c)
+(a (2 c))
+(a (quote 2))
+(a (quote 2))
+(a b 3 ((quote 6)) (+ a b) (quote c) (quote ((1 2))))
+(a 2 (list b 3))

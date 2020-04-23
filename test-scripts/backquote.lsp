@@ -1,0 +1,12 @@
+(setq a 1)
+(setq b 2)
+(setq c 3)
+(print `(a b))
+(print `a)
+(print `(a ,b c))
+(print `(a (,b c)))
+(print `(a (quote ,b)))
+(print `(a ',b))
+(print `(a b ,c (',(+ a b c)) (+ a b) 'c '((,a ,b))))
+(print `(a ,b `(,b ,,c)))
+

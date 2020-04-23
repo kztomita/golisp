@@ -36,27 +36,47 @@ func NewReaderParser(rd io.Reader) *ReaderParser {
 // io.Readerからexpressionを一つ分解析
 // 解析すべきexpressionがないなら(nil, nil)をリターン。
 func (p *ReaderParser) ParseExpression() (node, error) {
-	return readExpression(p.tk)
+	return readExpression(&parsingContext{}, p.tk)
 }
 
+// 一つのexpressionを解析する間有効なコンテキスト
+type parsingContext struct {
+	backquote	int
+	comma		int
+}
+func (c *parsingContext) clone() *parsingContext {
+	ctx2 := *c
+	return &ctx2
+}
 
-func readExpression(tk *tokenizer) (node, error) {
+func readExpression(ctx *parsingContext, tk *tokenizer) (node, error) {
 	token := tk.nextToken()
 	if token == nil {
 		return nil, nil
 	}
 
-	return createExpressionNode(tk, token)
+	return createExpressionNode(ctx, tk, token)
 }
 
-func createExpressionNode(tk *tokenizer, token *token) (node, error) {
+func createExpressionNode(ctx *parsingContext, tk *tokenizer, token *token) (node, error) {
 	switch (token.tokenId) {
 	case tokenLeftParentheses:
-		return readList(tk)
+		return readList(ctx, tk)
 	case tokenInt, tokenFloat, tokenSymbol, tokenString:
 		return createLeafNode(token)
 	case tokenQuote:
-		return quoteNextNode(tk)
+		return quoteNextNode(ctx, tk)
+	case tokenBackQuote:
+		ctx2 := ctx.clone()
+		ctx2.backquote++
+		return backquoteNextNode(ctx2, tk)
+	case tokenComma:
+		ctx2 := ctx.clone()
+		ctx2.comma++
+		if ctx.backquote < ctx2.comma {
+			return nil, fmt.Errorf("Too many commas.")
+		}
+		return unquoteNextNode(ctx2, tk)
 	default:
 		return nil, fmt.Errorf("Syntax error.")
 	}
@@ -85,8 +105,8 @@ func createLeafNode(token *token) (node, error) {
 	}
 }
 
-func quoteNextNode(tk *tokenizer) (node, error) {
-	nd, err := readExpression(tk)
+func quoteNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
+	nd, err := readExpression(ctx, tk)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +120,37 @@ func quoteNextNode(tk *tokenizer) (node, error) {
 	}), nil
 }
 
-func readList(tk *tokenizer) (node, error) {
+func backquoteNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
+	nd, err := readExpression(ctx, tk)
+	if err != nil {
+		return nil, err
+	}
+	if nd == nil {
+		return nil, fmt.Errorf("Invalid backquote literal.")
+	}
+
+	return createList([]node{
+		&SymbolNode{name: "system::backquote"},
+		nd,
+	}), nil
+}
+
+func unquoteNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
+	nd, err := readExpression(ctx, tk)
+	if err != nil {
+		return nil, err
+	}
+	if nd == nil {
+		return nil, fmt.Errorf("Invalid backquote literal.")
+	}
+
+	return createList([]node{
+		&SymbolNode{name: "system::unquote"},
+		nd,
+	}), nil
+}
+
+func readList(ctx *parsingContext, tk *tokenizer) (node, error) {
 
 	nodes := []node{}
 
@@ -137,7 +187,7 @@ func readList(tk *tokenizer) (node, error) {
 			continue
 		default:
 			var err error
-			nd, err = createExpressionNode(tk, token)
+			nd, err = createExpressionNode(ctx, tk, token)
 			if err != nil {
 				return nil, err
 			}
