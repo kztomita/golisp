@@ -134,13 +134,15 @@ func TestTokenizer(t *testing.T) {
 			},
 		},
 		{
-			"(foo ,,bar)",
+			"(foo ,,bar ,@baz)",
 			[]token{
 				{tokenId: tokenLeftParentheses, literal: "("},
 				{tokenId: tokenSymbol, literal: "foo"},
 				{tokenId: tokenComma, literal: ","},
 				{tokenId: tokenComma, literal: ","},
 				{tokenId: tokenSymbol, literal: "bar"},
+				{tokenId: tokenCommaAt, literal: ",@"},
+				{tokenId: tokenSymbol, literal: "baz"},
 				{tokenId: tokenRightParentheses, literal: ")"},
 			},
 		},
