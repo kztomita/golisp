@@ -62,6 +62,7 @@ func main() {
 - &gt;=
 - &lt;
 - &lt;=
+- cons
 - car
 - cdr
 - and
