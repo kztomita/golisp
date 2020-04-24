@@ -25,6 +25,7 @@ sub eval_test_script {
     my @results = `../src/golisp ${file}`;
     my $ret = $?;
     if ($ret) {
+	print @results;
 	die "test error";
     }
 
