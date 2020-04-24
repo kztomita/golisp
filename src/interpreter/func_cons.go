@@ -6,7 +6,7 @@ import (
 
 func funcCons(ev *evaluator, c *ConsCell) (node, error) {
 	if c == nil {
-		return &NilNode{}, nil
+		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 	if !c.isList() {
 		return nil, fmt.Errorf("Wrong type argument.")
