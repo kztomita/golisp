@@ -67,3 +67,15 @@ func createSliceFromList(head *ConsCell) []node {
 
 	return result
 }
+
+func getListFirstSymbol(nd node) *SymbolNode {
+	cell, ok := nd.(*ConsCell)
+	if !ok {
+		return nil
+	}
+	symbol, ok := cell.car.(*SymbolNode)
+	if !ok {
+		return nil
+	}
+	return symbol
+}

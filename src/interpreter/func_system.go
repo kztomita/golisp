@@ -15,84 +15,87 @@ func funcSystemBackQuote(ev *evaluator, c *ConsCell) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	return processBackQuote(ev, c.car, 1)
+	// backquoteマクロの展開
+	expanded, err := expandBackQuote(&ConsCell{
+		car: &SymbolNode{name: "system::backquote"},
+		cdr: c,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return ev.Eval(expanded)
 }
 
-// backquote,unquote,splice関数のみ評価して返す。それ以外の要素は評価せず返す(quote)。
-func processBackQuote(ev *evaluator, nd node, depth int) (node, error) {
+// backquoteマクロの展開
+func expandBackQuote(nd node) (node, error) {
+	cell, ok := nd.(*ConsCell)
+	if !ok {
+		return nil, fmt.Errorf("argument is not backquote.")
+	}
+	symbol, ok := cell.car.(*SymbolNode)
+	if !ok {
+		return nil, fmt.Errorf("argument is not backquote.")
+	}
+	if symbol.name != "system::backquote" {
+		return nil, fmt.Errorf("argument is not backquote.")
+	}
+	if cell.next() == nil {
+		return nil, fmt.Errorf("An argument of system::backquote not found.")
+	}
+
+	return expandBackQuotedNode(cell.next().car)
+}
+
+func expandBackQuotedNode(nd node) (node, error) {
+	symbol := getListFirstSymbol(nd)
+	if symbol != nil && symbol.name == "system::backquote" {
+		// ネストしていたら展開して差し替えて処理
+		expanded, err := expandBackQuote(nd)
+		if err != nil {
+			return nil, err
+		}
+		nd = expanded
+	}
+
 	switch nd.(type) {
 	case *ConsCell:
 		// list
 		cell := nd.(*ConsCell)
-		if symbol, ok := cell.car.(*SymbolNode); ok {
+
+		symbol := getListFirstSymbol(cell)
+		if symbol != nil {
+			// unquoteならunwrap
 			if symbol.name == "system::unquote" {
-				return processUnquote(ev, cell, depth)
-			} else if symbol.name == "system::backquote" {
 				if cell.next() == nil {
-					return nil, fmt.Errorf("An argument of system::backquote not found.")
+					return nil, fmt.Errorf("An argument of system::unquote not found.")
 				}
-				return processBackQuote(ev, cell.next().car, depth + 1)
+				return cell.next().car, nil
 			}
 		}
 
-		if depth >= 2 {
-			// listシンボルを挿入
-			insertCell := &ConsCell{
-				car: cell.car,
-				cdr: cell.cdr,
-			}
-			cell.car = &SymbolNode{name: "list"}
-			cell.cdr = insertCell
+		// その他のリストならlistシンボルを挿入
+		head := &ConsCell{
+			car: &SymbolNode{name: "list"},
+			cdr: cell,
 		}
 		for ; cell != nil ; cell = cell.next() {
-			n, err := processBackQuote(ev, cell.car, depth)
+			n, err := expandBackQuotedNode(cell.car)
 			if err != nil {
 				return nil, err
 			}
 			cell.car = n
 		}
-		return nd, nil
+		return head, nil
+
 	default:
-		return nd, nil
-	}
-}
-
-func processUnquote(ev *evaluator, c *ConsCell, backQuoteDepth int) (node, error) {
-
-	// system::unquote,spliceをたどって、最深のunquote対象ノードと深さを取得
-	var nd node = c
-	unquoteDepth := 0
-	for true {
-		switch nd.(type) {
-		case *ConsCell:
-			cell := nd.(*ConsCell)
-			symbol, ok := cell.car.(*SymbolNode)
-			if ok {
-				if symbol.name == "system::unquote" {
-					// ndはsystem::unquote関数呼び出しリスト
-					unquoteDepth++
-					if cell.next() == nil {
-						return nil, fmt.Errorf("An argument of system::unquote not found.")
-					}
-					nd = cell.next().car
-					continue
-				}
-			}
-		default:
-		}
-		break
-	}
-
-	if unquoteDepth == 0 {
-		return nil, fmt.Errorf("An argument 'c *ConsCell' is not system::unquote/splice.")
-	}
-
-	if unquoteDepth == backQuoteDepth {
-		// unquote
-		return ev.Eval(nd)
-	} else {
-		// quote
-		return nd, nil
+		// leaf node
+		return &ConsCell{
+			car: &SymbolNode{name: "quote"},
+			cdr: &ConsCell{
+				car: nd,
+				cdr: &NilNode{},
+			},
+		}, nil
 	}
 }
 
