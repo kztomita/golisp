@@ -208,6 +208,14 @@ func (c *ConsCell) length() int {
 	return length
 }
 
+func (c *ConsCell) tail() *ConsCell {
+	var tail *ConsCell
+	for cell := c ; cell != nil ; cell = cell.next() {
+		tail = cell
+	}
+	return tail
+}
+
 func isNumberNode(n node) bool {
 	switch n.(type) {
 	case *IntNode, *FloatNode:

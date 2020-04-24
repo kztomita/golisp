@@ -17,6 +17,8 @@ func init() {
 		">=": funcGreaterThanOrEqualTo,
 		"<": funcLessThan,
 		"<=": funcLessThanOrEqualTo,
+		"append": funcAppend,
+		"cons": funcCons,
 		"car": funcCar,
 		"cdr": funcCdr,
 		"and": funcAnd,

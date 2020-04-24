@@ -62,9 +62,10 @@ func main() {
 - &gt;=
 - &lt;
 - &lt;=
-- cons
+- append
 - car
 - cdr
+- cons
 - and
 - or
 - setq
