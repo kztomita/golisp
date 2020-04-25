@@ -33,6 +33,7 @@ func init() {
 		"quote": funcQuote,
 		"list": funcList,
 		"if": funcIf,
+		"do": funcDo,
 
 		"system::backquote": funcSystemBackQuote,
 	}

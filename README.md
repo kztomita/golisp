@@ -78,6 +78,7 @@ func main() {
 - quote
 - list
 - if
+- do
 
 (*1) lambda list keywordは&optional,&restのみ対応。<br />
 (*2) lambda list keywordは&optional,&rest,&bodyのみ対応。
