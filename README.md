@@ -33,13 +33,13 @@ import (
 )
 
 func main() {
-    // LISP構文を字句解析、構文解析して構文木を構築
+	// LISP構文を字句解析、構文解析して構文木を構築
 	node, err := interpreter.Parse("(+ 1 2)")
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
 
-    // 作成した構文木を評価
+	// 作成した構文木を評価
 	ev := interpreter.NewEvaluator()
 	result, err := ev.Eval(node)
 	if err != nil {
@@ -50,7 +50,7 @@ func main() {
 }
 ```
 
-# 現状使用可能な関数
+# 現状使用可能な関数/マクロ
 
 - \+
 - \-
@@ -70,7 +70,7 @@ func main() {
 - or
 - setq
 - defun (*1)
-- defmacro
+- defmacro (*2)
 - let
 - progn
 - print
@@ -78,7 +78,8 @@ func main() {
 - list
 - if
 
-(*1) lambda list keywordは&optional,&restのみ対応。
+(*1) lambda list keywordは&optional,&restのみ対応。<br />
+(*2) lambda list keywordは&optional,&rest,&bodyのみ対応。
 
 # TODO
 
