@@ -96,7 +96,7 @@ func (n *StringNode) ToString() string {
 }
 
 type FuncNode struct {
-	parameters	[]*lambdaListParameter
+	parameters	[]*ordinaryLambdaListParameter
 	body		*ConsCell
 	scope		*lexicalScope
 }

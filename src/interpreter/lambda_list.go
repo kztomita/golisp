@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-type lambdaListParameter struct {
+type ordinaryLambdaListParameter struct {
 	name		string
 	required	bool
 	optional	bool
@@ -17,8 +17,8 @@ const (
 	ordinaryLambdaListOptional
 	ordinaryLambdaListRest
 )
-func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*lambdaListParameter, error) {
-	parameters := []*lambdaListParameter{}
+func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*ordinaryLambdaListParameter, error) {
+	parameters := []*ordinaryLambdaListParameter{}
 
 	status := ordinaryLambdaListRequired
 	restKeyword := false
@@ -50,7 +50,7 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*lambdaListParameter
 			switch nd := c.car.(type) {
 			case *SymbolNode:
 				s := nd
-				parameters = append(parameters, &lambdaListParameter{
+				parameters = append(parameters, &ordinaryLambdaListParameter{
 					name: s.name,
 					required: true,
 				})
@@ -62,7 +62,7 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*lambdaListParameter
 			switch nd := c.car.(type) {
 			case *SymbolNode:
 				// default is nil
-				parameters = append(parameters, &lambdaListParameter{
+				parameters = append(parameters, &ordinaryLambdaListParameter{
 					name: nd.name,
 					optional: true,
 					defValue: &NilNode{},
@@ -87,7 +87,7 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*lambdaListParameter
 					}
 					value = result
 				}
-				parameters = append(parameters, &lambdaListParameter{
+				parameters = append(parameters, &ordinaryLambdaListParameter{
 					name: s.name,
 					optional: true,
 					defValue: value,
@@ -100,7 +100,7 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*lambdaListParameter
 			switch nd := c.car.(type) {
 			case *SymbolNode:
 				s := nd
-				parameters = append(parameters, &lambdaListParameter{
+				parameters = append(parameters, &ordinaryLambdaListParameter{
 					name: s.name,
 					rest: true,
 				})

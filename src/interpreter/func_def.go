@@ -23,7 +23,7 @@ func funcDefun(ev *evaluator, c *ConsCell) (node, error) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
-	parameters := []*lambdaListParameter{}	// 仮引数一覧
+	parameters := []*ordinaryLambdaListParameter{}	// 仮引数一覧
 	arg1, ok1 := args[1].(*ConsCell)	// parameters
 	if ok1 {
 		var err error
