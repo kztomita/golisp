@@ -66,6 +66,11 @@ func TestParser(t *testing.T) {
 			false,
 		},
 		{
+			"`(a ,@b)",
+			"(system::backquote (a (system::unquote (system::splice b))))",
+			false,
+		},
+		{
 			`)`,
 			"",
 			true,

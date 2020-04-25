@@ -6,3 +6,5 @@ a
 (a (quote 2))
 (a b 3 ((quote 6)) (+ a b) (quote c) (quote ((1 2))))
 (a 2 (list b 3))
+(a (1 2 3) 1 2 3)
+(a 2 (append d (list 1 2 3)))

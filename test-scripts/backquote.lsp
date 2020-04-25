@@ -1,6 +1,7 @@
 (setq a 1)
 (setq b 2)
 (setq c 3)
+(setq d '(1 2 3))
 (print `(a b))
 (print `a)
 (print `(a ,b c))
@@ -9,4 +10,6 @@
 (print `(a ',b))
 (print `(a b ,c (',(+ a b c)) (+ a b) 'c '((,a ,b))))
 (print `(a ,b `(,b ,,c)))
+(print `(a ,d ,@d))
+(print `(a ,b `(,@d ,,@d)))
 

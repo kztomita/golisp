@@ -77,6 +77,8 @@ func createExpressionNode(ctx *parsingContext, tk *tokenizer, token *token) (nod
 			return nil, fmt.Errorf("Too many commas.")
 		}
 		return unquoteNextNode(ctx2, tk)
+	case tokenCommaAt:
+		return unquoteAndSpliceNextNode(ctx, tk)
 	default:
 		return nil, fmt.Errorf("Syntax error.")
 	}
@@ -141,12 +143,30 @@ func unquoteNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
 		return nil, err
 	}
 	if nd == nil {
-		return nil, fmt.Errorf("Invalid backquote literal.")
+		return nil, fmt.Errorf("Invalid comma literal.")
 	}
 
 	return createList([]node{
 		&SymbolNode{name: "system::unquote"},
 		nd,
+	}), nil
+}
+
+func unquoteAndSpliceNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
+	nd, err := readExpression(ctx, tk)
+	if err != nil {
+		return nil, err
+	}
+	if nd == nil {
+		return nil, fmt.Errorf("Invalid ,@ literal.")
+	}
+
+	return createList([]node{
+		&SymbolNode{name: "system::unquote"},
+		createList([]node{
+			&SymbolNode{name: "system::splice"},
+			nd,
+		}),
 	}), nil
 }
 

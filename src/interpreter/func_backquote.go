@@ -71,21 +71,48 @@ func expandBackQuotedNode(nd node) (node, error) {
 				}
 				return cell.next().car, nil
 			}
+			// spliceならunwrap
+			if symbol.name == "system::splice" {
+				if cell.next() == nil {
+					return nil, fmt.Errorf("An argument of system::splice not found.")
+				}
+				return cell.next().car, nil
+			}
 		}
 
-		// その他のリストならlistシンボルを挿入
-		head := &ConsCell{
-			car: &SymbolNode{name: "list"},
-			cdr: cell,
-		}
-		for ; cell != nil ; cell = cell.next() {
+		// (system::unquote ...), (system::splice ...)でないリスト
+
+		head := cell
+
+		for cell := head ; cell != nil ; cell = cell.next() {
 			n, err := expandBackQuotedNode(cell.car)
 			if err != nil {
 				return nil, err
 			}
 			cell.car = n
 		}
-		return head, nil
+
+		foundSplice := false
+		for cell := head ; cell != nil ; cell = cell.next() {
+			symbol := getListFirstSymbol(cell.car)
+			if symbol != nil && symbol.name == "system::splice" {
+				foundSplice = true
+				break
+			}
+		}
+
+		if (!foundSplice) {
+			// (system::splice ...)が要素にない
+			// listシンボルを挿入
+			head = &ConsCell{
+				car: &SymbolNode{name: "list"},
+				cdr: head,
+			}
+			return head, nil
+		} else {
+			// (system::splice ...)を要素に持つ
+			return expandSpliceNode(head), nil
+		}
 
 	default:
 		// leaf node
@@ -99,3 +126,56 @@ func expandBackQuotedNode(nd node) (node, error) {
 	}
 }
 
+// (system::splice ...)の展開
+// (system::splice ...)のリストを親のリスト内に展開する式を作成
+func expandSpliceNode(cell *ConsCell) node {
+	if cell == nil {
+		return nil
+	}
+
+	elements := createSliceFromList(cell)
+
+	lastElement := elements[len(elements) - 1]
+	symbol := getListFirstSymbol(lastElement)
+	var prev node
+	if symbol != nil && symbol.name == "system::splice" {
+		c := lastElement.(*ConsCell)
+		prev = c.next().car
+	} else {
+		prev = createList([]node{
+			&SymbolNode{name: "list"},
+			lastElement,
+		})
+	}
+
+	for i := len(elements) - 2 ; i >= 0 ; i-- {
+		element := elements[i]
+		symbol := getListFirstSymbol(element)
+		if symbol != nil && symbol.name == "system::splice" {
+			c := element.(*ConsCell)
+			prev = &ConsCell{
+				car: &SymbolNode{name: "append"},
+				cdr: &ConsCell{
+					car: c.next().car,
+					cdr: &ConsCell{
+						car: prev,
+						cdr: &NilNode{},
+					},
+				},
+			}
+			} else {
+			prev = &ConsCell{
+				car: &SymbolNode{name: "cons"},
+				cdr: &ConsCell{
+					car: element,
+					cdr: &ConsCell{
+						car: prev,
+						cdr: &NilNode{},
+					},
+				},
+			}
+		}
+	}
+	head := prev
+	return head
+}
