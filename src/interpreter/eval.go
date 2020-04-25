@@ -135,8 +135,15 @@ func (e *evaluator) Eval(n node) (node, error) {
 			return nil, fmt.Errorf("invalid function.")
 		}
 	} else if n.GetNodeType() == NtSymbol {
-		// symbol tableをlookup
 		symbol := n.(*SymbolNode)
+		switch symbol.name {
+		case "nil":
+			return &NilNode{}, nil
+		case "t":
+			return &TrueNode{}, nil
+		default:
+		}
+		// symbol tableをlookup
 		value, ok := e.topScope().lookupSymbol(symbol.name)
 		if !ok {
 			return nil, fmt.Errorf("%v not found.", symbol.name)
