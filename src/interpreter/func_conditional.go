@@ -175,3 +175,28 @@ func funcOr(ev *evaluator, c *ConsCell) (node, error) {
 	}
 	return &NilNode{}, nil
 }
+
+func funcNot(ev *evaluator, c *ConsCell) (node, error) {
+	if c == nil {
+		return nil, fmt.Errorf("Wrong number of arguments.")
+	}
+	if !c.isList() {
+		return nil, fmt.Errorf("Wrong type argument.")
+	}
+	if c.length() != 1 {
+		return nil, fmt.Errorf("Wrong number of arguments.")
+	}
+
+	arg0 := c.car
+
+	result, err := ev.Eval(arg0)
+	if err != nil {
+		return nil, err
+	}
+	_, ok := result.(*NilNode)
+	if ok {
+		return &TrueNode{}, nil
+	} else {
+		return &NilNode{}, nil
+	}
+}

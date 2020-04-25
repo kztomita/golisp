@@ -640,6 +640,27 @@ func TestEvalOr(t *testing.T) {
 	evalTestCases(t, testCases)
 }
 
+func TestEvalNot(t *testing.T) {
+	testCases := []evalTestCase{
+		{
+			createList([]node{
+				&SymbolNode{name: "not"},
+				&NilNode{},
+			}),
+			"t",
+		},
+		{
+			createList([]node{
+				&SymbolNode{name: "not"},
+				&IntNode{value: 0},
+			}),
+			"nil",
+		},
+	}
+
+	evalTestCases(t, testCases)
+}
+
 func TestEvalSetq(t *testing.T) {
 	testCases := []evalTestCase{
 		{

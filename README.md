@@ -68,6 +68,7 @@ func main() {
 - cons
 - and
 - or
+- not
 - setq
 - defun (*1)
 - defmacro (*2)

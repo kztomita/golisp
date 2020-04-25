@@ -23,6 +23,7 @@ func init() {
 		"cdr": funcCdr,
 		"and": funcAnd,
 		"or": funcOr,
+		"not": funcNot,
 		"setq": funcSetq,
 		"defun": funcDefun,
 		"defmacro": funcDefmacro,
