@@ -5,3 +5,15 @@
 (print a)
 (inc a)
 (print a)
+
+(print "====")
+
+; backquote
+(defmacro foo (var &body body)
+  `(progn
+     (print ,var)
+     (print ',body)
+     (print '(,@body))))
+
+(foo 1 2 3)
+

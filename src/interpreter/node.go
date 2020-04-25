@@ -109,7 +109,7 @@ func (n *FuncNode) ToString() string {
 }
 
 type MacroNode struct {
-	parameters	[]*SymbolNode	// 仮引数名のsymbolNode
+	parameters	[]*macroLambdaListParameter
 	body		*ConsCell
 	scope		*lexicalScope
 }

@@ -198,13 +198,33 @@ func evalFunc(e *evaluator, fn *FuncNode, arguments []node) (node, error) {
 }
 
 func expandMacro(e *evaluator, mc *MacroNode, arguments []node) (node, error) {
-	if len(mc.parameters) != len(arguments) {
-		return nil, fmt.Errorf("Number of arguments is mismatch.")
-	}
-	// 未評価の引数をシンボルテーブルに登録
+	// 実引数を関数のscopeのsymbolTableに登録
 	symTable := e.topScope().topSymbolTable()
-	for i := range mc.parameters {
-		symTable[mc.parameters[i].name] = arguments[i]
+	ai := 0	// arguments index
+	for pi := range mc.parameters {
+		if mc.parameters[pi].required {
+			if ai >= len(arguments)	{
+				return nil, fmt.Errorf("Insufficient arguments")
+			}
+			symTable[mc.parameters[pi].name] = arguments[ai]
+			ai++
+		} else if mc.parameters[pi].optional {
+			if ai <= len(arguments) - 1	{
+				symTable[mc.parameters[pi].name] = arguments[ai]
+				ai++
+			} else {
+				symTable[mc.parameters[pi].name] = mc.parameters[pi].defValue
+			}
+		} else if mc.parameters[pi].rest {
+			rest := []node{}
+			for ; ai < len(arguments) ; ai++ {
+				rest = append(rest, arguments[ai])
+			}
+			symTable[mc.parameters[pi].name] = createList(rest)
+		}
+	}
+	if ai < len(arguments) {
+		return nil, fmt.Errorf("Too many arguments given.")
 	}
 
 	//fmt.Printf("%v\n", mc.body.ToString())

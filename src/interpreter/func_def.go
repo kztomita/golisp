@@ -65,17 +65,13 @@ func funcDefmacro(ev *evaluator, c *ConsCell) (node, error) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
-	parameters := []*SymbolNode{}	// 仮引数名のsymbolNode
+	parameters := []*macroLambdaListParameter{}	// 仮引数一覧
 	arg1, ok1 := args[1].(*ConsCell)	// parameters
 	if ok1 {
-		acell := arg1
-		for acell != nil {
-			sym, ok := acell.car.(*SymbolNode)
-			if !ok {
-				return nil, fmt.Errorf("Wrong type argument.")
-			}
-			parameters = append(parameters, sym)
-			acell = acell.next()
+		var err error
+		parameters, err = parseMacroLambdaList(ev, arg1)
+		if err != nil {
+			return nil, err
 		}
 	}
 
