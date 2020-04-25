@@ -1,5 +1,6 @@
 (print (not nil))
 (print (not ()))
+(print (not '()))
 (print (not 1))
 (print (not 0))
 (setq a nil)
