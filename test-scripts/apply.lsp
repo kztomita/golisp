@@ -1,3 +1,4 @@
+; system function
 (print (apply #'+ '(1 2)))
 (print (apply #'+ 1 2 '(3 4)))
 (print (apply #'+ '()))
@@ -5,7 +6,7 @@
 (print (apply '+ '(1 2)))	; 関数名をシンボルで指定
 
 (print "====")
-
+; function
 (defun foo ()
   (print "foo called"))
 
@@ -23,7 +24,9 @@
 (apply #'foo2 '(1 2))
 (apply 'foo1 '(1))	; 関数名をシンボルで指定
 
-; TODO lambda
+(print "====")
+; lambda function
+(print (apply (lambda (x) (+ x 1)) '(1)))
 
 (print "====")
 ; 変数経由
@@ -35,4 +38,7 @@
 
 (setq f 'foo1)
 (apply f '(1))
+
+(setq f (lambda (x) (+ x 1)))
+(print (apply f '(1)))
 
