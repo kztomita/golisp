@@ -31,6 +31,7 @@ func init() {
 		"setq": funcSetq,
 		"defun": funcDefun,
 		"defmacro": funcDefmacro,
+		"function": funcFunction,
 		"let": funcLet,
 		"progn": funcProgn,
 		"print": funcPrint,

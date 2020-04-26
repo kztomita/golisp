@@ -72,6 +72,7 @@ func main() {
 - setq
 - defun (*1)
 - defmacro (*2)
+- function
 - let
 - progn
 - print

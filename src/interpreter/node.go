@@ -18,6 +18,7 @@ const (
 	NtFloat
 	NtSymbol
 	NtString
+	NtSystemFunc
 	NtFunc
 	NtMacro
 )
@@ -95,6 +96,16 @@ func (n *StringNode) ToString() string {
 	return `"` + n.value + `"`
 }
 
+type SystemFuncNode struct {
+	name	string
+}
+func (n *SystemFuncNode) GetNodeType() int {
+	return NtSystemFunc
+}
+func (n *SystemFuncNode) ToString() string {
+	return "<system function " + n.name + ">"
+}
+
 type FuncNode struct {
 	parameters	[]*ordinaryLambdaListParameter
 	body		*ConsCell
@@ -104,8 +115,7 @@ func (n *FuncNode) GetNodeType() int {
 	return NtFunc
 }
 func (n *FuncNode) ToString() string {
-	// TODO escape
-	return "function"
+	return "<function>"
 }
 
 type MacroNode struct {
