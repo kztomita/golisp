@@ -29,6 +29,7 @@ func init() {
 		"defmacro": funcDefmacro,
 		"function": funcFunction,
 		"apply": funcApply,
+		"lambda": funcLambda,
 		"let": funcLet,
 		"progn": funcProgn,
 		"print": funcPrint,

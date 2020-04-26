@@ -73,6 +73,7 @@ func main() {
 - do
 - function (#')
 - if
+- lambda
 - let
 - list
 - not
