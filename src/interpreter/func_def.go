@@ -41,8 +41,7 @@ func funcDefun(ev *evaluator, c *ConsCell) (node, error) {
 		scope: newLexicalScope(ev.topScope()),	// 関数定義時にLexicalScope作成
 	}
 
-	symTable := ev.topScope().topSymbolTable()
-	symTable[arg0.name] = fn
+	functionTable[arg0.name] = fn
 
 	return &SymbolNode{name: arg0.name}, nil
 }
@@ -83,8 +82,7 @@ func funcDefmacro(ev *evaluator, c *ConsCell) (node, error) {
 		scope: newLexicalScope(ev.topScope()),	// 関数定義時にLexicalScope作成
 	}
 
-	symTable := ev.topScope().topSymbolTable()
-	symTable[arg0.name] = fn
+	functionTable[arg0.name] = fn
 
 	return &NilNode{}, nil
 }

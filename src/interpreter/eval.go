@@ -3,10 +3,14 @@ package interpreter
 import (
 	"fmt"
 )
-var embeddedFunctions map[string]func(ev *evaluator, c *ConsCell)(node, error)
+
+type LispFunc func(ev *evaluator, c *ConsCell)(node, error)
+
+var embeddedFunctions map[string]LispFunc
+var functionTable map[string]node = make(map[string]node)		// *FuncNode or *MacroNode
 
 func init() {
-	embeddedFunctions = map[string]func(ev *evaluator, c *ConsCell)(node, error){
+	embeddedFunctions = map[string]LispFunc{
 		"+": funcAdd,
 		"-": funcSubtract,
 		"*": funcMultiply,
@@ -77,9 +81,9 @@ func (e *evaluator) Eval(n node) (node, error) {
 			if ok {
 				return f(e, cell.next())
 			} else {
-				value, ok := e.topScope().lookupSymbol(funcName)
+				value, ok := functionTable[funcName]
 				if !ok {
-					return nil, fmt.Errorf("%v not found.", symbol.name)
+					return nil, fmt.Errorf("%v function not found.", funcName)
 				}
 				switch fn := value.(type) {
 				case *FuncNode:
