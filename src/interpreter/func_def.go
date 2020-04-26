@@ -14,7 +14,7 @@ func funcDefun(ev *evaluator, c *ConsCell) (node, error) {
 	}
 
 	args := createSliceFromList(c)
-	if len(args) < 3 {
+	if len(args) < 2 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
