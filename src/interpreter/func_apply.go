@@ -99,8 +99,10 @@ func lookupFunction(name string) node {
 	if _, ok := embeddedFunctions[name]; ok {
 		return &SystemFuncNode{name: name}
 	}
-	if fn, ok := functionTable[name]; ok {
-		return fn
+	if nd, ok := functionTable[name]; ok {
+		if fn, ok := nd.(*FuncNode); ok {		// *MacroNodeは返さないように
+			return fn
+		}
 	}
 	return nil
 }
