@@ -95,14 +95,3 @@ func funcApply(ev *evaluator, c *ConsCell) (node, error) {
 	}
 }
 
-func lookupFunction(name string) node {
-	if _, ok := embeddedFunctions[name]; ok {
-		return &SystemFuncNode{name: name}
-	}
-	if nd, ok := functionTable[name]; ok {
-		if fn, ok := nd.(*FuncNode); ok {		// *MacroNodeは返さないように
-			return fn
-		}
-	}
-	return nil
-}

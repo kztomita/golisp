@@ -4,47 +4,6 @@ import (
 	"fmt"
 )
 
-type LispFunc func(ev *evaluator, c *ConsCell)(node, error)
-
-var embeddedFunctions map[string]LispFunc
-var functionTable map[string]node = make(map[string]node)		// *FuncNode or *MacroNode
-
-func init() {
-	embeddedFunctions = map[string]LispFunc{
-		"+": funcAdd,
-		"-": funcSubtract,
-		"*": funcMultiply,
-		"/": funcDivide,
-		"=": funcEqual,
-		"/=": funcNotEqual,
-		">": funcGreaterThan,
-		">=": funcGreaterThanOrEqualTo,
-		"<": funcLessThan,
-		"<=": funcLessThanOrEqualTo,
-		"append": funcAppend,
-		"cons": funcCons,
-		"car": funcCar,
-		"cdr": funcCdr,
-		"and": funcAnd,
-		"or": funcOr,
-		"not": funcNot,
-		"setq": funcSetq,
-		"defun": funcDefun,
-		"defmacro": funcDefmacro,
-		"function": funcFunction,
-		"apply": funcApply,
-		"let": funcLet,
-		"progn": funcProgn,
-		"print": funcPrint,
-		"quote": funcQuote,
-		"list": funcList,
-		"if": funcIf,
-		"do": funcDo,
-
-		"system::backquote": funcSystemBackQuote,
-	}
-}
-
 type evaluator struct {
 	scopeStack	[]*lexicalScope
 }
