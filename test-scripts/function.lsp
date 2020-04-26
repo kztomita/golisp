@@ -3,6 +3,7 @@
 (defun foo ())
 
 (print (function foo))
+(print #'foo)
 
 ; TODO lambda
 

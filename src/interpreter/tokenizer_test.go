@@ -147,6 +147,15 @@ func TestTokenizer(t *testing.T) {
 			},
 		},
 		{
+			"(#'foo)",
+			[]token{
+				{tokenId: tokenLeftParentheses, literal: "("},
+				{tokenId: tokenSharpQuote, literal: "#'"},
+				{tokenId: tokenSymbol, literal: "foo"},
+				{tokenId: tokenRightParentheses, literal: ")"},
+			},
+		},
+		{
 			"(1 2 3 \nfoo)",
 			[]token{
 				{tokenId: tokenLeftParentheses, literal: "("},

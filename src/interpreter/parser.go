@@ -79,6 +79,8 @@ func createExpressionNode(ctx *parsingContext, tk *tokenizer, token *token) (nod
 		return unquoteNextNode(ctx2, tk)
 	case tokenCommaAt:
 		return unquoteAndSpliceNextNode(ctx, tk)
+	case tokenSharpQuote:
+		return functionNextNode(ctx, tk)
 	default:
 		return nil, fmt.Errorf("Syntax error.")
 	}
@@ -167,6 +169,21 @@ func unquoteAndSpliceNextNode(ctx *parsingContext, tk *tokenizer) (node, error) 
 			&SymbolNode{name: "system::splice"},
 			nd,
 		}),
+	}), nil
+}
+
+func functionNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
+	nd, err := readExpression(ctx, tk)
+	if err != nil {
+		return nil, err
+	}
+	if nd == nil {
+		return nil, fmt.Errorf("Invalid #' literal.")
+	}
+
+	return createList([]node{
+		&SymbolNode{name: "function"},
+		nd,
 	}), nil
 }
 

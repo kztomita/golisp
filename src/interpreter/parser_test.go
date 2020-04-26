@@ -71,6 +71,11 @@ func TestParser(t *testing.T) {
 			false,
 		},
 		{
+			"(#'foo)",
+			"((function foo))",
+			false,
+		},
+		{
 			`)`,
 			"",
 			true,

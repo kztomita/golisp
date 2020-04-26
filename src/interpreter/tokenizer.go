@@ -18,6 +18,7 @@ const (
 	tokenBackQuote
 	tokenComma
 	tokenCommaAt
+	tokenSharpQuote
 )
 
 type token struct {
@@ -169,6 +170,16 @@ func (t *tokenizer) nextToken() *token {
 				}
 			}
 			found = true
+		case '#':
+			if literal == "" {
+				next := t.peekChar(1)
+				if next == '\'' {
+					t.nextChar()
+					t.nextChar()
+					return &token{tokenId: tokenSharpQuote, literal: "#'"}
+				}
+			}
+
 		case ';':
 			if literal == "" {
 				// ignore comment
