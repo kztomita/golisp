@@ -85,8 +85,8 @@ func _funcDo(ev *evaluator, c *ConsCell) (node, error) {
 		}
 	}
 
-	declarations := args[2:len(args)]
-	container := &ContainerNode{nodes: declarations}
+	bodyStatements := args[2:len(args)]
+	container := &ContainerNode{nodes: bodyStatements}
 	endCondition := endResult.car
 
 	for true {
