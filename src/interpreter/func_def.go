@@ -44,7 +44,7 @@ func funcDefun(ev *evaluator, c *ConsCell) (node, error) {
 	symTable := ev.topScope().topSymbolTable()
 	symTable[arg0.name] = fn
 
-	return &NilNode{}, nil
+	return &SymbolNode{name: arg0.name}, nil
 }
 
 func funcDefmacro(ev *evaluator, c *ConsCell) (node, error) {
