@@ -62,27 +62,28 @@ func main() {
 - &gt;=
 - &lt;
 - &lt;=
+- and
 - append
+- apply
 - car
 - cdr
 - cons
-- and
-- or
-- not
-- setq
-- defun (*1)
-- defmacro (*2)
-- function (#')
-- let
-- progn
-- print
-- quote
-- list
-- if
+- defmacro (*1)
+- defun (*2)
 - do
+- function (#')
+- if
+- let
+- list
+- not
+- or
+- print
+- progn
+- quote
+- setq
 
-(*1) lambda list keywordは&optional,&restのみ対応。<br />
-(*2) lambda list keywordは&optional,&rest,&bodyのみ対応。
+(*1) lambda list keywordは&optional,&rest,&bodyのみ対応。<br />
+(*2) lambda list keywordは&optional,&restのみ対応。
 
 # TODO
 
