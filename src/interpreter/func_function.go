@@ -15,20 +15,17 @@ func funcFunction(ev *evaluator, c *ConsCell) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	arg0 := c.car
+	arg0 := c.car	// 評価は不要
 
 	// TODO lambda
 	switch arg0.(type) {
 	case *SymbolNode:
 		funcName := arg0.(*SymbolNode).name
-
-		if _, ok := embeddedFunctions[funcName]; ok {
-			return &SystemFuncNode{name: funcName}, nil
+		fn := lookupFunction(funcName)
+		if fn == nil {
+			return nil, fmt.Errorf("%v function not found.", funcName)
 		}
-		if fn, ok := functionTable[funcName]; ok {
-			return fn, nil
-		}
-		return nil, fmt.Errorf("%v function not found.", funcName)
+		return fn, nil
 	default:
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
