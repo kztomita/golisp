@@ -67,7 +67,9 @@ func main() {
 - and
 - append
 - apply
+- cadr
 - car
+- cddr
 - cdr
 - cons
 - defmacro (*1)
