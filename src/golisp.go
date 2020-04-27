@@ -25,6 +25,8 @@ func evaluateFile(file string) {
 		log.Fatalf("%v\n", err)
 	}
 
+	interpreter.Initialize()
+
 	node, err := interpreter.Parse(string(lispBytes))
 	if err != nil {
 		log.Fatalf("%v\n", err)

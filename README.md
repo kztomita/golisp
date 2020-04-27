@@ -33,6 +33,8 @@ import (
 )
 
 func main() {
+	interpreter.Initialize()
+
 	// LISP構文を字句解析、構文解析して構文木を構築
 	node, err := interpreter.Parse("(+ 1 2)")
 	if err != nil {
@@ -71,6 +73,7 @@ func main() {
 - defmacro (*1)
 - defun (*2)
 - do
+- funcall
 - function (#')
 - if
 - lambda
