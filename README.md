@@ -8,7 +8,7 @@ Goによるごく限られた機能しかないLISPインタプリタ。
 # 使い方
 
     cd src
-    go run golisp.go ../samples/fib.lsp
+    go run golisp.go ../test-scripts/fib.lsp
 
 
 REPL
