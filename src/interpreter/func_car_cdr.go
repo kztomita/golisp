@@ -21,11 +21,15 @@ func funcCar(ev *evaluator, c *ConsCell) (node, error) {
 	if err != nil {
 		return nil, err
 	}
-	cell, ok := result.(*ConsCell)
-	if !ok {
+	switch nd := result.(type) {
+	case *ConsCell:
+		return nd.car, nil
+	case *NilNode:
+		// empty list, nil symbol
+		return &NilNode{}, nil
+	default:
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	return cell.car, nil
 }
 
 // (cdr list)
@@ -45,9 +49,13 @@ func funcCdr(ev *evaluator, c *ConsCell) (node, error) {
 	if err != nil {
 		return nil, err
 	}
-	cell, ok := result.(*ConsCell)
-	if !ok {
+	switch nd := result.(type) {
+	case *ConsCell:
+		return nd.cdr, nil
+	case *NilNode:
+		// empty list, nil symbol
+		return &NilNode{}, nil
+	default:
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	return cell.cdr, nil
 }
