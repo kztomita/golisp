@@ -5,15 +5,12 @@ import (
 )
 
 func funcLet(ev *evaluator, c *ConsCell) (node, error) {
-	// lexicalScopeを作成してscopeを切り替え。
-	// 作成したlexicalScopeのsymbolStackに新しいテーブルを追加。
-	scope := newLexicalScope(ev.topScope())
-	ev.scopeStack = append(ev.scopeStack, scope)
-	scope.symbolTableStack = append(scope.symbolTableStack, symbolTable{})
+	// lexical environmentを作成して切り替え
+	ev.pushEnvironment(newLexicalEnvironment(ev.topEnvironment()))
 
 	result, err := funcLet_(ev, c)
 
-	ev.scopeStack = ev.scopeStack[0:len(ev.scopeStack) - 1]
+	ev.popEnvironment()
 
 	return result, err
 }
@@ -38,7 +35,7 @@ func funcLet_(ev *evaluator, c *ConsCell) (node, error) {
 		return nil, fmt.Errorf("Wrong type argument(binding-list).")
 	}
 
-	symTable := ev.topScope().topSymbolTable()
+	symTable := ev.topEnvironment().symbols
 
 	pBinding := arg0
 	for pBinding != nil {

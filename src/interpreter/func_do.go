@@ -15,13 +15,11 @@ func funcDo(ev *evaluator, c *ConsCell) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	scope := newLexicalScope(ev.topScope())
-	ev.scopeStack = append(ev.scopeStack, scope)
-	scope.symbolTableStack = append(scope.symbolTableStack, symbolTable{})
+	ev.pushEnvironment(newLexicalEnvironment(ev.topEnvironment()))
 
 	result, err := _funcDo(ev, c)
 
-	ev.scopeStack = ev.scopeStack[0:len(ev.scopeStack) - 1]
+	ev.popEnvironment()
 
 	return result, err
 }
@@ -44,7 +42,7 @@ func _funcDo(ev *evaluator, c *ConsCell) (node, error) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
-	symTable := ev.topScope().topSymbolTable()
+	symTable := ev.topEnvironment().symbols
 
 	stepExpressions := []node{}
 

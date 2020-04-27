@@ -5,17 +5,24 @@ import (
 )
 
 type evaluator struct {
-	scopeStack	[]*lexicalScope
+	envStack	[]*lexicalEnvironment
 }
 
 func NewEvaluator() *evaluator {
 	return &evaluator{
-		scopeStack: []*lexicalScope{newLexicalScope(nil)},
+		envStack: []*lexicalEnvironment{newLexicalEnvironment(nil)},
 	}
 }
 
-func (e *evaluator) topScope() *lexicalScope {
-	return e.scopeStack[len(e.scopeStack) - 1]
+// get current lexical environment
+func (e *evaluator) topEnvironment() *lexicalEnvironment {
+	return e.envStack[len(e.envStack) - 1]
+}
+func (e *evaluator) pushEnvironment(env *lexicalEnvironment) {
+	e.envStack = append(e.envStack, env)
+}
+func (e *evaluator) popEnvironment() {
+	e.envStack = e.envStack[0:len(e.envStack) - 1]
 }
 
 func (e *evaluator) Eval(n node) (node, error) {
@@ -57,16 +64,14 @@ func (e *evaluator) Eval(n node) (node, error) {
 						}
 						arguments = append(arguments, argNode)
 					}
-	
-					// evaluatorに関数のlexicalScopeを積んでscopeを切り替え。
-					// 関数のlexicalScopeのsymbolStackに新しいテーブルを追加。
-					e.scopeStack = append(e.scopeStack, fn.scope)
-					fn.scope.symbolTableStack = append(fn.scope.symbolTableStack, symbolTable{})
-	
+
+					// 新しいlexical environmentを作成して切り替え
+					// 新しいenvironmentは関数作成時にキャプチャしたenvironmentの子とする
+					e.pushEnvironment(newLexicalEnvironment(fn.env))
+
 					result, err := evalFunc(e, fn, arguments)
 	
-					fn.scope.symbolTableStack = fn.scope.symbolTableStack[0:len(fn.scope.symbolTableStack) - 1]
-					e.scopeStack = e.scopeStack[0:len(e.scopeStack) - 1]
+					e.popEnvironment()
 	
 					return result, err
 
@@ -79,13 +84,11 @@ func (e *evaluator) Eval(n node) (node, error) {
 					}
 
 					// 展開＆評価
-					e.scopeStack = append(e.scopeStack, fn.scope)
-					fn.scope.symbolTableStack = append(fn.scope.symbolTableStack, symbolTable{})
+					e.pushEnvironment(newLexicalEnvironment(fn.env))
 
 					expanded, err := expandMacro(e, fn, arguments)
 
-					fn.scope.symbolTableStack = fn.scope.symbolTableStack[0:len(fn.scope.symbolTableStack) - 1]
-					e.scopeStack = e.scopeStack[0:len(e.scopeStack) - 1]
+					e.popEnvironment()
 
 					if err != nil {
 						return nil, err
@@ -111,7 +114,7 @@ func (e *evaluator) Eval(n node) (node, error) {
 		default:
 		}
 		// symbol tableをlookup
-		value, ok := e.topScope().lookupSymbol(symbol.name)
+		value, ok := e.topEnvironment().lookupSymbol(symbol.name)
 		if !ok {
 			return nil, fmt.Errorf("%v not found.", symbol.name)
 		}
@@ -123,7 +126,7 @@ func (e *evaluator) Eval(n node) (node, error) {
 
 func evalFunc(e *evaluator, fn *FuncNode, arguments []node) (node, error) {
 	// 実引数を関数のscopeのsymbolTableに登録
-	symTable := e.topScope().topSymbolTable()
+	symTable := e.topEnvironment().symbols
 	ai := 0	// arguments index
 	for pi := range fn.parameters {
 		if fn.parameters[pi].required {
@@ -166,7 +169,7 @@ func evalFunc(e *evaluator, fn *FuncNode, arguments []node) (node, error) {
 
 func expandMacro(e *evaluator, mc *MacroNode, arguments []node) (node, error) {
 	// 実引数を関数のscopeのsymbolTableに登録
-	symTable := e.topScope().topSymbolTable()
+	symTable := e.topEnvironment().symbols
 	ai := 0	// arguments index
 	for pi := range mc.parameters {
 		if mc.parameters[pi].required {

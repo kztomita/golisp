@@ -32,7 +32,7 @@ func funcLambda(ev *evaluator, c *ConsCell) (node, error) {
 	fn := &FuncNode{
 		parameters: parameters,
 		body: bodyHead,
-		scope: newLexicalScope(ev.topScope()),	// LexicalScope作成
+		env: ev.topEnvironment(),	// capture current lexical scope
 	}
 
 	return fn, nil

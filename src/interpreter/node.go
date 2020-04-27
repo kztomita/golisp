@@ -109,7 +109,7 @@ func (n *SystemFuncNode) ToString() string {
 type FuncNode struct {
 	parameters	[]*ordinaryLambdaListParameter
 	body		*ConsCell
-	scope		*lexicalScope
+	env			*lexicalEnvironment		// captured environment
 }
 func (n *FuncNode) GetNodeType() int {
 	return NtFunc
@@ -121,7 +121,7 @@ func (n *FuncNode) ToString() string {
 type MacroNode struct {
 	parameters	[]*macroLambdaListParameter
 	body		*ConsCell
-	scope		*lexicalScope
+	env			*lexicalEnvironment		// captured environment
 }
 func (n *MacroNode) GetNodeType() int {
 	return NtMacro

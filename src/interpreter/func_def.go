@@ -38,7 +38,7 @@ func funcDefun(ev *evaluator, c *ConsCell) (node, error) {
 	fn := &FuncNode{
 		parameters: parameters,
 		body: bodyHead,
-		scope: newLexicalScope(ev.topScope()),	// 関数定義時にLexicalScope作成
+		env: ev.topEnvironment(),	// capture current lexical scope
 	}
 
 	functionTable[arg0.name] = fn
@@ -79,7 +79,7 @@ func funcDefmacro(ev *evaluator, c *ConsCell) (node, error) {
 	fn := &MacroNode{
 		parameters: parameters,
 		body: bodyHead,
-		scope: newLexicalScope(ev.topScope()),	// 関数定義時にLexicalScope作成
+		env: ev.topEnvironment(),	// capture current lexical scope
 	}
 
 	functionTable[arg0.name] = fn

@@ -79,15 +79,13 @@ func funcApply(ev *evaluator, c *ConsCell) (node, error) {
 		return f(ev, headCell)
 	case *FuncNode:
 		fn := nd
-		// evaluatorに関数のlexicalScopeを積んでscopeを切り替え。
-		// 関数のlexicalScopeのsymbolStackに新しいテーブルを追加。
-		ev.scopeStack = append(ev.scopeStack, fn.scope)
-		fn.scope.symbolTableStack = append(fn.scope.symbolTableStack, symbolTable{})
+		// 新しいlexical environmentを作成して切り替え
+		// 新しいenvironmentは関数作成時にキャプチャしたenvironmentの子とする
+		ev.pushEnvironment(newLexicalEnvironment(fn.env))
 
 		result, err := evalFunc(ev, fn, createSliceFromList(headCell))
 
-		fn.scope.symbolTableStack = fn.scope.symbolTableStack[0:len(fn.scope.symbolTableStack) - 1]
-		ev.scopeStack = ev.scopeStack[0:len(ev.scopeStack) - 1]
+		ev.popEnvironment()
 
 		return result, err
 	default:
