@@ -1,4 +1,4 @@
-(setq outer_a 1)
+(print (setq outer_a 1))
 
 (defun foo (a b)
   (let ((x 100) (y 200))

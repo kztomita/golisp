@@ -40,5 +40,5 @@ func funcSetq(ev *evaluator, c *ConsCell) (node, error) {
 	}
 	symTable[arg0.name] = result
 
-	return &NilNode{}, nil
+	return result, nil
 }
