@@ -186,6 +186,12 @@ func TestTokenizer(t *testing.T) {
 				{tokenId: tokenRightParentheses, literal: ")"},
 			},
 		},
+		{
+			`"aa \"bb"`,
+			[]token{
+				{tokenId: tokenString, literal: `aa "bb`},
+			},
+		},
 	}
 
 	for _, c := range testCases {

@@ -1,5 +1,13 @@
 package interpreter
 
+import (
+	"regexp"
+)
+
+//
+// List関連
+//
+
 func createList(elements []node) node {
 	if len(elements) == 0 {
 		return &NilNode{}
@@ -78,4 +86,19 @@ func getListFirstSymbol(nd node) *SymbolNode {
 		return nil
 	}
 	return symbol
+}
+
+
+//
+// 文字列関連
+//
+
+func escapeString(s string) string {
+	return regexEscapeString.ReplaceAllString(s, `\"`)
+}
+
+var regexEscapeString *regexp.Regexp
+
+func init() {
+	regexEscapeString, _ = regexp.Compile(`"`)
 }

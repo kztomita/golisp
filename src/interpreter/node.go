@@ -92,8 +92,7 @@ func (n *StringNode) GetNodeType() int {
 	return NtString
 }
 func (n *StringNode) ToString() string {
-	// TODO escape
-	return `"` + n.value + `"`
+	return `"` + escapeString(n.value) + `"`
 }
 
 type SystemFuncNode struct {

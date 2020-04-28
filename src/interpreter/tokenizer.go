@@ -135,14 +135,7 @@ func (t *tokenizer) nextToken() *token {
 			// TODO escape seq
 			if literal == "" {
 				t.nextChar()
-				for true {
-					c := t.nextChar()
-					if c == 0 || c == '"' {
-						break
-					}
-					literal += string(c)
-				}
-				return &token{tokenId: tokenString, literal: literal}
+				return &token{tokenId: tokenString, literal: readString(t)}
 			}
 			found = true
 		case '\'':
@@ -228,3 +221,27 @@ func (t *tokenizer) peekToken(offset int) *token {
 func isWhiteSpace(c byte) bool {
 	return c == ' ' || c == '\t' || c == 0x0d || c == 0x0a
 }
+
+// "まで読み込む
+func readString(t *tokenizer) string {
+	literal := ""
+	for true {
+		c := t.nextChar()
+		if c == 0 || c == '"' {
+			break
+		}
+		if c == '\\' {
+			// escape
+			c := t.nextChar()
+			if c == 0 {
+				break
+			} else {
+				literal += string(c)
+			}
+			continue
+		}
+		literal += string(c)
+	}
+	return literal
+}
+
