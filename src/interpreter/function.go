@@ -32,6 +32,7 @@ func init() {
 		"lambda": funcLambda,
 		"let": funcLet,
 		"progn": funcProgn,
+		"prin1": funcPrin1,
 		"print": funcPrint,
 		"quote": funcQuote,
 		"list": funcList,

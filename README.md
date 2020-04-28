@@ -83,6 +83,7 @@ func main() {
 - list
 - not
 - or
+- prin1
 - print
 - progn
 - quote

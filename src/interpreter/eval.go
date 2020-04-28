@@ -6,6 +6,7 @@ import (
 
 type evaluator struct {
 	envStack	[]*lexicalEnvironment
+	writed		bool
 }
 
 func NewEvaluator() *evaluator {
@@ -215,4 +216,11 @@ func expandMacro(e *evaluator, mc *MacroNode, arguments []node) (node, error) {
 
 	// 展開したリストを返す
 	return lastResult, nil
+}
+
+func (e *evaluator) Flush() {
+	if e.writed {
+		fmt.Println("")
+		e.writed = false
+	}
 }

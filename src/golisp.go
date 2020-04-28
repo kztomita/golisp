@@ -38,6 +38,7 @@ func evaluateFile(file string) {
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
+	ev.Flush()
 
 	if false {
 		fmt.Printf("%v", result.ToString());
