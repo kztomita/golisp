@@ -1,3 +1,8 @@
+(print (setq a 1))
+(print (setq b 2 c (+ 1 2)))
+(print (list a b c))
+
+(print "====")
 (print (setq outer_a 1))
 
 (defun foo (a b)
