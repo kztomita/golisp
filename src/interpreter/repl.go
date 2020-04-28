@@ -30,7 +30,7 @@ func Repl(input io.Reader) {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 			continue
 		}
-		ev.Flush()
+		ev.FreshLine()
 
 		fmt.Println(result.ToString())
 		index++

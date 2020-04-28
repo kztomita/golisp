@@ -218,7 +218,7 @@ func expandMacro(e *evaluator, mc *MacroNode, arguments []node) (node, error) {
 	return lastResult, nil
 }
 
-func (e *evaluator) Flush() {
+func (e *evaluator) FreshLine() {
 	if e.writed {
 		fmt.Println("")
 		e.writed = false
