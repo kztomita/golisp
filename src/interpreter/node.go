@@ -192,6 +192,10 @@ func (c *ConsCell) isDotList() bool {
 }
 
 func (c *ConsCell) tail() *ConsCell {
+	if !isProperList(c) {
+		return nil
+	}
+
 	var tail *ConsCell
 	for cell := c ; cell != nil ; cell = cell.next() {
 		tail = cell
