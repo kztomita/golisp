@@ -191,20 +191,6 @@ func (c *ConsCell) isDotList() bool {
 	return false
 }
 
-func (c *ConsCell) length() int {
-	length := 0
-
-	c2 := c
-	for c2 != nil {
-		length++
-		if c2.isDotList() {
-			break
-		}
-		c2 = c2.next()
-	}
-	return length
-}
-
 func (c *ConsCell) tail() *ConsCell {
 	var tail *ConsCell
 	for cell := c ; cell != nil ; cell = cell.next() {
