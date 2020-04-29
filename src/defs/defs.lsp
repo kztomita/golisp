@@ -1,9 +1,3 @@
-package interpreter
-
-var systemFuncDefinitions string
-
-func init() {
-	systemFuncDefinitions = `
 (defun cadr (x) (car (cdr x)))
 
 (defun cddr (x) (cdr (cdr x)))
@@ -12,7 +6,4 @@ func init() {
   (apply fn args))
 
 (defmacro progn (&rest args)
-  ` + "`" + `(let nil ,@args))
-
-	`
-}
+  `(let nil ,@args))
