@@ -37,11 +37,11 @@ func funcLet_(ev *evaluator, arglist node) (node, error) {
 
 	pBinding := arg0
 	for pBinding != nil {
-		binding, ok := pBinding.car.(*ConsCell)
-		if !ok {
+		if countProperListLength(pBinding.car) != 2 {
 			return nil, fmt.Errorf("Wrong type argument(binding-list).")
 		}
-		if !binding.isList() || binding.length() != 2 {
+		binding, ok := pBinding.car.(*ConsCell)
+		if !ok {
 			return nil, fmt.Errorf("Wrong type argument(binding-list).")
 		}
 

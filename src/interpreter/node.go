@@ -191,11 +191,6 @@ func (c *ConsCell) isDotList() bool {
 	return false
 }
 
-// XXX isProperList()に切り替えていずれ削除
-func (c *ConsCell) isList() bool {
-	return isProperList(c)
-}
-
 func (c *ConsCell) length() int {
 	length := 0
 
