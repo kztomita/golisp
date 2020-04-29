@@ -26,6 +26,12 @@ func TestIsProperList(t *testing.T) {
 	}
 
 	{
+		if isProperList(nil) == true {
+			t.Errorf("nil: expected: false, result: true")
+		}
+	}
+
+	{
 		c := &IntNode{value: 1}
 		if isProperList(c) == true {
 			t.Errorf("Not list: expected: false, result: true")
