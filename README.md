@@ -79,6 +79,7 @@ func main() {
 - function (#')
 - if
 - lambda
+- length
 - let
 - list
 - not

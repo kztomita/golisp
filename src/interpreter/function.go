@@ -35,6 +35,7 @@ func init() {
 		"prin1": funcPrin1,
 		"print": funcPrint,
 		"quote": funcQuote,
+		"length": funcLength,
 		"list": funcList,
 		"if": funcIf,
 		"do": funcDo,
