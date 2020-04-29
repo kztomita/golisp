@@ -136,6 +136,70 @@ func TestCreateDotList(t *testing.T) {
 	}
 }
 
+func TestCreateSliceFromProperList(t *testing.T) {
+	testCases := []struct{
+		list		node
+		err			bool
+		expected	[]node
+	}{
+		{
+			&ConsCell{
+				car: &IntNode{value: 3},
+				cdr: &ConsCell{
+					car: &IntNode{value: 4},
+					cdr: &ConsCell{
+						car: &IntNode{value: 5},
+						cdr: &NilNode{},
+					},
+				},
+			},
+			false,
+			[]node{
+				&IntNode{value: 3},
+				&IntNode{value: 4},
+				&IntNode{value: 5},
+			},
+		},
+		{
+			&ConsCell{
+				car: &IntNode{value: 3},
+				cdr: &ConsCell{
+					car: &IntNode{value: 4},
+					cdr: &IntNode{value: 5},
+				},
+			},
+			true,
+			[]node{},
+		},
+		{
+			&NilNode{},
+			false,
+			[]node{},
+		},
+	}
+
+	for _, c := range testCases {
+		result, err := createSliceFromProperList(c.list)
+		if c.err == false && err != nil {
+			t.Errorf("Expected err is nil. Result: %v", err)
+			continue
+		} else if c.err == true && err == nil {
+			t.Errorf("Expected err , but err is nil.")
+			continue
+		}
+		if len(result) != len(c.expected) {
+			t.Errorf("Result size is incorrect. Result: %v, Expected: %v", len(result), len(c.expected))
+		}
+		for i := range result {
+			if result[i].GetNodeType() != c.expected[i].GetNodeType() ||
+			   result[i].ToString() != c.expected[i].ToString() {
+				t.Errorf("Index %v: Result: %v, Expected: %v", i, result[i], c.expected[i])
+
+			}
+		}
+	}
+}
+
 func TestCreateSliceFromList(t *testing.T) {
 	testCases := []struct{
 		list		*ConsCell

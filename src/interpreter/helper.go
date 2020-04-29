@@ -1,6 +1,7 @@
 package interpreter
 
 import (
+	"fmt"
 	"regexp"
 )
 
@@ -72,6 +73,31 @@ func createDotList(elements []node) node {
 	return p
 }
 
+func createSliceFromProperList(head node) ([]node, error) {
+	if !isProperList(head) {
+		return nil, fmt.Errorf("Argument is not a proper list.")
+	}
+
+	result := []node{}
+
+	nd := head
+	for true {
+		switch nd.(type) {
+		case *ConsCell:
+			cell := nd.(*ConsCell)
+			result = append(result, cell.car)
+			nd = cell.cdr
+		case *NilNode:
+			return result, nil
+		default:
+			return nil, fmt.Errorf("Logic error. Argument is not a proper list.")
+		}
+	}
+	// not to reach
+	return nil, fmt.Errorf("Logic error. Not to reach.")
+}
+
+// TODO 削除
 func createSliceFromList(head *ConsCell) []node {
 	result := []node{}
 
