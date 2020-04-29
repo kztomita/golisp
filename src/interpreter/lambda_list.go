@@ -68,10 +68,13 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*ordinaryLambdaListP
 					defValue: &NilNode{},
 				})
 			case *ConsCell:
-				if !nd.isList() {
+				if !isProperList(nd) {
 					return nil, fmt.Errorf("Invalid lambda list element.")
 				}
-				pair := createSliceFromList(nd)
+				pair, err := createSliceFromProperList(nd)
+				if err != nil {
+					return nil, fmt.Errorf("Invalid lambda list element.")
+				}
 				if len(pair) > 2 {
 					return nil, fmt.Errorf("Invalid lambda list element.")
 				}
@@ -186,10 +189,13 @@ func parseMacroLambdaList(ev *evaluator, c *ConsCell) ([]*macroLambdaListParamet
 					defValue: &NilNode{},
 				})
 			case *ConsCell:
-				if !nd.isList() {
+				if !isProperList(nd) {
 					return nil, fmt.Errorf("Invalid lambda list element.")
 				}
-				pair := createSliceFromList(nd)
+				pair, err := createSliceFromProperList(nd)
+				if err != nil {
+					return nil, fmt.Errorf("Invalid lambda list element.")
+				}
 				if len(pair) > 2 {
 					return nil, fmt.Errorf("Invalid lambda list element.")
 				}
