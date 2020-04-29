@@ -191,16 +191,26 @@ func (c *ConsCell) isDotList() bool {
 	return false
 }
 
-// 末尾がdot listでないかチェック
+// proper listであることをチェック
+// (dotted list/circular listでないことをチェック)
 func (c *ConsCell) isList() bool {
 	c2 := c
 	for c2 != nil {
-		if c2.isDotList() {
+		switch cdr := c2.cdr.(type) {
+		case *ConsCell:
+			if cdr == c {
+				return false	// circular list
+			}
+			c2 = cdr
+		case *NilNode:
+			return true
+		default:
+			// dotted list
 			return false
 		}
-		c2 = c2.next()
 	}
-	return true
+	// not to reach
+	return false
 }
 
 func (c *ConsCell) length() int {
