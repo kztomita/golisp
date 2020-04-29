@@ -48,7 +48,7 @@ func (e *evaluator) Eval(n node) (node, error) {
 			funcName := symbol.name
 			f, ok := embeddedFunctions[funcName]
 			if ok {
-				return f(e, cell.next())
+				return f(e, cell.cdr)
 			} else {
 				value, ok := functionTable[funcName]
 				if !ok {

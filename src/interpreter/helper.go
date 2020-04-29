@@ -2,6 +2,7 @@ package interpreter
 
 import (
 	"fmt"
+	"reflect"
 	"regexp"
 )
 
@@ -12,6 +13,10 @@ import (
 // proper listであることをチェック
 // (dotted list/circular listでないことをチェック)
 func isProperList(head node) bool {
+	if head == nil || reflect.ValueOf(head).IsNil() {
+		return false
+	}
+
 	nd := head
 	for true {
 		switch nd.(type) {
@@ -30,6 +35,50 @@ func isProperList(head node) bool {
 	}
 	// not to reach
 	return false
+}
+
+// Proper Listの長さをカウント
+// Proper Listでなければ0を返す
+func countProperListLength(head node) int {
+	if !isProperList(head) {
+		return 0
+	}
+
+	length := 0
+	nd := head
+	for true {
+		switch nd.(type) {
+		case *ConsCell:
+			length++
+			nd = nd.(*ConsCell).cdr
+		case *NilNode:
+			return length
+		default:
+			// not to reach
+			return 0
+		}
+	}
+	// not to reach
+	return 0
+}
+
+// headリストの先頭の*ConsCellを返す。
+// headが空リスト(*NilNode)の場合はnilを返す。
+// headがリストでない場合もnilを返す。
+func getConsCell(head node) *ConsCell {
+	if head == nil || reflect.ValueOf(head).IsNil() {
+		return nil
+	}
+	switch head.(type) {
+	case *ConsCell:
+		return head.(*ConsCell)
+	case *NilNode:
+		// empty list
+		return nil
+	default:
+		// not list
+		return nil
+	}
 }
 
 func createList(elements []node) node {

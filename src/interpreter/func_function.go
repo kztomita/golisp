@@ -4,18 +4,20 @@ import (
 	"fmt"
 )
 
-func funcFunction(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcFunction(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	if c.length() != 1 {
+
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
+	if len(args) != 1 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	arg0 := c.car	// 評価は不要
+	arg0 := args[0]	// 評価は不要
 
 	switch arg0.(type) {
 	case *SymbolNode:

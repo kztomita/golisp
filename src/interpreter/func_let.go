@@ -4,34 +4,32 @@ import (
 	"fmt"
 )
 
-func funcLet(ev *evaluator, c *ConsCell) (node, error) {
+func funcLet(ev *evaluator, arglist node) (node, error) {
 	// lexical environmentを作成して切り替え
 	ev.pushEnvironment(newLexicalEnvironment(ev.topEnvironment()))
 
-	result, err := funcLet_(ev, c)
+	result, err := funcLet_(ev, arglist)
 
 	ev.popEnvironment()
 
 	return result, err
 }
 
-func funcLet_(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcLet_(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	if c.length() < 2 {
+
+	if countProperListLength(arglist) < 2 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	p := c
+	p := getConsCell(arglist)
 	arg0, ok := p.car.(*ConsCell)	// binding-list
 	if !ok {
 		return nil, fmt.Errorf("Wrong type argument(binding-list).")
 	}
-	if !arg0.isList() {
+	if !isProperList(arg0) {
 		return nil, fmt.Errorf("Wrong type argument(binding-list).")
 	}
 

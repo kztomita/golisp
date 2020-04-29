@@ -5,15 +5,15 @@ import (
 )
 
 
-func funcDefun(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcDefun(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
-	args := createSliceFromList(c)
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
 	if len(args) < 2 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
@@ -33,6 +33,7 @@ func funcDefun(ev *evaluator, c *ConsCell) (node, error) {
 		}
 	}
 
+	c := getConsCell(arglist)
 	bodyHead := c.next().next()		// body list
 
 	fn := &FuncNode{
@@ -46,15 +47,15 @@ func funcDefun(ev *evaluator, c *ConsCell) (node, error) {
 	return &SymbolNode{name: arg0.name}, nil
 }
 
-func funcDefmacro(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcDefmacro(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
-	args := createSliceFromList(c)
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
 	if len(args) < 3 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
@@ -74,6 +75,7 @@ func funcDefmacro(ev *evaluator, c *ConsCell) (node, error) {
 		}
 	}
 
+	c := getConsCell(arglist)
 	bodyHead := c.next().next()		// body list
 
 	fn := &MacroNode{

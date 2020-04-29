@@ -4,18 +4,18 @@ import (
 	"fmt"
 )
 
-func funcIf(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcIf(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	if c.length() != 3 {
+
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
+	if len(args) != 3 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
-
-	args := createSliceFromList(c)
 
 	condition, err := ev.Eval(args[0])
 	if err != nil {

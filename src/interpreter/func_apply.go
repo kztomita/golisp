@@ -4,18 +4,20 @@ import (
 	"fmt"
 )
 
-func funcApply(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Too few arguments given.")
-	}
-	if !c.isList() {
+func funcApply(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	if c.length() < 2 {
+
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
+	if len(args) < 2 {
 		return nil, fmt.Errorf("Too few arguments given.")
 	}
 
-	evaledArg0, err := ev.Eval(c.car)
+	evaledArg0, err := ev.Eval(args[0])
 	if err != nil {
 		return nil, err
 	}
@@ -26,17 +28,21 @@ func funcApply(ev *evaluator, c *ConsCell) (node, error) {
 		return nil, fmt.Errorf("The first argument is not function.")
 	}
 
-	args := createSliceFromList(c.next())
+	rest := getConsCell(arglist).next()
+	applyArgs, err := createSliceFromProperList(rest)
+	if err != nil {
+		return nil, err
+	}
 	var head node
-	if len(args) > 0 {
+	if len(applyArgs) > 0 {
 		// 末尾のリストにconsしていく
 		var err error
-		head, err = ev.Eval(args[len(args) - 1])
+		head, err = ev.Eval(applyArgs[len(applyArgs) - 1])
 		if err != nil {
 			return nil, err
 		}
-		for i := len(args) - 2 ; i >= 0 ; i-- {
-			result, err := ev.Eval(args[i])
+		for i := len(applyArgs) - 2 ; i >= 0 ; i-- {
+			result, err := ev.Eval(applyArgs[i])
 			if err != nil {
 				return nil, err
 			}
@@ -46,20 +52,8 @@ func funcApply(ev *evaluator, c *ConsCell) (node, error) {
 				cdr: head,
 			}
 		}
-	}
-
-	var headCell *ConsCell
-	switch head.(type) {
-	case *ConsCell:
-		headCell = head.(*ConsCell)
-	case *NilNode:
-		headCell = nil
-	default:
-		// dotリストに変換
-		headCell = &ConsCell{
-			car: &NilNode{},
-			cdr: head,
-		}
+	} else {
+		head = &NilNode{}
 	}
 
 	if symbol, ok := evaledArg0.(*SymbolNode); ok {
@@ -76,14 +70,18 @@ func funcApply(ev *evaluator, c *ConsCell) (node, error) {
 		if !ok {
 			return nil, fmt.Errorf("Undefined system function %v.", nd.name)
 		}
-		return f(ev, headCell)
+		return f(ev, head)
 	case *FuncNode:
 		fn := nd
 		// 新しいlexical environmentを作成して切り替え
 		// 新しいenvironmentは関数作成時にキャプチャしたenvironmentの子とする
 		ev.pushEnvironment(newLexicalEnvironment(fn.env))
 
-		result, err := evalFunc(ev, fn, createSliceFromList(headCell))
+		a, err := createSliceFromProperList(head)
+		if err != nil {
+			return nil, err
+		}
+		result, err := evalFunc(ev, fn, a)
 
 		ev.popEnvironment()
 

@@ -4,16 +4,14 @@ import (
 	"fmt"
 )
 
-func funcQuote(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcQuote(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	if c.length() != 1 {
+
+	if countProperListLength(arglist) != 1 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	return c.car, nil
+	return arglist.(*ConsCell).car, nil
 }

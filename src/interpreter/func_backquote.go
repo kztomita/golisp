@@ -4,21 +4,19 @@ import (
 	"fmt"
 )
 
-func funcSystemBackQuote(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcSystemBackQuote(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	if c.length() != 1 {
+
+	if countProperListLength(arglist) != 1 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
 	// backquoteマクロの展開
 	expanded, err := expandBackQuote(&ConsCell{
 		car: &SymbolNode{name: "system::backquote"},
-		cdr: c,
+		cdr: arglist,
 	})
 	if err != nil {
 		return nil, err

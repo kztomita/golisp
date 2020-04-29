@@ -66,6 +66,43 @@ func TestIsProperList(t *testing.T) {
 	}
 }
 
+func TestCountProperListLength(t *testing.T) {
+	testCases := []struct{
+		list		node
+		expected	int
+	}{
+		{
+			&NilNode{},
+			0,
+		},
+		{
+			&ConsCell{
+				car: &IntNode{value: 1},
+				cdr: &ConsCell{
+					car: &IntNode{value: 2},
+					cdr: &NilNode{},
+				},
+			},
+			2,
+		},
+		{
+			// dotted list
+			&ConsCell{
+				car: &IntNode{value: 1},
+				cdr: &IntNode{value: 2},
+			},
+			0,
+		},
+	}
+
+	for _, c := range testCases {
+		result := countProperListLength(c.list)
+		if result != c.expected {
+			t.Errorf("Result: %v, Expected: %v", result, c.expected)
+		}
+	}
+}
+
 func TestCreateList(t *testing.T) {
 	testCases := []struct{
 		elements	[]node

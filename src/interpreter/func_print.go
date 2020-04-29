@@ -4,19 +4,21 @@ import (
 	"fmt"
 )
 
-func funcPrin1(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcPrin1(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
+
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
 	// streamは未対応
-	if c.length() != 1 {
+	if len(args) != 1 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	value, err := ev.Eval(c.car)
+	value, err := ev.Eval(args[0])
 	if err != nil {
 		return nil, err
 	}
@@ -27,19 +29,21 @@ func funcPrin1(ev *evaluator, c *ConsCell) (node, error) {
 	return value, nil
 }
 
-func funcPrint(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcPrint(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
+
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
 	// streamは未対応
-	if c.length() != 1 {
+	if len(args) != 1 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	value, err := ev.Eval(c.car)
+	value, err := ev.Eval(args[0])
 	if err != nil {
 		return nil, err
 	}

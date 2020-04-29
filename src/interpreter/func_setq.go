@@ -4,15 +4,18 @@ import (
 	"fmt"
 )
 
-func funcSetq(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcSetq(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
-	args := createSliceFromList(c)
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
+	if len(args) == 0 {
+		return nil, fmt.Errorf("Wrong number of arguments.")
+	}
 	if (len(args) % 2) == 1 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}

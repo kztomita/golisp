@@ -4,15 +4,15 @@ import (
 	"fmt"
 )
 
-func funcLambda(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcLambda(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
-	args := createSliceFromList(c)
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
 	if len(args) < 2 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
@@ -27,6 +27,7 @@ func funcLambda(ev *evaluator, c *ConsCell) (node, error) {
 		}
 	}
 
+	c := getConsCell(arglist)
 	bodyHead := c.next()		// body list
 
 	fn := &FuncNode{

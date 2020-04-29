@@ -1,6 +1,6 @@
 package interpreter
 
-type LispFunc func(ev *evaluator, c *ConsCell)(node, error)
+type LispFunc func(ev *evaluator, arglist node)(node, error)
 
 var embeddedFunctions map[string]LispFunc
 var functionTable map[string]node = make(map[string]node)		// *FuncNode or *MacroNode

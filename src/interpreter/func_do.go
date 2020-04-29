@@ -4,29 +4,29 @@ import (
 	"fmt"
 )
 
-func funcDo(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcDo(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	if c.length() < 2 {
+
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
+	if len(args) < 2 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
 	ev.pushEnvironment(newLexicalEnvironment(ev.topEnvironment()))
 
-	result, err := _funcDo(ev, c)
+	result, err := _funcDo(ev, args)
 
 	ev.popEnvironment()
 
 	return result, err
 }
 
-func _funcDo(ev *evaluator, c *ConsCell) (node, error) {
-	args := createSliceFromList(c)
-
+func _funcDo(ev *evaluator, args []node) (node, error) {
 	var variables *ConsCell
 	switch arg0 := args[0].(type) {
 	case *ConsCell:
@@ -115,6 +115,6 @@ func _funcDo(ev *evaluator, c *ConsCell) (node, error) {
 	}
 
 	// result form
-	resultForms := endResult.next()
+	resultForms := endResult.cdr
 	return funcProgn(ev, resultForms)
 }

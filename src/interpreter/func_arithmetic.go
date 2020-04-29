@@ -4,12 +4,15 @@ import (
 	"fmt"
 )
 
-func funcAdd(ev *evaluator, c *ConsCell) (node, error) {
-	if c != nil && !c.isList() {
+func funcAdd(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
-	args := createSliceFromList(c)
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
 
 	var result node
 	result = &IntNode{value: 0}
@@ -28,18 +31,18 @@ func funcAdd(ev *evaluator, c *ConsCell) (node, error) {
 	return result, nil
 }
 
-func funcSubtract(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcSubtract(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	if c.length() < 1 {
+
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
+	if len(args) < 1 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
-
-	args := createSliceFromList(c)
 
 	first, err := ev.Eval(args[0])
 	if err != nil {
@@ -69,12 +72,15 @@ func funcSubtract(ev *evaluator, c *ConsCell) (node, error) {
 	return result, nil
 }
 
-func funcMultiply(ev *evaluator, c *ConsCell) (node, error) {
-	if c != nil && !c.isList() {
+func funcMultiply(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
 
-	args := createSliceFromList(c)
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
 
 	var result node
 	result = &IntNode{value: 1}
@@ -93,18 +99,18 @@ func funcMultiply(ev *evaluator, c *ConsCell) (node, error) {
 	return result, nil
 }
 
-func funcDivide(ev *evaluator, c *ConsCell) (node, error) {
-	if c == nil {
-		return nil, fmt.Errorf("Wrong number of arguments.")
-	}
-	if !c.isList() {
+func funcDivide(ev *evaluator, arglist node) (node, error) {
+	if !isProperList(arglist) {
 		return nil, fmt.Errorf("Wrong type argument.")
 	}
-	if c.length() < 1 {
+
+	args, err := createSliceFromProperList(arglist)
+	if err != nil {
+		return nil, err
+	}
+	if len(args) < 1 {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
-
-	args := createSliceFromList(c)
 
 	first, err := ev.Eval(args[0])
 	if err != nil {
