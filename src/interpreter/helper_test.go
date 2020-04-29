@@ -4,6 +4,62 @@ import (
 	"testing"
 )
 
+func TestIsProperList(t *testing.T) {
+	{
+		c := &ConsCell{
+			car: &IntNode{value: 1},
+			cdr: &ConsCell{
+				car: &IntNode{value: 2},
+				cdr: &NilNode{},
+			},
+		}
+		if isProperList(c) == false {
+			t.Errorf("Proper list: expected: true, result: false")
+		}
+	}
+
+	{
+		c := &NilNode{}
+		if isProperList(c) == false {
+			t.Errorf("Proper list(empty list): expected: true, result: false")
+		}
+	}
+
+	{
+		c := &IntNode{value: 1}
+		if isProperList(c) == true {
+			t.Errorf("Not list: expected: false, result: true")
+		}
+	}
+
+	{
+		c := &ConsCell{
+			car: &IntNode{value: 1},
+			cdr: &ConsCell{
+				car: &IntNode{value: 2},
+				cdr: &IntNode{value: 3},
+			},
+		}
+		if isProperList(c) == true {
+			t.Errorf("Dotted list: expected: false, result: true")
+		}
+	}
+
+	{
+		c := &ConsCell{
+			car: &IntNode{value: 1},
+			cdr: &ConsCell{
+				car: &IntNode{value: 2},
+				cdr: nil,
+			},
+		}
+		c.cdr.(*ConsCell).cdr = c
+		if isProperList(c) == true {
+			t.Errorf("Circular list: expected: false, result: true")
+		}
+	}
+}
+
 func TestCreateList(t *testing.T) {
 	testCases := []struct{
 		elements	[]node

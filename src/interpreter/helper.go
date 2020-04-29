@@ -8,6 +8,29 @@ import (
 // List関連
 //
 
+// proper listであることをチェック
+// (dotted list/circular listでないことをチェック)
+func isProperList(head node) bool {
+	nd := head
+	for true {
+		switch nd.(type) {
+		case *ConsCell:
+			cell := nd.(*ConsCell)
+			nd = cell.cdr
+			if nd == head {
+				return false	// circular list
+			}
+		case *NilNode:
+			return true
+		default:
+			// not list or dotted list
+			return false
+		}
+	}
+	// not to reach
+	return false
+}
+
 func createList(elements []node) node {
 	if len(elements) == 0 {
 		return &NilNode{}
