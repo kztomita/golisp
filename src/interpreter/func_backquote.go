@@ -130,8 +130,10 @@ func expandSpliceNode(cell *ConsCell) node {
 	if cell == nil {
 		return nil
 	}
-
-	elements := createSliceFromList(cell)
+	elements, err := createSliceFromProperList(cell)
+	if err != nil {
+		return nil
+	}
 
 	lastElement := elements[len(elements) - 1]
 	symbol := getListFirstSymbol(lastElement)

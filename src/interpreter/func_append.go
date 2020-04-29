@@ -23,20 +23,14 @@ func funcAppend(ev *evaluator, arglist node) (node, error) {
 	}
 
 	// len(args) >= 2
-	elements := []node{}
-
 	arg0, err := ev.Eval(args[0])
 	if err != nil {
 		return nil, err
 	}
 
-	switch arg0.(type) {
-	case *ConsCell:
-		elements = createSliceFromList(arg0.(*ConsCell))
-	case *NilNode:
-		// empty list
-	default:
-		return nil, fmt.Errorf("The first argument is not a list.")
+	elements, err := createSliceFromProperList(arg0)
+	if err != nil {
+		return nil, err
 	}
 
 	args = args[1:len(args)]
@@ -48,7 +42,11 @@ func funcAppend(ev *evaluator, arglist node) (node, error) {
 
 		switch argx.(type) {
 		case *ConsCell:
-			elements = append(elements, createSliceFromList(argx.(*ConsCell))...)
+			list, err := createSliceFromProperList(argx)
+			if err != nil {
+				return nil, err
+			}
+			elements = append(elements, list...)
 		case *NilNode:
 			// empty list
 			continue

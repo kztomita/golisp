@@ -50,7 +50,10 @@ func _funcDo(ev *evaluator, args []node) (node, error) {
 		switch n := cell.car.(type) {
 		case *ConsCell:
 			// (var [init-form [step-form]])
-			varInitStep := createSliceFromList(n)
+			varInitStep, err := createSliceFromProperList(n)
+			if err != nil {
+				return nil, err
+			}
 			s, ok := varInitStep[0].(*SymbolNode)
 			if !ok {
 				return nil, fmt.Errorf("Variable name is not symbol.")
