@@ -176,6 +176,11 @@ func TestCreateSliceFromProperList(t *testing.T) {
 			false,
 			[]node{},
 		},
+		{
+			nil,
+			true,
+			[]node{},
+		},
 	}
 
 	for _, c := range testCases {
