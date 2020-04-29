@@ -10,3 +10,10 @@
 (foo 2 3)
 
 (print (list outer_var b y))
+
+(print "====")
+(let ()
+  (print "nil binding list"))
+(let nil
+  (print "nil binding list"))
+

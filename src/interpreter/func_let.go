@@ -25,17 +25,31 @@ func funcLet_(ev *evaluator, arglist node) (node, error) {
 	}
 
 	p := getConsCell(arglist)
-	arg0, ok := p.car.(*ConsCell)	// binding-list
-	if !ok {
-		return nil, fmt.Errorf("Wrong type argument(binding-list).")
-	}
-	if !isProperList(arg0) {
+
+	arg0 := p.car	// binding-list
+
+	var pBinding *ConsCell
+	switch nd := arg0.(type) {
+	case *ConsCell:
+		if !isProperList(arg0) {
+			return nil, fmt.Errorf("Wrong type argument(binding-list).")
+		}
+		pBinding = nd
+	case *NilNode:
+		// empty binding-list
+		pBinding = nil
+	case *SymbolNode:
+		// nil symbol -> empty binding-list
+		if nd.name != "nil" {
+			return nil, fmt.Errorf("Wrong type argument(binding-list).")
+		}
+		pBinding = nil
+	default:
 		return nil, fmt.Errorf("Wrong type argument(binding-list).")
 	}
 
 	symTable := ev.topEnvironment().symbols
 
-	pBinding := arg0
 	for pBinding != nil {
 		if countProperListLength(pBinding.car) != 2 {
 			return nil, fmt.Errorf("Wrong type argument(binding-list).")
