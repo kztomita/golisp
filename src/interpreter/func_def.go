@@ -33,8 +33,7 @@ func funcDefun(ev *evaluator, arglist node) (node, error) {
 		}
 	}
 
-	c := getConsCell(arglist)
-	bodyHead := c.next().next()		// body list
+	bodyHead := cdr(cdr(arglist))		// body list
 
 	fn := &FuncNode{
 		parameters: parameters,
@@ -75,8 +74,7 @@ func funcDefmacro(ev *evaluator, arglist node) (node, error) {
 		}
 	}
 
-	c := getConsCell(arglist)
-	bodyHead := c.next().next()		// body list
+	bodyHead := cdr(cdr(arglist))		// body list
 
 	fn := &MacroNode{
 		parameters: parameters,

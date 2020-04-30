@@ -107,7 +107,7 @@ func (n *SystemFuncNode) ToString() string {
 
 type FuncNode struct {
 	parameters	[]*ordinaryLambdaListParameter
-	body		*ConsCell
+	body		node					// *ConsCell or *NilNode
 	env			*lexicalEnvironment		// captured environment
 }
 func (n *FuncNode) GetNodeType() int {
@@ -119,7 +119,7 @@ func (n *FuncNode) ToString() string {
 
 type MacroNode struct {
 	parameters	[]*macroLambdaListParameter
-	body		*ConsCell
+	body		node					// *ConsCell or *NilNode
 	env			*lexicalEnvironment		// captured environment
 }
 func (n *MacroNode) GetNodeType() int {

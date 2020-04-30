@@ -62,6 +62,15 @@ func countProperListLength(head node) int {
 	return 0
 }
 
+func cdr(nd node) node {
+	switch nd.(type) {
+	case *ConsCell:
+		return nd.(*ConsCell).cdr
+	default:
+		return &NilNode{}
+	}
+}
+
 // headリストの先頭の*ConsCellを返す。
 // headが空リスト(*NilNode)の場合はnilを返す。
 // headがリストでない場合もnilを返す。
