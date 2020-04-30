@@ -26,6 +26,7 @@ func init() {
 		"defmacro": funcDefmacro,
 		"defun": funcDefun,
 		"do": funcDo,
+		"eq": funcEq,
 		"function": funcFunction,
 		"if": funcIf,
 		"lambda": funcLambda,

@@ -75,6 +75,7 @@ func main() {
 - defmacro (*1)
 - defun (*2)
 - do
+- eq
 - funcall
 - function (#')
 - if
