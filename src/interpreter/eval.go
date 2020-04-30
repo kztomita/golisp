@@ -201,10 +201,19 @@ func expandMacro(e *evaluator, mc *MacroNode, arguments []node) (node, error) {
 	//fmt.Printf("%v\n", mc.body.ToString())
 
 	// bodyを評価することでマクロを展開
+	// 展開によって式を破壊するのでコピーしてから評価する
 	// 引数は評価されずに渡されているので、仮引数のシンボルは引数に置換される
+	var bodyCell *ConsCell
+	if mc.body != nil {
+		body, err := copyProperList(mc.body)
+		if err != nil {
+			return nil, err
+		}
+		bodyCell = body.(*ConsCell)
+	}
 	var lastResult node
 	lastResult = &NilNode{}
-	for current := mc.body ; current != nil ; current = current.next() {
+	for current := bodyCell ; current != nil ; current = current.next() {
 		var err error
 		lastResult, err = e.Eval(current.car)
 		if err != nil {

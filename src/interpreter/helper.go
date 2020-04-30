@@ -158,6 +158,46 @@ func getListFirstSymbol(nd node) *SymbolNode {
 	return symbol
 }
 
+// ConsCellをコピー。LeafNodeはコピーしない。
+func copyProperList(nd node) (node, error) {
+	if !isProperList(nd) {
+		return nil, fmt.Errorf("Can't copy improper list.")
+	}
+	switch nd.(type) {
+	case *NilNode:
+		return &NilNode{}, nil
+	case *ConsCell:
+		var head *ConsCell
+		var prev *ConsCell
+		for c := nd.(*ConsCell) ; c != nil ; c = c.next() {
+			element := c.car
+
+			_, ok := c.car.(*ConsCell)
+			if ok {
+				var err error
+				element, err = copyProperList(c.car)
+				if err != nil {
+					return nil, err
+				}
+			}
+
+			tail := &ConsCell{
+				car: element,
+				cdr: nil,
+			}
+			if prev != nil {
+				prev.cdr = tail
+			} else {
+				head = tail
+			}
+			prev = tail
+		}
+		prev.cdr = &NilNode{}
+		return head, nil
+	default:
+		return nil, fmt.Errorf("Logic error. Can't copy improper list.")
+	}
+}
 
 //
 // 文字列関連

@@ -241,3 +241,54 @@ func TestCreateSliceFromProperList(t *testing.T) {
 		}
 	}
 }
+
+func TestCopyProperList(t *testing.T) {
+	testCases := []struct{
+		list		node
+		expected	string
+	}{
+		{
+			&ConsCell{
+				car: &IntNode{value: 1},
+				cdr: &ConsCell{
+					car: &IntNode{value: 2},
+					cdr: &ConsCell{
+						car: &IntNode{value: 3},
+						cdr: &NilNode{},
+					},
+				},
+			},
+			"(1 2 3)",
+		},
+		{
+			&ConsCell{
+				car: &IntNode{value: 1},
+				cdr: &ConsCell{
+					car: &ConsCell{
+						car: &IntNode{value: 2},
+						cdr: &ConsCell{
+							car: &IntNode{value: 3},
+							cdr: &NilNode{},
+							},
+						},
+					cdr: &ConsCell{
+						car: &IntNode{value: 4},
+						cdr: &NilNode{},
+					},
+				},
+			},
+			"(1 (2 3) 4)",
+		},
+	}
+
+	for _, c := range testCases {
+		result, err := copyProperList(c.list)
+		if err != nil {
+			t.Errorf("%v", err)
+			continue
+		}
+		if result.ToString() != c.expected {
+			t.Errorf("Result: %v, Expected: %v", result.ToString(), c.expected)
+		}
+	}
+}
