@@ -16,4 +16,4 @@
   (print "nil binding list"))
 (let nil
   (print "nil binding list"))
-
+(print (let nil))	; no forms

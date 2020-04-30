@@ -20,7 +20,8 @@ func funcLet_(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("let: Wrong type argument.")
 	}
 
-	if countProperListLength(arglist) < 2 {
+	if countProperListLength(arglist) < 1 {
+		fmt.Printf("%v\n", arglist.ToString())
 		return nil, fmt.Errorf("let: Too few arguments given.")
 	}
 
