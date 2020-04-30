@@ -119,5 +119,11 @@ func _funcDo(ev *evaluator, args []node) (node, error) {
 
 	// result form
 	resultForms := endResult.cdr
-	return funcProgn(ev, resultForms)
+
+	resultProgn := &ConsCell{
+		car: &SymbolNode{name: "progn"},
+		cdr: resultForms,
+	}
+
+	return ev.Eval(resultProgn)
 }

@@ -916,30 +916,6 @@ func TestEvalLet2(t *testing.T) {
 	}
 }
 
-func TestEvalProgn(t *testing.T) {
-	ev := NewEvaluator()
-
-	{
-		// (progn (setq c 100) (setq d 200))
-		_, err := ev.Eval(createList([]node{
-			&SymbolNode{name: "progn"},
-			createList([]node{
-				&SymbolNode{name: "setq"},
-				&SymbolNode{name: "c"},
-				&IntNode{value: 100},
-			}),
-			createList([]node{
-				&SymbolNode{name: "setq"},
-				&SymbolNode{name: "d"},
-				&IntNode{value: 200},
-			}),
-		}))
-		if err != nil {
-			t.Errorf("%v", err)
-		}
-	}
-}
-
 func TestEvalPrint(t *testing.T) {
 	ev := NewEvaluator()
 
