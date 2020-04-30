@@ -17,11 +17,11 @@ func funcLet(ev *evaluator, arglist node) (node, error) {
 
 func funcLet_(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("let: Wrong type argument.")
 	}
 
 	if countProperListLength(arglist) < 2 {
-		return nil, fmt.Errorf("Wrong number of arguments.")
+		return nil, fmt.Errorf("let: Too few arguments given.")
 	}
 
 	p := getConsCell(arglist)
@@ -32,7 +32,7 @@ func funcLet_(ev *evaluator, arglist node) (node, error) {
 	switch nd := arg0.(type) {
 	case *ConsCell:
 		if !isProperList(arg0) {
-			return nil, fmt.Errorf("Wrong type argument(binding-list).")
+			return nil, fmt.Errorf("let: Wrong type argument(binding-list).")
 		}
 		pBinding = nd
 	case *NilNode:
@@ -41,34 +41,34 @@ func funcLet_(ev *evaluator, arglist node) (node, error) {
 	case *SymbolNode:
 		// nil symbol -> empty binding-list
 		if nd.name != "nil" {
-			return nil, fmt.Errorf("Wrong type argument(binding-list).")
+			return nil, fmt.Errorf("let: Wrong type argument(binding-list).")
 		}
 		pBinding = nil
 	default:
-		return nil, fmt.Errorf("Wrong type argument(binding-list).")
+		return nil, fmt.Errorf("let: Wrong type argument(binding-list).")
 	}
 
 	symTable := ev.topEnvironment().symbols
 
 	for pBinding != nil {
 		if countProperListLength(pBinding.car) != 2 {
-			return nil, fmt.Errorf("Wrong type argument(binding-list).")
+			return nil, fmt.Errorf("let: Wrong type argument(binding-list).")
 		}
 		binding, ok := pBinding.car.(*ConsCell)
 		if !ok {
-			return nil, fmt.Errorf("Wrong type argument(binding-list).")
+			return nil, fmt.Errorf("let: Wrong type argument(binding-list).")
 		}
 
 		// first element
 		bindingSymbol, ok := binding.car.(*SymbolNode)
 		if !ok {
-			return nil, fmt.Errorf("Wrong type argument(binding-list).")
+			return nil, fmt.Errorf("let: Wrong type argument(binding-list).")
 		}
 
 		// second element
 		value := binding.next()
 		if value == nil {
-			return nil, fmt.Errorf("Wrong type argument(binding-list).")
+			return nil, fmt.Errorf("let: Wrong type argument(binding-list).")
 		}
 		bindingValue, err := ev.Eval(value.car)
 		if err != nil {
