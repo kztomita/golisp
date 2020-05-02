@@ -2,6 +2,7 @@
 (print (eq 3 (+ 1 2)))
 (print (eq 3 2))
 (print (eq 'a 'a))
+(print (eq 'a 'A))
 (print (eq 'a 'b))
 (print "====")	; list
 (print (eq '(a b) '(a b)))

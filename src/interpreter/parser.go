@@ -101,7 +101,7 @@ func createLeafNode(token *token) (node, error) {
 		}
 		return &FloatNode{value: f}, nil
 	case tokenSymbol:
-		return &SymbolNode{name: token.literal}, nil
+		return &SymbolNode{name: strings.ToLower(token.literal)}, nil
 	case tokenString:
 		return &StringNode{value: token.literal}, nil
 	default:
