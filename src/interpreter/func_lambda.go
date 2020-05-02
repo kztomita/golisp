@@ -6,15 +6,15 @@ import (
 
 func funcLambda(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("lambda: Wrong type argument.")
 	}
 
 	args, err := createSliceFromProperList(arglist)
 	if err != nil {
 		return nil, err
 	}
-	if len(args) < 2 {
-		return nil, fmt.Errorf("Wrong number of arguments.")
+	if len(args) < 1 {
+		return nil, fmt.Errorf("lambda: Wrong number of arguments.")
 	}
 
 	parameters := []*ordinaryLambdaListParameter{}	// 仮引数一覧
