@@ -40,6 +40,7 @@ func init() {
 		"print": funcPrint,
 		"quote": funcQuote,
 		"setq": funcSetq,
+		"type-of": funcTypeOf,
 
 		"system::backquote": funcSystemBackQuote,
 	}
