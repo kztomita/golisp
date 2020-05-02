@@ -29,6 +29,14 @@ func funcEq(ev *evaluator, arglist node) (node, error) {
 	if arg0.GetNodeType() != arg1.GetNodeType() {
 		return &NilNode{}, nil
 	}
+	_, ok := arg0.(*SymbolNode)
+	if ok {
+		if arg0.(*SymbolNode).symbolKey() == arg1.(*SymbolNode).symbolKey() {
+			return &TrueNode{}, nil
+		} else {
+			return &NilNode{}, nil
+		}
+	}
 	if isConstantNode(arg0) {
 		if arg0.ToString() == arg1.ToString() {
 			return &TrueNode{}, nil

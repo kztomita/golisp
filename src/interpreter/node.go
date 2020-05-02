@@ -76,13 +76,29 @@ func (n *FloatNode) ToString() string {
 }
 
 type SymbolNode struct {
+	unnamed	bool			// gensymで作成したシンボルでtrue
 	name	string
 }
 func (n *SymbolNode) GetNodeType() int {
 	return NtSymbol
 }
 func (n *SymbolNode) ToString() string {
-	return n.name
+	if n.unnamed == false {
+		return n.name
+	} else {
+		return fmt.Sprintf("unnamed:%p", n)
+	}
+}
+func (n *SymbolNode) symbolKey() string {
+	if n.unnamed == false {
+		return "named:" + n.name
+	} else {
+		return fmt.Sprintf("unnamed:%p", n)		// cloneでkeyが変わるので注意
+	}
+}
+func (n *SymbolNode) clone() *SymbolNode {
+	cloned := *n
+	return &cloned
 }
 
 type StringNode struct {

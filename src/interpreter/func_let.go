@@ -78,7 +78,7 @@ func funcLet_(ev *evaluator, arglist node) (node, error) {
 
 		// 変数をシンボルテーブルに登録
 		//fmt.Printf("%v %v", bindingSymbol.name, bindingValue.ToString())
-		symTable[bindingSymbol.name] = bindingValue
+		symTable.set(bindingSymbol, bindingValue)
 
 		pBinding = pBinding.next()
 	}

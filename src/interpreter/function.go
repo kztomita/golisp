@@ -28,6 +28,7 @@ func init() {
 		"do": funcDo,
 		"eq": funcEq,
 		"function": funcFunction,
+		"gensym": funcGensym,
 		"if": funcIf,
 		"lambda": funcLambda,
 		"length": funcLength,

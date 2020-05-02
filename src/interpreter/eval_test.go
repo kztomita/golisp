@@ -905,7 +905,7 @@ func TestEvalLet2(t *testing.T) {
 			&IntNode{value: 2},
 		}))
 		if err != nil {
-			t.Errorf("%v", err)
+			t.Fatalf("%v", err)
 		} else {
 			t.Logf("%v", result.ToString());
 		}

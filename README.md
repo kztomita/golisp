@@ -78,6 +78,7 @@ func main() {
 - eq
 - funcall
 - function (#')
+- gensym
 - if
 - lambda
 - length
@@ -97,5 +98,4 @@ func main() {
 # TODO
 
 - 対応関数の充実
-- テストケースの充実
 - わかりやすいエラー表示

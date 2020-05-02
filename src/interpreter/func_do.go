@@ -65,7 +65,7 @@ func _funcDo(ev *evaluator, args []node) (node, error) {
 				if err != nil {
 					return nil, nil
 				}
-				symTable[s.name] = result
+				symTable.set(s, result)
 			}
 			if len(varInitStep) >= 3 {
 				// step form配列
@@ -80,7 +80,7 @@ func _funcDo(ev *evaluator, args []node) (node, error) {
 			}
 		case *SymbolNode:
 			// var
-			symTable[n.name] = &NilNode{}
+			symTable.set(n, &NilNode{})
 		default:
 			return nil, fmt.Errorf("Variable name is not symbol.")
 		}

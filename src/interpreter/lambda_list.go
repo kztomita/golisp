@@ -5,7 +5,7 @@ import (
 )
 
 type ordinaryLambdaListParameter struct {
-	name		string
+	symbol		*SymbolNode
 	required	bool
 	optional	bool
 	defValue	node
@@ -51,7 +51,7 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*ordinaryLambdaListP
 			case *SymbolNode:
 				s := nd
 				parameters = append(parameters, &ordinaryLambdaListParameter{
-					name: s.name,
+					symbol: s.clone(),
 					required: true,
 				})
 			default:
@@ -62,8 +62,9 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*ordinaryLambdaListP
 			switch nd := c.car.(type) {
 			case *SymbolNode:
 				// default is nil
+				s := nd
 				parameters = append(parameters, &ordinaryLambdaListParameter{
-					name: nd.name,
+					symbol: s.clone(),
 					optional: true,
 					defValue: &NilNode{},
 				})
@@ -91,7 +92,7 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*ordinaryLambdaListP
 					value = result
 				}
 				parameters = append(parameters, &ordinaryLambdaListParameter{
-					name: s.name,
+					symbol: s.clone(),
 					optional: true,
 					defValue: value,
 				})
@@ -104,7 +105,7 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*ordinaryLambdaListP
 			case *SymbolNode:
 				s := nd
 				parameters = append(parameters, &ordinaryLambdaListParameter{
-					name: s.name,
+					symbol: s.clone(),
 					rest: true,
 				})
 				rest++
@@ -126,7 +127,7 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*ordinaryLambdaListP
 
 
 type macroLambdaListParameter struct {
-	name		string
+	symbol		*SymbolNode
 	required	bool
 	optional	bool
 	defValue	node
@@ -172,7 +173,7 @@ func parseMacroLambdaList(ev *evaluator, c *ConsCell) ([]*macroLambdaListParamet
 			case *SymbolNode:
 				s := nd
 				parameters = append(parameters, &macroLambdaListParameter{
-					name: s.name,
+					symbol: s.clone(),
 					required: true,
 				})
 			default:
@@ -183,8 +184,9 @@ func parseMacroLambdaList(ev *evaluator, c *ConsCell) ([]*macroLambdaListParamet
 			switch nd := c.car.(type) {
 			case *SymbolNode:
 				// default is nil
+				s := nd
 				parameters = append(parameters, &macroLambdaListParameter{
-					name: nd.name,
+					symbol: s.clone(),
 					optional: true,
 					defValue: &NilNode{},
 				})
@@ -212,7 +214,7 @@ func parseMacroLambdaList(ev *evaluator, c *ConsCell) ([]*macroLambdaListParamet
 					value = result
 				}
 				parameters = append(parameters, &macroLambdaListParameter{
-					name: s.name,
+					symbol: s.clone(),
 					optional: true,
 					defValue: value,
 				})
@@ -225,7 +227,7 @@ func parseMacroLambdaList(ev *evaluator, c *ConsCell) ([]*macroLambdaListParamet
 			case *SymbolNode:
 				s := nd
 				parameters = append(parameters, &macroLambdaListParameter{
-					name: s.name,
+					symbol: s.clone(),
 					rest: true,
 				})
 				rest++

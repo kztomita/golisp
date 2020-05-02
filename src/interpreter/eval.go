@@ -115,7 +115,7 @@ func (e *evaluator) Eval(n node) (node, error) {
 		default:
 		}
 		// symbol tableをlookup
-		value, ok := e.topEnvironment().lookupSymbol(symbol.name)
+		value, ok := e.topEnvironment().lookupSymbol(symbol)
 		if !ok {
 			return nil, fmt.Errorf("%v not found.", symbol.name)
 		}
@@ -134,21 +134,21 @@ func evalFunc(e *evaluator, fn *FuncNode, arguments []node) (node, error) {
 			if ai >= len(arguments)	{
 				return nil, fmt.Errorf("Insufficient arguments")
 			}
-			symTable[fn.parameters[pi].name] = arguments[ai]
+			symTable.set(fn.parameters[pi].symbol, arguments[ai])
 			ai++
 		} else if fn.parameters[pi].optional {
 			if ai <= len(arguments) - 1	{
-				symTable[fn.parameters[pi].name] = arguments[ai]
+				symTable.set(fn.parameters[pi].symbol, arguments[ai])
 				ai++
 			} else {
-				symTable[fn.parameters[pi].name] = fn.parameters[pi].defValue
+				symTable.set(fn.parameters[pi].symbol, fn.parameters[pi].defValue)
 			}
 		} else if fn.parameters[pi].rest {
 			rest := []node{}
 			for ; ai < len(arguments) ; ai++ {
 				rest = append(rest, arguments[ai])
 			}
-			symTable[fn.parameters[pi].name] = createList(rest)
+			symTable.set(fn.parameters[pi].symbol, createList(rest))
 		}
 	}
 	if ai < len(arguments) {
@@ -177,21 +177,21 @@ func expandMacro(e *evaluator, mc *MacroNode, arguments []node) (node, error) {
 			if ai >= len(arguments)	{
 				return nil, fmt.Errorf("Insufficient arguments")
 			}
-			symTable[mc.parameters[pi].name] = arguments[ai]
+			symTable.set(mc.parameters[pi].symbol, arguments[ai])
 			ai++
 		} else if mc.parameters[pi].optional {
 			if ai <= len(arguments) - 1	{
-				symTable[mc.parameters[pi].name] = arguments[ai]
+				symTable.set(mc.parameters[pi].symbol, arguments[ai])
 				ai++
 			} else {
-				symTable[mc.parameters[pi].name] = mc.parameters[pi].defValue
+				symTable.set(mc.parameters[pi].symbol, mc.parameters[pi].defValue)
 			}
 		} else if mc.parameters[pi].rest {
 			rest := []node{}
 			for ; ai < len(arguments) ; ai++ {
 				rest = append(rest, arguments[ai])
 			}
-			symTable[mc.parameters[pi].name] = createList(rest)
+			symTable.set(mc.parameters[pi].symbol, createList(rest))
 		}
 	}
 	if ai < len(arguments) {

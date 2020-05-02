@@ -36,7 +36,7 @@ func funcSetq(ev *evaluator, arglist node) (node, error) {
 		var symTable symbolTable
 		for env := ev.topEnvironment() ; env != nil ; env = env.parent {
 			symTable = env.symbols
-			_, ok := symTable[symbol.name]
+			_, ok := symTable.lookup(symbol)
 			if ok {
 				break
 			}
@@ -44,7 +44,7 @@ func funcSetq(ev *evaluator, arglist node) (node, error) {
 		if symTable == nil {
 			symTable = ev.envStack[0].symbols
 		}
-		symTable[symbol.name] = result
+		symTable.set(symbol, result)
 	}
 
 	return result, nil
