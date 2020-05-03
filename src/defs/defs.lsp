@@ -9,3 +9,11 @@
 
 (defmacro progn (&rest args)
   `(let nil ,@args))
+
+(defmacro cond (&rest args)
+  (if (null args)
+    nil
+    (let ((clause (car args)))
+      `(if ,(car clause)
+	(progn ,@(cdr clause))
+	(cond ,@(cdr args))))))

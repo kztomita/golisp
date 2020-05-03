@@ -71,6 +71,7 @@ func main() {
 - car
 - cddr
 - cdr
+- cond
 - cons
 - defmacro (*1)
 - defun (*2)
