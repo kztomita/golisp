@@ -11,7 +11,7 @@ func TestTokenizer(t *testing.T) {
 		expected	[]token
 	}{
 		{
-			"(1 2 +3 -4 0.1 .1 -1. foo)",
+			"(1 2 +3 -4 0.1 foo)",
 			[]token{
 				{tokenId: tokenLeftParentheses, literal: "("},
 				{tokenId: tokenInt, literal: "1"},
@@ -19,8 +19,6 @@ func TestTokenizer(t *testing.T) {
 				{tokenId: tokenInt, literal: "+3"},
 				{tokenId: tokenInt, literal: "-4"},
 				{tokenId: tokenFloat, literal: "0.1"},
-				{tokenId: tokenFloat, literal: ".1"},
-				{tokenId: tokenFloat, literal: "-1."},
 				{tokenId: tokenSymbol, literal: "foo"},
 				{tokenId: tokenRightParentheses, literal: ")"},
 			},	
@@ -47,6 +45,20 @@ func TestTokenizer(t *testing.T) {
 				{tokenId: tokenString, literal: "3 test"},
 				{tokenId: tokenSymbol, literal: "foo"},
 				{tokenId: tokenString, literal: "bar baz"},
+				{tokenId: tokenRightParentheses, literal: ")"},
+			},
+		},
+		{
+			"(0.1 .1 -1. 1.2e5 1.2E5 1.2e-5 1e5)",
+			[]token{
+				{tokenId: tokenLeftParentheses, literal: "("},
+				{tokenId: tokenFloat, literal: "0.1"},
+				{tokenId: tokenFloat, literal: ".1"},
+				{tokenId: tokenFloat, literal: "-1."},
+				{tokenId: tokenFloat, literal: "1.2e5"},
+				{tokenId: tokenFloat, literal: "1.2E5"},
+				{tokenId: tokenFloat, literal: "1.2e-5"},
+				{tokenId: tokenFloat, literal: "1e5"},
 				{tokenId: tokenRightParentheses, literal: ")"},
 			},
 		},

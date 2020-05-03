@@ -132,7 +132,6 @@ func (t *tokenizer) nextToken() *token {
 			}
 			literal += string(c)
 		case '"':
-			// TODO escape seq
 			if literal == "" {
 				t.nextChar()
 				return &token{tokenId: tokenString, literal: readString(t)}
@@ -198,8 +197,11 @@ func (t *tokenizer) nextToken() *token {
 	if err == nil && matched {
 		return &token{tokenId: tokenInt, literal: literal}
 	}
-	// TODO exponential
 	matched, err = regexp.MatchString(`^(\+|-|)(\d+\.\d+|\.\d+|\d+.)$`, literal)
+	if err == nil && matched {
+		return &token{tokenId: tokenFloat, literal: literal}
+	}
+	matched, err = regexp.MatchString(`(?i)^(\+|-|)(\d+\.\d+|\.\d+|\d+.|\d+)(e(\+|-)?\d+)?$`, literal)
 	if err == nil && matched {
 		return &token{tokenId: tokenFloat, literal: literal}
 	}
