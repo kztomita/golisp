@@ -8,7 +8,7 @@ import (
 // Ex. (car '(1 2 3))
 func funcCar(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("car: Wrong type argument.")
 	}
 
 	args, err := createSliceFromProperList(arglist)
@@ -16,7 +16,7 @@ func funcCar(ev *evaluator, arglist node) (node, error) {
 		return nil, err
 	}
 	if len(args) != 1 {
-		return nil, fmt.Errorf("Wrong number of arguments.")
+		return nil, fmt.Errorf("car: Wrong number of arguments.")
 	}
 
 	result, err := ev.Eval(args[0])
@@ -30,7 +30,7 @@ func funcCar(ev *evaluator, arglist node) (node, error) {
 		// empty list, nil symbol
 		return &NilNode{}, nil
 	default:
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("car: Wrong type argument.")
 	}
 }
 
@@ -38,7 +38,7 @@ func funcCar(ev *evaluator, arglist node) (node, error) {
 // Ex. (cdr '(1 2 3))
 func funcCdr(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("cdr: Wrong type argument.")
 	}
 
 	args, err := createSliceFromProperList(arglist)
@@ -46,7 +46,7 @@ func funcCdr(ev *evaluator, arglist node) (node, error) {
 		return nil, err
 	}
 	if len(args) != 1 {
-		return nil, fmt.Errorf("Wrong number of arguments.")
+		return nil, fmt.Errorf("cdr: Wrong number of arguments.")
 	}
 
 	result, err := ev.Eval(args[0])
@@ -60,6 +60,6 @@ func funcCdr(ev *evaluator, arglist node) (node, error) {
 		// empty list, nil symbol
 		return &NilNode{}, nil
 	default:
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("cdr: Wrong type argument.")
 	}
 }

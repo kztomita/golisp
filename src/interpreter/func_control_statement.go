@@ -6,7 +6,7 @@ import (
 
 func funcIf(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("if: Wrong type argument.")
 	}
 
 	args, err := createSliceFromProperList(arglist)
@@ -14,7 +14,7 @@ func funcIf(ev *evaluator, arglist node) (node, error) {
 		return nil, err
 	}
 	if len(args) != 3 {
-		return nil, fmt.Errorf("Wrong number of arguments.")
+		return nil, fmt.Errorf("if: Wrong number of arguments.")
 	}
 
 	condition, err := ev.Eval(args[0])

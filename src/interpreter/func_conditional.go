@@ -32,7 +32,7 @@ func compareAdjacentArguments(ev *evaluator, args []node, op arithmeticCompariso
 
 func funcEqual(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("=: Wrong type argument.")
 	}
 
 	args, err := createSliceFromProperList(arglist)
@@ -40,7 +40,7 @@ func funcEqual(ev *evaluator, arglist node) (node, error) {
 		return nil, err
 	}
 	if len(args) < 2 {
-		return nil, fmt.Errorf("Wrong number of arguments.")
+		return nil, fmt.Errorf("=: Wrong number of arguments.")
 	}
 
 	return compareAdjacentArguments(ev, args, arithmeticComparisonEqual)
@@ -48,7 +48,7 @@ func funcEqual(ev *evaluator, arglist node) (node, error) {
 
 func funcNotEqual(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("/=: Wrong type argument.")
 	}
 
 	args, err := createSliceFromProperList(arglist)
@@ -56,7 +56,7 @@ func funcNotEqual(ev *evaluator, arglist node) (node, error) {
 		return nil, err
 	}
 	if len(args) < 2 {
-		return nil, fmt.Errorf("Wrong number of arguments.")
+		return nil, fmt.Errorf("/=: Wrong number of arguments.")
 	}
 
 	for pivot := 0 ; pivot < len(args) - 1 ; pivot++ {
@@ -76,7 +76,7 @@ func funcNotEqual(ev *evaluator, arglist node) (node, error) {
 
 func funcGreaterThan(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf(">: Wrong type argument.")
 	}
 
 	args, err := createSliceFromProperList(arglist)
@@ -84,7 +84,7 @@ func funcGreaterThan(ev *evaluator, arglist node) (node, error) {
 		return nil, err
 	}
 	if len(args) < 2 {
-		return nil, fmt.Errorf("Wrong number of arguments.")
+		return nil, fmt.Errorf(">: Wrong number of arguments.")
 	}
 
 	return compareAdjacentArguments(ev, args, arithmeticComparisonGreaterThan)
@@ -92,7 +92,7 @@ func funcGreaterThan(ev *evaluator, arglist node) (node, error) {
 
 func funcGreaterThanOrEqualTo(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf(">=: Wrong type argument.")
 	}
 
 	args, err := createSliceFromProperList(arglist)
@@ -100,7 +100,7 @@ func funcGreaterThanOrEqualTo(ev *evaluator, arglist node) (node, error) {
 		return nil, err
 	}
 	if len(args) < 2 {
-		return nil, fmt.Errorf("Wrong number of arguments.")
+		return nil, fmt.Errorf(">=: Wrong number of arguments.")
 	}
 
 	return compareAdjacentArguments(ev, args, arithmeticComparisonGreaterThanOrEqualTo)
@@ -108,7 +108,7 @@ func funcGreaterThanOrEqualTo(ev *evaluator, arglist node) (node, error) {
 
 func funcLessThan(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("<: Wrong type argument.")
 	}
 
 	args, err := createSliceFromProperList(arglist)
@@ -116,7 +116,7 @@ func funcLessThan(ev *evaluator, arglist node) (node, error) {
 		return nil, err
 	}
 	if len(args) < 2 {
-		return nil, fmt.Errorf("Wrong number of arguments.")
+		return nil, fmt.Errorf("<: Wrong number of arguments.")
 	}
 
 	return compareAdjacentArguments(ev, args, arithmeticComparisonLessThan)
@@ -124,7 +124,7 @@ func funcLessThan(ev *evaluator, arglist node) (node, error) {
 
 func funcLessThanOrEqualTo(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("<=: Wrong type argument.")
 	}
 
 	args, err := createSliceFromProperList(arglist)
@@ -132,7 +132,7 @@ func funcLessThanOrEqualTo(ev *evaluator, arglist node) (node, error) {
 		return nil, err
 	}
 	if len(args) < 2 {
-		return nil, fmt.Errorf("Wrong number of arguments.")
+		return nil, fmt.Errorf("<=: Wrong number of arguments.")
 	}
 
 	return compareAdjacentArguments(ev, args, arithmeticComparisonLessThanOrEqualTo)
@@ -140,7 +140,7 @@ func funcLessThanOrEqualTo(ev *evaluator, arglist node) (node, error) {
 
 func funcAnd(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("and: Wrong type argument.")
 	}
 
 	args, err := createSliceFromProperList(arglist)
@@ -163,7 +163,7 @@ func funcAnd(ev *evaluator, arglist node) (node, error) {
 
 func funcOr(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("or: Wrong type argument.")
 	}
 
 	args, err := createSliceFromProperList(arglist)
@@ -186,7 +186,7 @@ func funcOr(ev *evaluator, arglist node) (node, error) {
 
 func funcNot(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("Wrong type argument.")
+		return nil, fmt.Errorf("not: Wrong type argument.")
 	}
 
 	args, err := createSliceFromProperList(arglist)
@@ -194,7 +194,7 @@ func funcNot(ev *evaluator, arglist node) (node, error) {
 		return nil, err
 	}
 	if len(args) != 1 {
-		return nil, fmt.Errorf("Wrong number of arguments.")
+		return nil, fmt.Errorf("not: Wrong number of arguments.")
 	}
 
 	arg0 := args[0]
