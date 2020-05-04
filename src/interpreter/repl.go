@@ -1,6 +1,7 @@
 package interpreter
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -17,7 +18,7 @@ func Repl(input io.Reader) {
 
 		node, err := p.ParseExpression()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "%v\n", err)
+			fmt.Fprintf(os.Stderr, "%v\n", errors.Unwrap(err))
 			continue
 		}
 		if node == nil {

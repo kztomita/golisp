@@ -30,10 +30,12 @@ type tokenizer struct {
 	scanner	*bufio.Scanner
 	s	string
 	pos	int			// next position
+	lineno	int
 }
 func newTokenizer(rd io.Reader) *tokenizer {
 	return &tokenizer{
 		scanner: bufio.NewScanner(rd),
+		lineno: 1,
 	}
 }
 
@@ -54,6 +56,15 @@ func (t *tokenizer) nextChar() byte {
 	}
 
 	t.pos++
+
+	if b == 0x0d && t.peekChar(0) == 0x0a {
+		t.lineno++
+		t.pos++
+		b = 0x0a
+	} else if b == 0x0a || b == 0x0d {
+		t.lineno++
+		b = 0x0a
+	}
 
 	return b
 }

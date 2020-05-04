@@ -7,6 +7,27 @@ import (
 	"strings"
 )
 
+type ParserError struct {
+	LineNo	int
+	Err  	error
+}
+func (e *ParserError) Error() string {
+	if e.LineNo > 0 {
+		return "Line " + strconv.Itoa(e.LineNo) + ": " + e.Err.Error()
+	} else {
+		return e.Err.Error()
+	}
+}
+func (e *ParserError) Unwrap() error {
+	return e.Err
+}
+func parserError(lineno int, err error) *ParserError {
+	return &ParserError{
+		LineNo: lineno,
+		Err: err,
+	}
+}
+
 func Parse(s string) (node, error) {
 	parser := NewReaderParser(strings.NewReader(s))
 
@@ -63,7 +84,7 @@ func createExpressionNode(ctx *parsingContext, tk *tokenizer, token *token) (nod
 	case tokenLeftParentheses:
 		return readList(ctx, tk)
 	case tokenInt, tokenFloat, tokenSymbol, tokenString:
-		return createLeafNode(token)
+		return createLeafNode(tk, token)
 	case tokenQuote:
 		return quoteNextNode(ctx, tk)
 	case tokenBackQuote:
@@ -74,7 +95,7 @@ func createExpressionNode(ctx *parsingContext, tk *tokenizer, token *token) (nod
 		ctx2 := ctx.clone()
 		ctx2.comma++
 		if ctx.backquote < ctx2.comma {
-			return nil, fmt.Errorf("Too many commas.")
+			return nil, parserError(tk.lineno, fmt.Errorf("Too many commas."))
 		}
 		return unquoteNextNode(ctx2, tk)
 	case tokenCommaAt:
@@ -82,22 +103,22 @@ func createExpressionNode(ctx *parsingContext, tk *tokenizer, token *token) (nod
 	case tokenSharpQuote:
 		return functionNextNode(ctx, tk)
 	default:
-		return nil, fmt.Errorf("Syntax error.")
+		return nil, parserError(tk.lineno, fmt.Errorf("Syntax error."))
 	}
 }
 
-func createLeafNode(token *token) (node, error) {
+func createLeafNode(tk *tokenizer, token *token) (node, error) {
 	switch (token.tokenId) {
 	case tokenInt:
 		i, err := strconv.Atoi(token.literal)
 		if err != nil {
-			return nil, fmt.Errorf("can't parse literal as integer.")
+			return nil, parserError(tk.lineno, fmt.Errorf("can't parse literal as integer."))
 		}
 		return &IntNode{value: i}, nil
 	case tokenFloat:
 		f, err := strconv.ParseFloat(token.literal, 64)
 		if err != nil {
-			return nil, fmt.Errorf("can't parse literal as integer.")
+			return nil, parserError(tk.lineno, fmt.Errorf("can't parse literal as integer."))
 		}
 		return &FloatNode{value: f}, nil
 	case tokenSymbol:
@@ -105,7 +126,7 @@ func createLeafNode(token *token) (node, error) {
 	case tokenString:
 		return &StringNode{value: token.literal}, nil
 	default:
-		return nil, fmt.Errorf("Unknown token %v", token)
+		return nil, parserError(tk.lineno, fmt.Errorf("Unknown token %v", token))
 	}
 }
 
@@ -115,7 +136,7 @@ func quoteNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
 		return nil, err
 	}
 	if nd == nil {
-		return nil, fmt.Errorf("Invalid quote literal.")
+		return nil, parserError(tk.lineno, fmt.Errorf("Invalid quote literal."))
 	}
 
 	return createList([]node{
@@ -130,7 +151,7 @@ func backquoteNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
 		return nil, err
 	}
 	if nd == nil {
-		return nil, fmt.Errorf("Invalid backquote literal.")
+		return nil, parserError(tk.lineno, fmt.Errorf("Invalid backquote literal."))
 	}
 
 	return createList([]node{
@@ -145,7 +166,7 @@ func unquoteNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
 		return nil, err
 	}
 	if nd == nil {
-		return nil, fmt.Errorf("Invalid comma literal.")
+		return nil, parserError(tk.lineno, fmt.Errorf("Invalid comma literal."))
 	}
 
 	return createList([]node{
@@ -160,7 +181,7 @@ func unquoteAndSpliceNextNode(ctx *parsingContext, tk *tokenizer) (node, error) 
 		return nil, err
 	}
 	if nd == nil {
-		return nil, fmt.Errorf("Invalid ,@ literal.")
+		return nil, parserError(tk.lineno, fmt.Errorf("Invalid ,@ literal."))
 	}
 
 	return createList([]node{
@@ -178,7 +199,7 @@ func functionNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
 		return nil, err
 	}
 	if nd == nil {
-		return nil, fmt.Errorf("Invalid #' literal.")
+		return nil, parserError(tk.lineno, fmt.Errorf("Invalid #' literal."))
 	}
 
 	return createList([]node{
@@ -196,7 +217,7 @@ func readList(ctx *parsingContext, tk *tokenizer) (node, error) {
 	for true {
 		token := tk.nextToken()
 		if token == nil {
-			return nil, fmt.Errorf("list is not terminated.")
+			return nil, parserError(tk.lineno, fmt.Errorf("list is not terminated."))
 		}
 
 		var nd node
@@ -209,7 +230,7 @@ func readList(ctx *parsingContext, tk *tokenizer) (node, error) {
 				return createList(nodes), nil
 			} else {
 				if foundDot != len(nodes) - 1 {
-					return nil, fmt.Errorf("syntax error.")
+					return nil, parserError(tk.lineno, fmt.Errorf("syntax error."))
 				}
 				return createDotList(nodes), nil
 			}
@@ -231,12 +252,12 @@ func readList(ctx *parsingContext, tk *tokenizer) (node, error) {
 		}
 
 		if nd == nil {
-			return nil, fmt.Errorf("Logic error(nd is nil).");
+			return nil, parserError(tk.lineno, fmt.Errorf("Logic error(nd is nil)."))
 		}
 
 		nodes = append(nodes, nd)
 	}
 
 	// not to reach
-	return nil, fmt.Errorf("not to reach")
+	return nil, parserError(tk.lineno, fmt.Errorf("not to reach"))
 }
