@@ -2,7 +2,33 @@ package interpreter
 
 import (
 	"fmt"
+	"strconv"
 )
+
+type EvaluatorError struct {
+	LineNo	int
+	Err  	error
+}
+func (e *EvaluatorError) Error() string {
+	if e.LineNo > 0 {
+		return "Line " + strconv.Itoa(e.LineNo) + ": " + e.Err.Error()
+	} else {
+		return e.Err.Error()
+	}
+}
+func (e *EvaluatorError) Unwrap() error {
+	return e.Err
+}
+func evError(lineno int, err error) *EvaluatorError {
+	// EvaluatorErrorならそのまま返す
+	if e, ok := err.(*EvaluatorError) ; ok {
+		return e
+	}
+	return &EvaluatorError{
+		LineNo: lineno,
+		Err: err,
+	}
+}
 
 type evaluator struct {
 	envStack	[]*lexicalEnvironment
@@ -48,11 +74,15 @@ func (e *evaluator) Eval(n node) (node, error) {
 			funcName := symbol.name
 			f, ok := embeddedFunctions[funcName]
 			if ok {
-				return f(e, cell.cdr)
+				result, err := f(e, cell.cdr)
+				if err != nil {
+					err = evError(nodeLineno(cell.car), err)
+				}
+				return result, err
 			} else {
 				value, ok := functionTable[funcName]
 				if !ok {
-					return nil, fmt.Errorf("%v function not found.", funcName)
+					return nil, evError(nodeLineno(cell.car), fmt.Errorf("%v function not found.", funcName))
 				}
 				switch fn := value.(type) {
 				case *FuncNode:
@@ -74,6 +104,10 @@ func (e *evaluator) Eval(n node) (node, error) {
 	
 					e.popEnvironment()
 	
+					if err != nil {
+						err = evError(nodeLineno(cell.car), err)
+					}
+
 					return result, err
 
 				case *MacroNode:
@@ -92,18 +126,19 @@ func (e *evaluator) Eval(n node) (node, error) {
 					e.popEnvironment()
 
 					if err != nil {
+						err = evError(nodeLineno(cell.car), err)
 						return nil, err
 					}
 
 					return e.Eval(expanded)
 
 				default:
-					return nil, fmt.Errorf("%v is not function.", symbol.name)
+					return nil, evError(nodeLineno(value), fmt.Errorf("%v is not function.", symbol.name))
 				}
 				// not to reach
 			}
 		} else {
-			return nil, fmt.Errorf("invalid function.")
+			return nil, evError(nodeLineno(cell.car), fmt.Errorf("invalid function (%v).", cell.car.ToString()))
 		}
 	} else if n.GetNodeType() == NtSymbol {
 		symbol := n.(*SymbolNode)
@@ -117,7 +152,7 @@ func (e *evaluator) Eval(n node) (node, error) {
 		// symbol tableをlookup
 		value, ok := e.topEnvironment().lookupSymbol(symbol)
 		if !ok {
-			return nil, fmt.Errorf("%v not found.", symbol.name)
+			return nil, evError(nodeLineno(symbol), fmt.Errorf("%v not found.", symbol.name))
 		}
 		return value, nil
 	}

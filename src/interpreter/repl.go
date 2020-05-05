@@ -28,7 +28,7 @@ func Repl(input io.Reader) {
 
 		result, err := ev.Eval(node)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "%v\n", err)
+			fmt.Fprintf(os.Stderr, "%v\n", errors.Unwrap(err))
 			continue
 		}
 		ev.FreshLine()

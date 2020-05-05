@@ -7,6 +7,7 @@ import (
 type node interface {
 	GetNodeType() int
 	ToString() string
+	Common() *NodeCommon
 }
 
 const (
@@ -23,7 +24,15 @@ const (
 	NtMacro
 )
 
+type NodeCommon struct {
+	lineno	int
+}
+func nodeLineno(nd node) int {
+	return nd.Common().lineno
+}
+
 type ContainerNode struct {
+	common	NodeCommon
 	nodes	[]node
 }
 func (n *ContainerNode) GetNodeType() int {
@@ -36,8 +45,12 @@ func (n *ContainerNode) ToString() string {
 	}
 	return s
 }
+func (n *ContainerNode) Common() *NodeCommon {
+	return &n.common
+}
 
 type NilNode struct {
+	common	NodeCommon
 }
 func (n *NilNode) GetNodeType() int {
 	return NtNil
@@ -45,8 +58,12 @@ func (n *NilNode) GetNodeType() int {
 func (n *NilNode) ToString() string {
 	return "nil"
 }
+func (n *NilNode) Common() *NodeCommon {
+	return &n.common
+}
 
 type TrueNode struct {
+	common	NodeCommon
 }
 func (n *TrueNode) GetNodeType() int {
 	return NtTrue
@@ -54,8 +71,12 @@ func (n *TrueNode) GetNodeType() int {
 func (n *TrueNode) ToString() string {
 	return "t"
 }
+func (n *TrueNode) Common() *NodeCommon {
+	return &n.common
+}
 
 type IntNode struct {
+	common		NodeCommon
 	value		int
 }
 func (n *IntNode) GetNodeType() int {
@@ -64,8 +85,12 @@ func (n *IntNode) GetNodeType() int {
 func (n *IntNode) ToString() string {
 	return fmt.Sprintf("%v", n.value)
 }
+func (n *IntNode) Common() *NodeCommon {
+	return &n.common
+}
 
 type FloatNode struct {
+	common		NodeCommon
 	value		float64
 }
 func (n *FloatNode) GetNodeType() int {
@@ -74,8 +99,12 @@ func (n *FloatNode) GetNodeType() int {
 func (n *FloatNode) ToString() string {
 	return fmt.Sprintf("%v", n.value)
 }
+func (n *FloatNode) Common() *NodeCommon {
+	return &n.common
+}
 
 type SymbolNode struct {
+	common	NodeCommon
 	unnamed	bool			// gensymで作成したシンボルでtrue
 	name	string
 }
@@ -88,6 +117,9 @@ func (n *SymbolNode) ToString() string {
 	} else {
 		return fmt.Sprintf("unnamed:%p", n)
 	}
+}
+func (n *SymbolNode) Common() *NodeCommon {
+	return &n.common
 }
 func (n *SymbolNode) symbolKey() string {
 	if n.unnamed == false {
@@ -102,6 +134,7 @@ func (n *SymbolNode) clone() *SymbolNode {
 }
 
 type StringNode struct {
+	common	NodeCommon
 	value	string
 }
 func (n *StringNode) GetNodeType() int {
@@ -110,8 +143,12 @@ func (n *StringNode) GetNodeType() int {
 func (n *StringNode) ToString() string {
 	return `"` + escapeString(n.value) + `"`
 }
+func (n *StringNode) Common() *NodeCommon {
+	return &n.common
+}
 
 type SystemFuncNode struct {
+	common	NodeCommon
 	name	string
 }
 func (n *SystemFuncNode) GetNodeType() int {
@@ -120,8 +157,12 @@ func (n *SystemFuncNode) GetNodeType() int {
 func (n *SystemFuncNode) ToString() string {
 	return "<system function " + n.name + ">"
 }
+func (n *SystemFuncNode) Common() *NodeCommon {
+	return &n.common
+}
 
 type FuncNode struct {
+	common		NodeCommon
 	parameters	[]*ordinaryLambdaListParameter
 	body		node					// *ConsCell or *NilNode
 	env			*lexicalEnvironment		// captured environment
@@ -132,8 +173,12 @@ func (n *FuncNode) GetNodeType() int {
 func (n *FuncNode) ToString() string {
 	return "<function>"
 }
+func (n *FuncNode) Common() *NodeCommon {
+	return &n.common
+}
 
 type MacroNode struct {
+	common		NodeCommon
 	parameters	[]*macroLambdaListParameter
 	body		node					// *ConsCell or *NilNode
 	env			*lexicalEnvironment		// captured environment
@@ -144,8 +189,12 @@ func (n *MacroNode) GetNodeType() int {
 func (n *MacroNode) ToString() string {
 	return "macro"
 }
+func (n *MacroNode) Common() *NodeCommon {
+	return &n.common
+}
 
 type ConsCell struct {
+	common	NodeCommon
 	car		node
 	cdr		node
 }
@@ -189,6 +238,9 @@ func (c *ConsCell) ToString() string {
 	s += ")"
 
 	return s
+}
+func (n *ConsCell) Common() *NodeCommon {
+	return &n.common
 }
 
 func (c *ConsCell) next() *ConsCell {

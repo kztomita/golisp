@@ -110,6 +110,12 @@ func createList(elements []node) node {
 	return p
 }
 
+func createListWithLineno(elements []node, lineno int) node {
+	node := createList(elements)
+	node.Common().lineno = lineno
+	return node
+}
+
 // 最後のエントリをcdrに入れる
 func createDotList(elements []node) node {
 	if len(elements) < 2 {

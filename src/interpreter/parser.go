@@ -108,23 +108,25 @@ func createExpressionNode(ctx *parsingContext, tk *tokenizer, token *token) (nod
 }
 
 func createLeafNode(tk *tokenizer, token *token) (node, error) {
+	cmn := NodeCommon{lineno: tk.lineno}
+
 	switch (token.tokenId) {
 	case tokenInt:
 		i, err := strconv.Atoi(token.literal)
 		if err != nil {
 			return nil, parserError(tk.lineno, fmt.Errorf("can't parse literal as integer."))
 		}
-		return &IntNode{value: i}, nil
+		return &IntNode{value: i, common: cmn}, nil
 	case tokenFloat:
 		f, err := strconv.ParseFloat(token.literal, 64)
 		if err != nil {
 			return nil, parserError(tk.lineno, fmt.Errorf("can't parse literal as integer."))
 		}
-		return &FloatNode{value: f}, nil
+		return &FloatNode{value: f, common: cmn}, nil
 	case tokenSymbol:
-		return &SymbolNode{name: strings.ToLower(token.literal)}, nil
+		return &SymbolNode{name: strings.ToLower(token.literal), common: cmn}, nil
 	case tokenString:
-		return &StringNode{value: token.literal}, nil
+		return &StringNode{value: token.literal, common: cmn}, nil
 	default:
 		return nil, parserError(tk.lineno, fmt.Errorf("Unknown token %v", token))
 	}
@@ -139,10 +141,10 @@ func quoteNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
 		return nil, parserError(tk.lineno, fmt.Errorf("Invalid quote literal."))
 	}
 
-	return createList([]node{
-		&SymbolNode{name: "quote"},
+	return createListWithLineno([]node{
+		&SymbolNode{name: "quote", common: NodeCommon{lineno: tk.lineno}},
 		nd,
-	}), nil
+	}, tk.lineno), nil
 }
 
 func backquoteNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
@@ -154,10 +156,10 @@ func backquoteNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
 		return nil, parserError(tk.lineno, fmt.Errorf("Invalid backquote literal."))
 	}
 
-	return createList([]node{
-		&SymbolNode{name: "system::backquote"},
+	return createListWithLineno([]node{
+		&SymbolNode{name: "system::backquote", common: NodeCommon{lineno: tk.lineno}},
 		nd,
-	}), nil
+	}, tk.lineno), nil
 }
 
 func unquoteNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
@@ -169,10 +171,10 @@ func unquoteNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
 		return nil, parserError(tk.lineno, fmt.Errorf("Invalid comma literal."))
 	}
 
-	return createList([]node{
-		&SymbolNode{name: "system::unquote"},
+	return createListWithLineno([]node{
+		&SymbolNode{name: "system::unquote", common: NodeCommon{lineno: tk.lineno}},
 		nd,
-	}), nil
+	}, tk.lineno), nil
 }
 
 func unquoteAndSpliceNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
@@ -184,13 +186,13 @@ func unquoteAndSpliceNextNode(ctx *parsingContext, tk *tokenizer) (node, error) 
 		return nil, parserError(tk.lineno, fmt.Errorf("Invalid ,@ literal."))
 	}
 
-	return createList([]node{
-		&SymbolNode{name: "system::unquote"},
+	return createListWithLineno([]node{
+		&SymbolNode{name: "system::unquote", common: NodeCommon{lineno: tk.lineno}},
 		createList([]node{
-			&SymbolNode{name: "system::splice"},
+			&SymbolNode{name: "system::splice", common: NodeCommon{lineno: tk.lineno}},
 			nd,
 		}),
-	}), nil
+	}, tk.lineno), nil
 }
 
 func functionNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
@@ -202,10 +204,10 @@ func functionNextNode(ctx *parsingContext, tk *tokenizer) (node, error) {
 		return nil, parserError(tk.lineno, fmt.Errorf("Invalid #' literal."))
 	}
 
-	return createList([]node{
-		&SymbolNode{name: "function"},
+	return createListWithLineno([]node{
+		&SymbolNode{name: "function", common: NodeCommon{lineno: tk.lineno}},
 		nd,
-	}), nil
+	}, tk.lineno), nil
 }
 
 func readList(ctx *parsingContext, tk *tokenizer) (node, error) {
@@ -225,9 +227,9 @@ func readList(ctx *parsingContext, tk *tokenizer) (node, error) {
 		case tokenRightParentheses:
 			if foundDot == -1 {
 				if len(nodes) == 0 {
-					return &NilNode{}, nil
+					return &NilNode{common: NodeCommon{lineno: tk.lineno}}, nil
 				}
-				return createList(nodes), nil
+				return createListWithLineno(nodes, tk.lineno), nil
 			} else {
 				if foundDot != len(nodes) - 1 {
 					return nil, parserError(tk.lineno, fmt.Errorf("syntax error."))
