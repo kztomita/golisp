@@ -38,6 +38,8 @@ func init() {
 		"or": funcOr,
 		"prin1": funcPrin1,
 		"print": funcPrint,
+		"rplaca": funcRplaca,
+		"rplacd": funcRplacd,
 		"quote": funcQuote,
 		"setq": funcSetq,
 		"type-of": funcTypeOf,

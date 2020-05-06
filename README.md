@@ -92,6 +92,8 @@ func main() {
 - print
 - progn
 - quote
+- rplaca
+- rplacd
 - setq
 - type-of
 
