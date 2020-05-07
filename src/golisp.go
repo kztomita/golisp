@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/kztomita/golisp/interpreter"
@@ -19,30 +18,32 @@ func repl() {
 	interpreter.Repl(os.Stdin)
 }
 
-func evaluateFile(file string) {
+func evaluateFile(file string) error {
 	lispBytes, err := ioutil.ReadFile(file)
 	if err != nil {
-		log.Fatalf("%v\n", err)
+		return err
 	}
 
 	interpreter.Initialize()
 
 	node, err := interpreter.Parse(string(lispBytes))
 	if err != nil {
-		log.Fatalf("%v\n", err)
+		return err
 	}
 	//fmt.Printf("%v\n", node.ToString())
 
 	ev := interpreter.NewEvaluator()
 	result, err := ev.Eval(node)
 	if err != nil {
-		log.Fatalf("%v", err)
+		return err
 	}
 	ev.FreshLine()
 
 	if false {
 		fmt.Printf("%v", result.ToString());
 	}
+
+	return nil
 }
 
 func main() {
@@ -52,5 +53,8 @@ func main() {
 	}
 
 	file := os.Args[1]
-	evaluateFile(file)
+	err := evaluateFile(file)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+	}
 }
