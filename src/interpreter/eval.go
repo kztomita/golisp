@@ -53,6 +53,29 @@ func (e *evaluator) popEnvironment() {
 }
 
 func (e *evaluator) Eval(n node) (node, error) {
+	return e.evaluate(n, false)
+}
+
+func (e *evaluator) evaluate(n node, requireMultipleValue bool) (node, error) {
+	result, err := e.evaluate_(n)
+	if err != nil {
+		return nil, err
+	}
+
+	if !requireMultipleValue {
+		if result.GetNodeType() == NtMultipleValues {
+			mv := result.(*MultipleValuesNode)
+			if len(mv.values) == 0 {
+				return &NilNode{}, nil
+			}
+			return mv.values[0], nil
+		}
+	}
+
+	return result, nil
+}
+
+func (e *evaluator) evaluate_(n node) (node, error) {
 	if n.GetNodeType() == NtContainer {
 		container := n.(*ContainerNode)
 		var lastResult node

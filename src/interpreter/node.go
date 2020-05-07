@@ -22,6 +22,7 @@ const (
 	NtSystemFunc
 	NtFunc
 	NtMacro
+	NtMultipleValues
 )
 
 type NodeCommon struct {
@@ -190,6 +191,27 @@ func (n *MacroNode) ToString() string {
 	return "macro"
 }
 func (n *MacroNode) Common() *NodeCommon {
+	return &n.common
+}
+
+type MultipleValuesNode struct {
+	common	NodeCommon
+	values	[]node
+}
+func (n *MultipleValuesNode) GetNodeType() int {
+	return NtMultipleValues
+}
+func (n *MultipleValuesNode) ToString() string {
+	str := ""
+	for i := range n.values {
+		str += n.values[i].ToString()
+		if i < len(n.values) - 1 {
+			str += ", "
+		}
+	}
+	return str
+}
+func (n *MultipleValuesNode) Common() *NodeCommon {
 	return &n.common
 }
 

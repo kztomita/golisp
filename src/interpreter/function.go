@@ -34,6 +34,7 @@ func init() {
 		"length": funcLength,
 		"let": funcLet,
 		"list": funcList,
+		"multiple-value-bind": funcMultipleValueBind,
 		"not": funcNot,
 		"or": funcOr,
 		"prin1": funcPrin1,
@@ -43,6 +44,7 @@ func init() {
 		"quote": funcQuote,
 		"setq": funcSetq,
 		"type-of": funcTypeOf,
+		"values": funcValues,
 
 		"system::backquote": funcSystemBackQuote,
 	}
