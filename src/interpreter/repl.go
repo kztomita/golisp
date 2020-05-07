@@ -26,7 +26,7 @@ func Repl(input io.Reader) {
 			break
 		}
 
-		result, err := ev.Eval(node)
+		result, err := ev.evaluate(node, true)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", errors.Unwrap(err))
 			continue
