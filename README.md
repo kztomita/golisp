@@ -97,6 +97,7 @@ func main() {
 - rplacd
 - setq
 - type-of
+- typep
 - values
 
 (*1) lambda list keywordは&optional,&rest,&bodyのみ対応。<br />
