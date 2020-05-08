@@ -44,6 +44,7 @@ func init() {
 		"quote": funcQuote,
 		"setq": funcSetq,
 		"type-of": funcTypeOf,
+		"typep": funcTypep,
 		"values": funcValues,
 
 		"system::backquote": funcSystemBackQuote,
