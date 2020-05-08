@@ -73,6 +73,7 @@ func main() {
 - cdr
 - cond
 - cons
+- consp
 - defmacro (*1)
 - defun (*2)
 - do
@@ -96,6 +97,8 @@ func main() {
 - rplaca
 - rplacd
 - setq
+- stringp
+- symbolp
 - type-of
 - typep
 - values

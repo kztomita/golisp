@@ -24,5 +24,9 @@ func init() {
 	(progn ,@(cdr clause))
 	(cond ,@(cdr args))))))
 
+(defun symbolp (x) (typep x 'symbol))
+(defun stringp (x) (typep x 'string))
+(defun consp (x) (typep x 'cons))
+
 	`
 }
