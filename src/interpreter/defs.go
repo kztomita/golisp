@@ -27,6 +27,8 @@ func init() {
 (defun symbolp (x) (typep x 'symbol))
 (defun stringp (x) (typep x 'string))
 (defun consp (x) (typep x 'cons))
+(defun atom (x) (not (consp x)))
+(defun listp (x) (or (consp x) (null x)))
 
 	`
 }

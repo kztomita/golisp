@@ -67,6 +67,7 @@ func main() {
 - and
 - append
 - apply
+- atom
 - cadr
 - car
 - cddr
@@ -86,6 +87,7 @@ func main() {
 - length
 - let
 - list
+- listp
 - multiple-value-bind
 - not
 - null
