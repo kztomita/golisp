@@ -4,6 +4,7 @@
 (print 1.2E5)
 (print 1.2e-5)
 (print 1e5)
+(print :foo)
 (print "foo")
 (print t)
 (print nil)
