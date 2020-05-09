@@ -12,6 +12,7 @@ const (
 	tokenInt
 	tokenFloat
 	tokenSymbol
+	tokenKeyword
 	tokenString
 	tokenDot
 	tokenQuote
@@ -215,6 +216,10 @@ func (t *tokenizer) nextToken() *token {
 	matched, err = regexp.MatchString(`(?i)^(\+|-|)(\d+\.\d+|\.\d+|\d+.|\d+)(e(\+|-)?\d+)?$`, literal)
 	if err == nil && matched {
 		return &token{tokenId: tokenFloat, literal: literal}
+	}
+
+	if literal[0] == ':' {
+		return &token{tokenId: tokenKeyword, literal: literal}
 	}
 
 	return &token{tokenId: tokenSymbol, literal: literal}

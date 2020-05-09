@@ -83,7 +83,7 @@ func createExpressionNode(ctx *parsingContext, tk *tokenizer, token *token) (nod
 	switch (token.tokenId) {
 	case tokenLeftParentheses:
 		return readList(ctx, tk)
-	case tokenInt, tokenFloat, tokenSymbol, tokenString:
+	case tokenInt, tokenFloat, tokenSymbol, tokenKeyword, tokenString:
 		return createLeafNode(tk, token)
 	case tokenQuote:
 		return quoteNextNode(ctx, tk)
@@ -125,6 +125,8 @@ func createLeafNode(tk *tokenizer, token *token) (node, error) {
 		return &FloatNode{value: f, common: cmn}, nil
 	case tokenSymbol:
 		return &SymbolNode{name: strings.ToLower(token.literal), common: cmn}, nil
+	case tokenKeyword:
+		return &KeywordNode{name: strings.ToLower(token.literal[1:]), common: cmn}, nil
 	case tokenString:
 		return &StringNode{value: token.literal, common: cmn}, nil
 	default:

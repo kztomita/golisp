@@ -4,5 +4,6 @@ boolean
 integer 
 float 
 symbol 
+keyword 
 string 
 function 

@@ -18,6 +18,7 @@ const (
 	NtInt
 	NtFloat
 	NtSymbol
+	NtKeyword
 	NtString
 	NtSystemFunc
 	NtFunc
@@ -132,6 +133,20 @@ func (n *SymbolNode) symbolKey() string {
 func (n *SymbolNode) clone() *SymbolNode {
 	cloned := *n
 	return &cloned
+}
+
+type KeywordNode struct {
+	common	NodeCommon
+	name	string
+}
+func (n *KeywordNode) GetNodeType() int {
+	return NtKeyword
+}
+func (n *KeywordNode) ToString() string {
+	return ":" + n.name
+}
+func (n *KeywordNode) Common() *NodeCommon {
+	return &n.common
 }
 
 type StringNode struct {

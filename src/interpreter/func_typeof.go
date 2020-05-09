@@ -32,6 +32,8 @@ func funcTypeOf(ev *evaluator, arglist node) (node, error) {
 		return &SymbolNode{name: "float"}, nil
 	case *SymbolNode:
 		return &SymbolNode{name: "symbol"}, nil
+	case *KeywordNode:
+		return &SymbolNode{name: "keyword"}, nil
 	case *StringNode:
 		return &SymbolNode{name: "string"}, nil
 	case *FuncNode, *SystemFuncNode:
