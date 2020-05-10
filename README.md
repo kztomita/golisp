@@ -105,7 +105,7 @@ func main() {
 - typep
 - values
 
-(*1) lambda list keywordは&optional,&rest,&bodyのみ対応。<br />
+(*1) lambda list keywordは&optional,&rest,&body,&keyのみ対応。<br />
 (*2) lambda list keywordは&optional,&rest,&keyのみ対応。
 
 # TODO

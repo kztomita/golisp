@@ -263,8 +263,10 @@ func evalFunc(e *evaluator, fn *FuncNode, arguments []node) (node, error) {
 func expandMacro(e *evaluator, mc *MacroNode, arguments []node) (node, error) {
 	// 実引数を関数のscopeのsymbolTableに登録
 	symTable := e.topEnvironment().symbols
+	pi := 0	// parameters index
 	ai := 0	// arguments index
-	for pi := range mc.parameters {
+	foundKeywordParam := false
+	for pi = range mc.parameters {
 		if mc.parameters[pi].required {
 			if ai >= len(arguments)	{
 				return nil, fmt.Errorf("Insufficient arguments")
@@ -284,6 +286,38 @@ func expandMacro(e *evaluator, mc *MacroNode, arguments []node) (node, error) {
 				rest = append(rest, arguments[ai])
 			}
 			symTable.set(mc.parameters[pi].symbol, createList(rest))
+		} else if mc.parameters[pi].key {
+			symTable.set(mc.parameters[pi].symbol, mc.parameters[pi].defValue)
+			foundKeywordParam = true
+		}
+	}
+	if foundKeywordParam {
+		// キーワード引数の読み込み
+		aiStart := 0	// requiredとoptional引数の数
+		for pi := range mc.parameters {
+			if !mc.parameters[pi].required && !mc.parameters[pi].optional {
+				break
+			}
+			aiStart++
+		}
+		for ai = aiStart ; ai < len(arguments) ; ai += 2 {
+			keyword, ok := arguments[ai].(*KeywordNode)
+			if !ok {
+				return nil, fmt.Errorf("Must be keyword name here.")
+			}
+			if ai + 1 >= len(arguments) {
+				return nil, fmt.Errorf("keyword's value is not found.")
+			}
+			found := false
+			for pi := range mc.parameters {
+				if mc.parameters[pi].key && mc.parameters[pi].keyword.name == keyword.name {
+					symTable.set(mc.parameters[pi].symbol, arguments[ai + 1])
+					found = true
+				}
+			}
+			if !found {
+				return nil, fmt.Errorf("keyword %v is not found in argument list.", keyword.name)
+			}
 		}
 	}
 	if ai < len(arguments) {
