@@ -68,45 +68,15 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*ordinaryLambdaListP
 			}
 
 		case ordinaryLambdaListOptional:
-			switch nd := c.car.(type) {
-			case *SymbolNode:
-				// default is nil
-				s := nd
+			err := readOptionalParameter(ev , c.car, func(s *SymbolNode, defValue node) {
 				parameters = append(parameters, &ordinaryLambdaListParameter{
-					symbol: s.clone(),
+					symbol: s,
 					optional: true,
-					defValue: &NilNode{},
+					defValue: defValue,
 				})
-			case *ConsCell:
-				if !isProperList(nd) {
-					return nil, fmt.Errorf("Invalid lambda list element.")
-				}
-				pair, err := createSliceFromProperList(nd)
-				if err != nil {
-					return nil, fmt.Errorf("Invalid lambda list element.")
-				}
-				if len(pair) > 2 {
-					return nil, fmt.Errorf("Invalid lambda list element.")
-				}
-				s, ok := pair[0].(*SymbolNode)
-				if !ok {
-					return nil, fmt.Errorf("Invalid lambda list element.")
-				}
-				var value node = &NilNode{}
-				if len(pair) == 2 {
-					result, err := ev.Eval(pair[1])
-					if err != nil {
-						return nil, err
-					}
-					value = result
-				}
-				parameters = append(parameters, &ordinaryLambdaListParameter{
-					symbol: s.clone(),
-					optional: true,
-					defValue: value,
-				})
-			default:
-				return nil, fmt.Errorf("Wrong type argument.")
+			})
+			if err != nil {
+				return nil, err
 			}
 
 		case ordinaryLambdaListRest:
@@ -123,70 +93,16 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*ordinaryLambdaListP
 			}
 
 		case ordinaryLambdaListKey:
-			switch nd := c.car.(type) {
-			case *SymbolNode:
-				// default is nil
-				s := nd
+			err := readKeywordParameter(ev , c.car, func(k *KeywordNode, s *SymbolNode, defValue node) {
 				parameters = append(parameters, &ordinaryLambdaListParameter{
-					symbol: s.clone(),
+					symbol: s,
 					key: true,
-					keyword: &KeywordNode{name: s.name},
-					defValue: &NilNode{},
+					keyword: k,
+					defValue: defValue,
 				})
-			case *ConsCell:
-				if !isProperList(nd) {
-					return nil, fmt.Errorf("Invalid lambda list element.")
-				}
-				if countProperListLength(nd) > 2 {
-					return nil, fmt.Errorf("Invalid lambda list element.")
-				}
-
-				var value node = &NilNode{}
-				if next := nd.next() ; next != nil {
-					initForm := next.car
-					result, err := ev.Eval(initForm)
-					if err != nil {
-						return nil, err
-					}
-					value = result
-				}
-
-				switch ndcar := nd.car.(type) {
-				case *SymbolNode:		// (foo 1)形式
-					s := ndcar
-					parameters = append(parameters, &ordinaryLambdaListParameter{
-						symbol: s.clone(),
-						key: true,
-						keyword: &KeywordNode{name: s.name},
-						defValue: value,
-					})
-				case *ConsCell:		// ((:foo foo) 1)形式
-					pair, err := createSliceFromProperList(ndcar)
-					if err != nil {
-						return nil, fmt.Errorf("Invalid lambda list element.")
-					}
-					if len(pair) != 2 {
-						return nil, fmt.Errorf("Invalid lambda list element.")
-					}
-					k, ok := pair[0].(*KeywordNode)
-					if !ok {
-						return nil, fmt.Errorf("Invalid lambda list element.")
-					}
-					s, ok := pair[1].(*SymbolNode)
-					if !ok {
-						return nil, fmt.Errorf("Invalid lambda list element.")
-					}
-					parameters = append(parameters, &ordinaryLambdaListParameter{
-						symbol: s.clone(),
-						key: true,
-						keyword: &KeywordNode{name: k.name},
-						defValue: value,
-					})
-				default:
-					return nil, fmt.Errorf("Wrong type argument.")
-				}
-			default:
-				return nil, fmt.Errorf("Wrong type argument.")
+			})
+			if err != nil {
+				return nil, err
 			}
 		}
 	}
@@ -266,45 +182,15 @@ func parseMacroLambdaList(ev *evaluator, c *ConsCell) ([]*macroLambdaListParamet
 			}
 
 		case macroLambdaListOptional:
-			switch nd := c.car.(type) {
-			case *SymbolNode:
-				// default is nil
-				s := nd
+			err := readOptionalParameter(ev , c.car, func(s *SymbolNode, defValue node) {
 				parameters = append(parameters, &macroLambdaListParameter{
-					symbol: s.clone(),
+					symbol: s,
 					optional: true,
-					defValue: &NilNode{},
+					defValue: defValue,
 				})
-			case *ConsCell:
-				if !isProperList(nd) {
-					return nil, fmt.Errorf("Invalid lambda list element.")
-				}
-				pair, err := createSliceFromProperList(nd)
-				if err != nil {
-					return nil, fmt.Errorf("Invalid lambda list element.")
-				}
-				if len(pair) > 2 {
-					return nil, fmt.Errorf("Invalid lambda list element.")
-				}
-				s, ok := pair[0].(*SymbolNode)
-				if !ok {
-					return nil, fmt.Errorf("Invalid lambda list element.")
-				}
-				var value node = &NilNode{}
-				if len(pair) == 2 {
-					result, err := ev.Eval(pair[1])
-					if err != nil {
-						return nil, err
-					}
-					value = result
-				}
-				parameters = append(parameters, &macroLambdaListParameter{
-					symbol: s.clone(),
-					optional: true,
-					defValue: value,
-				})
-			default:
-				return nil, fmt.Errorf("Wrong type argument.")
+			})
+			if err != nil {
+				return nil, err
 			}
 
 		case macroLambdaListRest:
@@ -321,70 +207,16 @@ func parseMacroLambdaList(ev *evaluator, c *ConsCell) ([]*macroLambdaListParamet
 			}
 
 		case ordinaryLambdaListKey:
-			switch nd := c.car.(type) {
-			case *SymbolNode:
-				// default is nil
-				s := nd
+			err := readKeywordParameter(ev , c.car, func(k *KeywordNode, s *SymbolNode, defValue node) {
 				parameters = append(parameters, &macroLambdaListParameter{
-					symbol: s.clone(),
+					symbol: s,
 					key: true,
-					keyword: &KeywordNode{name: s.name},
-					defValue: &NilNode{},
+					keyword: k,
+					defValue: defValue,
 				})
-			case *ConsCell:
-				if !isProperList(nd) {
-					return nil, fmt.Errorf("Invalid lambda list element.")
-				}
-				if countProperListLength(nd) > 2 {
-					return nil, fmt.Errorf("Invalid lambda list element.")
-				}
-
-				var value node = &NilNode{}
-				if next := nd.next() ; next != nil {
-					initForm := next.car
-					result, err := ev.Eval(initForm)
-					if err != nil {
-						return nil, err
-					}
-					value = result
-				}
-
-				switch ndcar := nd.car.(type) {
-				case *SymbolNode:		// (foo 1)形式
-					s := ndcar
-					parameters = append(parameters, &macroLambdaListParameter{
-						symbol: s.clone(),
-						key: true,
-						keyword: &KeywordNode{name: s.name},
-						defValue: value,
-					})
-				case *ConsCell:		// ((:foo foo) 1)形式
-					pair, err := createSliceFromProperList(ndcar)
-					if err != nil {
-						return nil, fmt.Errorf("Invalid lambda list element.")
-					}
-					if len(pair) != 2 {
-						return nil, fmt.Errorf("Invalid lambda list element.")
-					}
-					k, ok := pair[0].(*KeywordNode)
-					if !ok {
-						return nil, fmt.Errorf("Invalid lambda list element.")
-					}
-					s, ok := pair[1].(*SymbolNode)
-					if !ok {
-						return nil, fmt.Errorf("Invalid lambda list element.")
-					}
-					parameters = append(parameters, &macroLambdaListParameter{
-						symbol: s.clone(),
-						key: true,
-						keyword: &KeywordNode{name: k.name},
-						defValue: value,
-					})
-				default:
-					return nil, fmt.Errorf("Wrong type argument.")
-				}
-			default:
-				return nil, fmt.Errorf("Wrong type argument.")
+			})
+			if err != nil {
+				return nil, err
 			}
 		}
 	}
@@ -397,4 +229,99 @@ func parseMacroLambdaList(ev *evaluator, c *ConsCell) ([]*macroLambdaListParamet
 	}
 
 	return parameters, nil
+}
+
+func readOptionalParameter(ev *evaluator, p node, fn func(s *SymbolNode, defValue node)) error {
+	switch nd := p.(type) {
+	case *SymbolNode:
+		// default is nil
+		s := nd
+		fn(s.clone(), &NilNode{})
+	case *ConsCell:
+		if !isProperList(nd) {
+			return fmt.Errorf("Invalid lambda list element.")
+		}
+		pair, err := createSliceFromProperList(nd)
+		if err != nil {
+			return fmt.Errorf("Invalid lambda list element.")
+		}
+		if len(pair) > 2 {
+			return fmt.Errorf("Invalid lambda list element.")
+		}
+		s, ok := pair[0].(*SymbolNode)
+		if !ok {
+			return fmt.Errorf("Invalid lambda list element.")
+		}
+		var value node = &NilNode{}
+		if len(pair) == 2 {
+			result, err := ev.Eval(pair[1])
+			if err != nil {
+				return err
+			}
+			value = result
+		}
+		fn(s.clone(), value)
+	default:
+		return fmt.Errorf("Wrong type argument.")
+	}
+
+	return nil
+}
+
+func readKeywordParameter(ev *evaluator, p node, fn func(k *KeywordNode, s *SymbolNode, defValue node)) error {
+	switch nd := p.(type) {
+	case *SymbolNode:
+		// default is nil
+		s := nd
+		fn(&KeywordNode{name: s.name}, s.clone(), &NilNode{})
+
+	case *ConsCell:
+		if !isProperList(nd) {
+			return fmt.Errorf("Invalid lambda list element.")
+		}
+		if countProperListLength(nd) > 2 {
+			return fmt.Errorf("Invalid lambda list element.")
+		}
+
+		var value node = &NilNode{}
+		if next := nd.next() ; next != nil {
+			initForm := next.car
+			result, err := ev.Eval(initForm)
+			if err != nil {
+				return err
+			}
+			value = result
+		}
+
+		switch ndcar := nd.car.(type) {
+		case *SymbolNode:		// (foo 1)形式
+			s := ndcar
+			fn(&KeywordNode{name: s.name}, s.clone(), value)
+
+		case *ConsCell:		// ((:foo foo) 1)形式
+			pair, err := createSliceFromProperList(ndcar)
+			if err != nil {
+				return fmt.Errorf("Invalid lambda list element.")
+			}
+			if len(pair) != 2 {
+				return fmt.Errorf("Invalid lambda list element.")
+			}
+			k, ok := pair[0].(*KeywordNode)
+			if !ok {
+				return fmt.Errorf("Invalid lambda list element.")
+			}
+			s, ok := pair[1].(*SymbolNode)
+			if !ok {
+				return fmt.Errorf("Invalid lambda list element.")
+			}
+			fn(&KeywordNode{name: k.name}, s.clone(), value)
+
+		default:
+			return fmt.Errorf("Wrong type argument.")
+		}
+	default:
+		return fmt.Errorf("Wrong type argument.")
+	}
+
+	return nil
 }
