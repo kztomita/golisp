@@ -32,3 +32,29 @@
 (optional_rest_arg 1 2)
 (optional_rest_arg 1 2 3)
 (optional_rest_arg 1 2 3 4)
+
+(defun key_arg (a &key b (c 1) (d))
+  (print (list a b c d)))
+
+(print "----")
+(key_arg 1)
+(key_arg 1 :b 2)
+(key_arg 1 :c 3 :b 2)
+(key_arg 1 :c 3 :b 2 :d 4)
+
+(defun key_arg2 (a &key ((:foo f)) ((:bar b) 2))
+  (print (list a f b)))
+
+(print "----")
+(key_arg2 1)
+(key_arg2 1 :foo 2 :bar 3)
+
+(defun optional_rest_key_arg (a &optional b &rest c &key (d 1))
+  (print (list a b c d)))
+
+(print "----")
+(optional_rest_key_arg 1)
+(optional_rest_key_arg 1 2)
+;(optional_rest_key_arg 1 2 3)	; error
+;(optional_rest_key_arg 1 :d 3)	; error
+(optional_rest_key_arg 1 2 :d 3)

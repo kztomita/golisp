@@ -70,6 +70,10 @@ func funcTypep(ev *evaluator, arglist node) (node, error) {
 		if typename == "symbol" {
 			ret = true
 		}
+	case *KeywordNode:
+		if typename == "keyword" || typename == "symbol" {
+			ret = true
+		}
 	case *StringNode:
 		if typename == "string" || typename == "vector" || typename == "array" || typename == "sequence" {
 			ret = true

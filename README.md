@@ -106,7 +106,7 @@ func main() {
 - values
 
 (*1) lambda list keywordは&optional,&rest,&bodyのみ対応。<br />
-(*2) lambda list keywordは&optional,&restのみ対応。
+(*2) lambda list keywordは&optional,&rest,&keyのみ対応。
 
 # TODO
 
