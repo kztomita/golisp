@@ -121,6 +121,7 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*ordinaryLambdaListP
 			default:
 				return nil, fmt.Errorf("Wrong type argument.")
 			}
+
 		case ordinaryLambdaListKey:
 			switch nd := c.car.(type) {
 			case *SymbolNode:
@@ -136,27 +137,23 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*ordinaryLambdaListP
 				if !isProperList(nd) {
 					return nil, fmt.Errorf("Invalid lambda list element.")
 				}
+				if countProperListLength(nd) > 2 {
+					return nil, fmt.Errorf("Invalid lambda list element.")
+				}
+
+				var value node = &NilNode{}
+				if next := nd.next() ; next != nil {
+					initForm := next.car
+					result, err := ev.Eval(initForm)
+					if err != nil {
+						return nil, err
+					}
+					value = result
+				}
+
 				switch ndcar := nd.car.(type) {
 				case *SymbolNode:		// (foo 1)形式
-					pair, err := createSliceFromProperList(nd)
-					if err != nil {
-						return nil, fmt.Errorf("Invalid lambda list element.")
-					}
-					if len(pair) > 2 {
-						return nil, fmt.Errorf("Invalid lambda list element.")
-					}
-					s, ok := pair[0].(*SymbolNode)
-					if !ok {
-						return nil, fmt.Errorf("Invalid lambda list element.")
-					}
-					var value node = &NilNode{}
-					if len(pair) == 2 {
-						result, err := ev.Eval(pair[1])
-						if err != nil {
-							return nil, err
-						}
-						value = result
-					}
+					s := ndcar
 					parameters = append(parameters, &ordinaryLambdaListParameter{
 						symbol: s.clone(),
 						key: true,
@@ -168,7 +165,7 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*ordinaryLambdaListP
 					if err != nil {
 						return nil, fmt.Errorf("Invalid lambda list element.")
 					}
-					if len(pair) > 2 {
+					if len(pair) != 2 {
 						return nil, fmt.Errorf("Invalid lambda list element.")
 					}
 					k, ok := pair[0].(*KeywordNode)
@@ -178,15 +175,6 @@ func parseOrdinaryLambdaList(ev *evaluator, c *ConsCell) ([]*ordinaryLambdaListP
 					s, ok := pair[1].(*SymbolNode)
 					if !ok {
 						return nil, fmt.Errorf("Invalid lambda list element.")
-					}
-					var value node = &NilNode{}
-					if next := nd.next() ; next != nil {
-						initForm := next.car
-						result, err := ev.Eval(initForm)
-						if err != nil {
-							return nil, err
-						}
-						value = result
 					}
 					parameters = append(parameters, &ordinaryLambdaListParameter{
 						symbol: s.clone(),
