@@ -17,3 +17,10 @@
 
 (foo 1 2 3)
 
+(print "====")
+
+(defmacro optional_arg (a &optional b)
+  `(print (list ,a ,b)))
+
+(optional_arg 1)
+(optional_arg 1 2)
