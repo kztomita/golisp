@@ -14,6 +14,7 @@
 (rest_arg 1)
 (rest_arg 1 2)
 (rest_arg 1 2 3)
+(rest_arg 1 2 3 . 4)
 
 (print "----")
 
