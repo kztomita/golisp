@@ -18,15 +18,10 @@ func funcPrin1(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	value, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
-
 	ev.writed = true
-	fmt.Print(value.ToString())
+	fmt.Print(args[0].ToString())
 
-	return value, nil
+	return args[0], nil
 }
 
 func funcPrint(ev *evaluator, arglist node) (node, error) {
@@ -43,13 +38,8 @@ func funcPrint(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	value, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
-
 	ev.writed = true
-	fmt.Printf("\n%v ", value.ToString())
+	fmt.Printf("\n%v ", args[0].ToString())
 
-	return value, nil
+	return args[0], nil
 }

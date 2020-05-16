@@ -21,15 +21,8 @@ func funcTypep(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("typep: environment parameter not supported.")
 }
 
-	result, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
-
-	tspec, err := ev.Eval(args[1])
-	if err != nil {
-		return nil, err
-	}
+	object := args[0]
+	tspec := args[1]
 
 	// atomic type specifierのみサポート
 	typename := ""
@@ -45,7 +38,7 @@ func funcTypep(ev *evaluator, arglist node) (node, error) {
 	}
 
 	ret := false
-	switch result.(type) {
+	switch object.(type) {
 	case *NilNode:
 		if typename == "null" || typename == "symbol" || typename == "list" || typename == "sequence" {
 			ret = true

@@ -19,11 +19,7 @@ func funcCar(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("car: Wrong number of arguments.")
 	}
 
-	result, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
-	switch nd := result.(type) {
+	switch nd := args[0].(type) {
 	case *ConsCell:
 		return nd.car, nil
 	case *NilNode:
@@ -49,11 +45,7 @@ func funcCdr(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("cdr: Wrong number of arguments.")
 	}
 
-	result, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
-	switch nd := result.(type) {
+	switch nd := args[0].(type) {
 	case *ConsCell:
 		return nd.cdr, nil
 	case *NilNode:

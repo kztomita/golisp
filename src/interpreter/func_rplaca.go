@@ -17,21 +17,12 @@ func funcRplaca(ev *evaluator, arglist node) (node, error) {
 			return nil, fmt.Errorf("rplaca: Wrong number of arguments.")
 	}
 
-	arg0, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
-	cell, ok := arg0.(*ConsCell)
+	cell, ok := args[0].(*ConsCell)
 	if !ok {
 		return nil, fmt.Errorf("rplaca: A first parameter is not cons.")
 	}
 
-	obj, err := ev.Eval(args[1])
-	if err != nil {
-		return nil, err
-	}
-
-	cell.car = obj
+	cell.car = args[1]
 
 	return cell, nil
 }
@@ -49,21 +40,12 @@ func funcRplacd(ev *evaluator, arglist node) (node, error) {
 			return nil, fmt.Errorf("rplacd: Wrong number of arguments.")
 	}
 
-	arg0, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
-	cell, ok := arg0.(*ConsCell)
+	cell, ok := args[0].(*ConsCell)
 	if !ok {
 		return nil, fmt.Errorf("rplaca: A first parameter is not cons.")
 	}
 
-	obj, err := ev.Eval(args[1])
-	if err != nil {
-		return nil, err
-	}
-
-	cell.cdr = obj
+	cell.cdr = args[1]
 
 	return cell, nil
 }

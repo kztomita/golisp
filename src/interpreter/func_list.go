@@ -11,11 +11,7 @@ func funcList(ev *evaluator, arglist node) (node, error) {
 
 	elements := []node{}
 	for c := getConsCell(arglist) ; c != nil ; c = c.next() {
-		result, err := ev.Eval(c.car)
-		if err != nil {
-			return nil, err
-		}
-		elements = append(elements, result)
+		elements = append(elements, c.car)
 	}
 
 	return createList(elements), nil

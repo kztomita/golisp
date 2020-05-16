@@ -14,12 +14,7 @@ func funcTypeOf(ev *evaluator, arglist node) (node, error) {
 
 	arg0 := getConsCell(arglist).car
 
-	result, err := ev.Eval(arg0)
-	if err != nil {
-		return nil, err
-	}
-
-	switch result.(type) {
+	switch arg0.(type) {
 	case *NilNode:
 		return &SymbolNode{name: "null"}, nil
 	case *ConsCell:

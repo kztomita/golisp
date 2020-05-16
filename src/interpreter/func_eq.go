@@ -16,15 +16,8 @@ func funcEq(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("eq: Wrong number of arguments.")
 	}
 
-	arg0, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
-
-	arg1, err := ev.Eval(args[1])
-	if err != nil {
-		return nil, err
-	}
+	arg0 := args[0]
+	arg1 := args[1]
 
 	if arg0.GetNodeType() != arg1.GetNodeType() {
 		return &NilNode{}, nil

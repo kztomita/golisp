@@ -97,7 +97,15 @@ func (e *evaluator) evaluate_(n node) (node, error) {
 			funcName := symbol.name
 			f, ok := embeddedFunctions[funcName]
 			if ok {
-				result, err := f(e, cell.cdr)
+				arglist := cell.cdr
+				if f.fntype == lispFuncTypeFunction {
+					var err error
+					arglist, err = evalArglist(e, arglist)
+					if err != nil {
+						return nil, err
+					}
+				}
+				result, err := f.fn(e, arglist)
 				if err != nil {
 					err = evError(nodeLineno(cell.car), err)
 				}
@@ -181,6 +189,31 @@ func (e *evaluator) evaluate_(n node) (node, error) {
 	}
 
 	return n, nil
+}
+
+// arglistの各carを評価してProperListを返す。
+func evalArglist(e *evaluator, arglist node) (node, error) {
+	switch arglist.(type) {
+	case *NilNode:
+		return &NilNode{}, nil
+	case *ConsCell:
+		arguments := []node{}
+		head := arglist.(*ConsCell)
+		for cell := head ; cell != nil ; cell = cell.next() {
+			result, err := e.Eval(cell.car)
+			if err != nil {
+				return nil, err
+			}
+			arguments = append(arguments, result)
+
+			if cell.next() == head {
+				return nil, fmt.Errorf("Argument is circular list.")
+			}
+		}
+		return createList(arguments), nil
+	default:
+		return nil, fmt.Errorf("Argument is not list")
+	}
 }
 
 func evalFunc(e *evaluator, fn *FuncNode, arguments []node) (node, error) {

@@ -17,17 +17,12 @@ func funcLength(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	result, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
-
-	switch nd := result.(type) {
+	switch nd := args[0].(type) {
 	case *ConsCell, *NilNode:
-		if !isProperList(result) {
+		if !isProperList(args[0]) {
 			return nil, fmt.Errorf("Wrong type argument (is not proper list).")
 		}
-		return &IntNode{value: countProperListLength(result)}, nil
+		return &IntNode{value: countProperListLength(args[0])}, nil
 	case *StringNode:
 		return &IntNode{value: len(nd.value)}, nil
 	default:

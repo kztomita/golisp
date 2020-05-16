@@ -17,11 +17,7 @@ func funcValues(ev *evaluator, arglist node) (node, error) {
 	mv := &MultipleValuesNode{values: []node{}}
 
 	for _, arg := range args {
-		evaled, err := ev.Eval(arg)
-		if err != nil {
-			return nil, err
-		}
-		mv.values = append(mv.values, evaled)
+		mv.values = append(mv.values, arg)
 	}
 
 	return mv, nil

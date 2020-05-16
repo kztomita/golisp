@@ -4,27 +4,20 @@ import (
 	"fmt"
 )
 
-func compareAdjacentArguments(ev *evaluator, args []node, op arithmeticComparisonType) (node, error) {
-	prev, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
+func compareAdjacentArguments(args []node, op arithmeticComparisonType) (node, error) {
+	prev := args[0]
 
 	args = args[1:len(args)]
 
 	for _, arg := range args {
-		element, err := ev.Eval(arg)
-		if err != nil {
-			return nil, err
-		}
-		result, err := arithmeticComparison(op, prev, element)
+		result, err := arithmeticComparison(op, prev, arg)
 		if err != nil {
 			return nil, err
 		}
 		if !result {
 			return &NilNode{}, nil
 		}
-		prev = element
+		prev = arg
 	}
 
 	return &TrueNode{}, nil
@@ -43,7 +36,7 @@ func funcEqual(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("=: Wrong number of arguments.")
 	}
 
-	return compareAdjacentArguments(ev, args, arithmeticComparisonEqual)
+	return compareAdjacentArguments(args, arithmeticComparisonEqual)
 }
 
 func funcNotEqual(ev *evaluator, arglist node) (node, error) {
@@ -87,7 +80,7 @@ func funcGreaterThan(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf(">: Wrong number of arguments.")
 	}
 
-	return compareAdjacentArguments(ev, args, arithmeticComparisonGreaterThan)
+	return compareAdjacentArguments(args, arithmeticComparisonGreaterThan)
 }
 
 func funcGreaterThanOrEqualTo(ev *evaluator, arglist node) (node, error) {
@@ -103,7 +96,7 @@ func funcGreaterThanOrEqualTo(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf(">=: Wrong number of arguments.")
 	}
 
-	return compareAdjacentArguments(ev, args, arithmeticComparisonGreaterThanOrEqualTo)
+	return compareAdjacentArguments(args, arithmeticComparisonGreaterThanOrEqualTo)
 }
 
 func funcLessThan(ev *evaluator, arglist node) (node, error) {
@@ -119,7 +112,7 @@ func funcLessThan(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("<: Wrong number of arguments.")
 	}
 
-	return compareAdjacentArguments(ev, args, arithmeticComparisonLessThan)
+	return compareAdjacentArguments(args, arithmeticComparisonLessThan)
 }
 
 func funcLessThanOrEqualTo(ev *evaluator, arglist node) (node, error) {
@@ -135,7 +128,7 @@ func funcLessThanOrEqualTo(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("<=: Wrong number of arguments.")
 	}
 
-	return compareAdjacentArguments(ev, args, arithmeticComparisonLessThanOrEqualTo)
+	return compareAdjacentArguments(args, arithmeticComparisonLessThanOrEqualTo)
 }
 
 func funcAnd(ev *evaluator, arglist node) (node, error) {
@@ -196,14 +189,7 @@ func funcNot(ev *evaluator, arglist node) (node, error) {
 	if len(args) != 1 {
 		return nil, fmt.Errorf("not: Wrong number of arguments.")
 	}
-
-	arg0 := args[0]
-
-	result, err := ev.Eval(arg0)
-	if err != nil {
-		return nil, err
-	}
-	_, ok := result.(*NilNode)
+	_, ok := args[0].(*NilNode)
 	if ok {
 		return &TrueNode{}, nil
 	} else {

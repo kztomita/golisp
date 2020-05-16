@@ -18,11 +18,7 @@ func funcAdd(ev *evaluator, arglist node) (node, error) {
 	result = &IntNode{value: 0}
 
 	for _, arg := range args {
-		element, err := ev.Eval(arg)
-		if err != nil {
-			return nil, err
-		}
-		result, err = arithmeticOp(arithmeticOpAdd, result, element)
+		result, err = arithmeticOp(arithmeticOpAdd, result, arg)
 		if err != nil {
 			return nil, err
 		}
@@ -44,26 +40,17 @@ func funcSubtract(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	first, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
-
 	if len(args) == 1 {
-		return arithmeticOp(arithmeticOpSubtract, &IntNode{value: 0}, first)
+		return arithmeticOp(arithmeticOpSubtract, &IntNode{value: 0}, args[0])
 	}
 
 	var result node
-	result = first
+	result = args[0]
 
 	args = args[1:len(args)]
 
 	for _, arg := range args {
-		element, err := ev.Eval(arg)
-		if err != nil {
-			return nil, err
-		}
-		result, err = arithmeticOp(arithmeticOpSubtract, result, element)
+		result, err = arithmeticOp(arithmeticOpSubtract, result, arg)
 		if err != nil {
 			return nil, err
 		}
@@ -86,11 +73,7 @@ func funcMultiply(ev *evaluator, arglist node) (node, error) {
 	result = &IntNode{value: 1}
 
 	for _, arg := range args {
-		element, err := ev.Eval(arg)
-		if err != nil {
-			return nil, err
-		}
-		result, err = arithmeticOp(arithmeticOpMultiply, result, element)
+		result, err = arithmeticOp(arithmeticOpMultiply, result, arg)
 		if err != nil {
 			return nil, err
 		}
@@ -112,26 +95,17 @@ func funcDivide(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	first, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
-
 	if len(args) == 1 {
-		return arithmeticOp(arithmeticOpDivide, &IntNode{value: 1}, first)
+		return arithmeticOp(arithmeticOpDivide, &IntNode{value: 1}, args[0])
 	}
 
 	var result node
-	result = first
+	result = args[0]
 
 	args = args[1:len(args)]
 
 	for _, arg := range args {
-		element, err := ev.Eval(arg)
-		if err != nil {
-			return nil, err
-		}
-		result, err = arithmeticOp(arithmeticOpDivide, result, element)
+		result, err = arithmeticOp(arithmeticOpDivide, result, arg)
 		if err != nil {
 			return nil, err
 		}

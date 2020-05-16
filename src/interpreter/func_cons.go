@@ -17,18 +17,8 @@ func funcCons(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("Wrong number of arguments.")
 	}
 
-	first, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
-
-	second, err := ev.Eval(args[1])
-	if err != nil {
-		return nil, err
-	}
-
 	return &ConsCell{
-		car: first,
-		cdr: second,
+		car: args[0],
+		cdr: args[1],
 	}, nil
 }

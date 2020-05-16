@@ -17,11 +17,6 @@ func funcMapcar(ev *evaluator, arglist node) (node, error) {
 			return nil, fmt.Errorf("mapcar: Too few arguments given.")
 	}
 
-	args, err = evalNodes(ev, args)
-	if err != nil {
-		return nil, err
-	}
-
 	fn := args[0]
 
 	minimum := 0
@@ -46,10 +41,7 @@ func funcMapcar(ev *evaluator, arglist node) (node, error) {
 
 		applyArgs := createList([]node{
 			fn,
-			createList([]node{
-				&SymbolNode{name: "quote"},
-				createList(fnArgs),
-			}),
+			createList(fnArgs),
 		})
 
 		result, err := funcApply(ev, applyArgs)

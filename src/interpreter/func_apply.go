@@ -17,12 +17,9 @@ func funcApply(ev *evaluator, arglist node) (node, error) {
 		return nil, fmt.Errorf("Too few arguments given.")
 	}
 
-	evaledArg0, err := ev.Eval(args[0])
-	if err != nil {
-		return nil, err
-	}
+	function := args[0]
 
-	switch evaledArg0.(type) {
+	switch function.(type) {
 	case *SystemFuncNode, *FuncNode, *SymbolNode:
 	default:
 		return nil, fmt.Errorf("The first argument is not function.")
@@ -36,19 +33,11 @@ func funcApply(ev *evaluator, arglist node) (node, error) {
 	var head node
 	if len(applyArgs) > 0 {
 		// 末尾のリストにconsしていく
-		var err error
-		head, err = ev.Eval(applyArgs[len(applyArgs) - 1])
-		if err != nil {
-			return nil, err
-		}
+		head = applyArgs[len(applyArgs) - 1]
 		for i := len(applyArgs) - 2 ; i >= 0 ; i-- {
-			result, err := ev.Eval(applyArgs[i])
-			if err != nil {
-				return nil, err
-			}
-			// (cons result prev)
+			// (cons applyArgs[i] prev)
 			head = &ConsCell{
-				car: result,
+				car: applyArgs[i],
 				cdr: head,
 			}
 		}
@@ -56,40 +45,26 @@ func funcApply(ev *evaluator, arglist node) (node, error) {
 		head = &NilNode{}
 	}
 
-	if symbol, ok := evaledArg0.(*SymbolNode); ok {
+	if symbol, ok := function.(*SymbolNode); ok {
 		funcNode := lookupFunction(symbol.name)
 		if funcNode == nil {
 			return nil, fmt.Errorf("Undefined system function %v.", symbol.name)
 		}
-		evaledArg0 = funcNode
+		function = funcNode
 	}
 
-	switch nd := evaledArg0.(type) {
+	switch nd := function.(type) {
 	case *SystemFuncNode:
 		f, ok := embeddedFunctions[nd.name]
 		if !ok {
 			return nil, fmt.Errorf("Undefined system function %v.", nd.name)
 		}
 
-		// 組込み関数はfuncXXXX内で引数の評価を自分で行う。
-		// applyから渡す引数は評価済みとして処理させるためquoteして渡す。
-		// 将来的にはfuncXXXとmacroXXXを区別して、funcXXXは呼び出し前に引数を評価し
-		// funcXXX内での自前の評価実行はやめる。
-		nodes, err := createSliceFromProperList(head)
-		if err != nil {
-			return nil, err
+		if f.fntype != lispFuncTypeFunction {
+			return nil, fmt.Errorf("Undefined system function %v.", nd.name)
 		}
-		quoted := []node{}
-		for _, n := range nodes {
-			quoted = append(quoted,
-				createList([]node{
-					&SymbolNode{name: "quote"},
-					n,
-				}))
-		}
-		head = createList(quoted)
 
-		return f(ev, head)
+		return f.fn(ev, head)
 	case *FuncNode:
 		fn := nd
 		// 新しいlexical environmentを作成して切り替え
