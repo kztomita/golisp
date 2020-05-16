@@ -24,6 +24,14 @@ func init() {
 	(progn ,@(cdr clause))
 	(cond ,@(cdr args))))))
 
+; characters type not supported yet
+(defun eql (x y)
+  (cond
+   ((typep x 'number) (and (eq (type-of x) (type-of y))
+                           (= x y)))
+   (t (eq x y)))
+  )
+
 (defun symbolp (x) (typep x 'symbol))
 (defun stringp (x) (typep x 'string))
 (defun consp (x) (typep x 'cons))

@@ -3,8 +3,6 @@
 
 Goによるごく限られた機能しかないLISPインタプリタ。
 
-実用にはならないので注意。
-
 # 使い方
 
     cd src
@@ -79,6 +77,7 @@ func main() {
 - defun (*2)
 - do
 - eq
+- eql
 - funcall
 - function (#')
 - gensym
