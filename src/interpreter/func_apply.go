@@ -70,6 +70,25 @@ func funcApply(ev *evaluator, arglist node) (node, error) {
 		if !ok {
 			return nil, fmt.Errorf("Undefined system function %v.", nd.name)
 		}
+
+		// 組込み関数はfuncXXXX内で引数の評価を自分で行う。
+		// applyから渡す引数は評価済みとして処理させるためquoteして渡す。
+		// 将来的にはfuncXXXとmacroXXXを区別して、funcXXXは呼び出し前に引数を評価し
+		// funcXXX内での自前の評価実行はやめる。
+		nodes, err := createSliceFromProperList(head)
+		if err != nil {
+			return nil, err
+		}
+		quoted := []node{}
+		for _, n := range nodes {
+			quoted = append(quoted,
+				createList([]node{
+					&SymbolNode{name: "quote"},
+					n,
+				}))
+		}
+		head = createList(quoted)
+
 		return f(ev, head)
 	case *FuncNode:
 		fn := nd

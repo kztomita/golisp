@@ -4,6 +4,7 @@
 (print (apply #'+ '()))
 (print (apply #'+ nil))
 (print (apply '+ '(1 2)))	; 関数名をシンボルで指定
+(print (apply #'car '((1 a))))
 
 (print "====")
 ; function
