@@ -7,7 +7,7 @@ import (
 // environmentパラメータはサポートしない
 func funcMapcar(ev *evaluator, arglist node) (node, error) {
 	if !isProperList(arglist) {
-		return nil, fmt.Errorf("typep: Wrong type argument.")
+		return nil, fmt.Errorf("mapcar: Wrong type argument.")
 	}
 	args, err := createSliceFromProperList(arglist)
 	if err != nil {
