@@ -214,6 +214,18 @@ func copyProperList(nd node) (node, error) {
 	}
 }
 
+func evalNodes(ev *evaluator, nodes []node) ([]node, error) {
+	evaled := []node{}
+	for _, nd := range nodes {
+		result, err := ev.Eval(nd)
+		if err != nil {
+			return nil, err
+		}
+		evaled = append(evaled, result)
+	}
+	return evaled, nil
+}
+
 //
 // 文字列関連
 //

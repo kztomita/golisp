@@ -88,6 +88,7 @@ func main() {
 - let
 - list
 - listp
+- mapcar
 - multiple-value-bind
 - not
 - null

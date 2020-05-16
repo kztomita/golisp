@@ -34,6 +34,7 @@ func init() {
 		"length": funcLength,
 		"let": funcLet,
 		"list": funcList,
+		"mapcar": funcMapcar,
 		"multiple-value-bind": funcMultipleValueBind,
 		"not": funcNot,
 		"or": funcOr,
