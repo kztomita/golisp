@@ -19,7 +19,7 @@ func funcMapcar(ev *evaluator, arglist node) (node, error) {
 
 	fn := args[0]
 
-	minimum := 0
+	minimum := countProperListLength(args[1])
 	lists := [][]node{}
 	for _, list := range args[1:len(args)] {
 		nodes, err := createSliceFromProperList(list)
@@ -27,7 +27,7 @@ func funcMapcar(ev *evaluator, arglist node) (node, error) {
 			return nil, err
 		}
 		lists = append(lists, nodes)
-		if len(nodes) > minimum {
+		if len(nodes) < minimum {
 			minimum = len(nodes)
 		}
 	}
