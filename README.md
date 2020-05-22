@@ -20,7 +20,7 @@ REPL
 
 Goからインタプリタを呼び出す例。
 
-```
+```Go
 package main
 
 import (
